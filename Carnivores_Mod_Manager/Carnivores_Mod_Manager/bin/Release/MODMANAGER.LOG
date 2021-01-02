@@ -1,0 +1,110 @@
+
+READ Weapon : 0
+Name=Pistol
+CAR File=pistol.car
+Bullet Image=bullet1.tga
+Gunshot Sound=pistol.wav
+Price=0
+Power=2
+Shots=8
+Reload=0
+Trace=1
+Precision=0.8
+Volume=0.8
+Rate of Fire=1.6
+Scope Zoom=False
+Bullet Fall=False
+---------------------------------------------------------------------
+READ Weapon : 1
+Name=Shotgun
+CAR File=shotgun.car
+Bullet Image=bullet2.tga
+Gunshot Sound=shotgun.wav
+Price=0
+Power=1
+Shots=7
+Reload=0
+Trace=6
+Precision=0.3
+Volume=1.5
+Rate of Fire=1.2
+Scope Zoom=False
+Bullet Fall=False
+---------------------------------------------------------------------
+READ Weapon : 2
+Name=DB Shotgun
+CAR File=dbsgun.car
+Bullet Image=bullet2.tga
+Gunshot Sound=dbsgun.wav
+Price=0
+Power=1
+Shots=6
+Reload=2
+Trace=6
+Precision=0.2
+Volume=1.9
+Rate of Fire=1.2
+Scope Zoom=False
+Bullet Fall=True
+---------------------------------------------------------------------
+READ Weapon : 3
+Name=X-Bow
+CAR File=x_bow.car
+Bullet Image=bullet4.tga
+Gunshot Sound=
+Price=0
+Power=6
+Shots=6
+Reload=0
+Trace=1
+Precision=1.0
+Volume=0.4
+Rate of Fire=1.0
+Scope Zoom=False
+Bullet Fall=False
+---------------------------------------------------------------------
+READ Weapon : 4
+Name=Rifle
+CAR File=rifle.car
+Bullet Image=bullet3.tga
+Gunshot Sound=rifle.wav
+Price=0
+Power=4
+Shots=7
+Reload=0
+Trace=1
+Precision=1.8
+Volume=1.5
+Rate of Fire=1.0
+Scope Zoom=False
+Bullet Fall=False
+---------------------------------------------------------------------
+READ Weapon : 5
+Name=Sniper rifle
+CAR File=sniper.car
+Bullet Image=bullet3.tga
+Gunshot Sound=sniper.wav
+Price=0
+Power=4
+Shots=7
+Reload=0
+Trace=1
+Precision=2.0
+Volume=1.4
+Rate of Fire=1.0
+Scope Zoom=True
+Bullet Fall=False
+---------------------------------------------------------------------
+READ PRICES:
+START MONEY = 10000
+WEAPON0=20
+WEAPON1=100
+WEAPON2=150
+WEAPON3=50
+WEAPON4=100
+WEAPON5=200
+AREA0=100
+AREA1=0
+AREA2=0
+AREA3=0
+---------------------------------------------------------------------

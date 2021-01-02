@@ -1,0 +1,12 @@
+C:\Users\ojm14\source\repos\Carnivores_Mod_Manager\Carnivores_Mod_Manager\bin\Debug\Carnivores_Mod_Manager.exe.config
+C:\Users\ojm14\source\repos\Carnivores_Mod_Manager\Carnivores_Mod_Manager\bin\Debug\Carnivores_Mod_Manager.exe
+C:\Users\ojm14\source\repos\Carnivores_Mod_Manager\Carnivores_Mod_Manager\bin\Debug\Carnivores_Mod_Manager.pdb
+C:\Users\ojm14\source\repos\Carnivores_Mod_Manager\Carnivores_Mod_Manager\bin\Debug\Carnivores_Mod_Manager.xml
+C:\Users\ojm14\source\repos\Carnivores_Mod_Manager\Carnivores_Mod_Manager\obj\Debug\Carnivores_Mod_Manager.vbprojAssemblyReference.cache
+C:\Users\ojm14\source\repos\Carnivores_Mod_Manager\Carnivores_Mod_Manager\obj\Debug\Carnivores_Mod_Manager.Form1.resources
+C:\Users\ojm14\source\repos\Carnivores_Mod_Manager\Carnivores_Mod_Manager\obj\Debug\Carnivores_Mod_Manager.Resources.resources
+C:\Users\ojm14\source\repos\Carnivores_Mod_Manager\Carnivores_Mod_Manager\obj\Debug\Carnivores_Mod_Manager.vbproj.GenerateResource.cache
+C:\Users\ojm14\source\repos\Carnivores_Mod_Manager\Carnivores_Mod_Manager\obj\Debug\Carnivores_Mod_Manager.vbproj.CoreCompileInputs.cache
+C:\Users\ojm14\source\repos\Carnivores_Mod_Manager\Carnivores_Mod_Manager\obj\Debug\Carnivores_Mod_Manager.exe
+C:\Users\ojm14\source\repos\Carnivores_Mod_Manager\Carnivores_Mod_Manager\obj\Debug\Carnivores_Mod_Manager.xml
+C:\Users\ojm14\source\repos\Carnivores_Mod_Manager\Carnivores_Mod_Manager\obj\Debug\Carnivores_Mod_Manager.pdb
