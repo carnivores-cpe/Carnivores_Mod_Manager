@@ -23,7 +23,6 @@
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        ' todo clear temp folders
         init()
         'todo load dialog?
         setupTabData()
@@ -34,10 +33,10 @@
 
     Private Sub init()
         version(0) = "0.1.0"
-        debug = False
-        startMoney = 0
         FileOpen(2, "MODMANAGER.LOG", OpenMode.Output)
         printLog("")
+        debug = False
+        startMoney = 0
     End Sub
 
     Private Sub setupTabData()
@@ -251,6 +250,8 @@
         panel1.Size = New Drawing.Size(285, 250)
         panel1.AutoScroll = True
         editForm.FormBorderStyle = FormBorderStyle.FixedDialog
+        editForm.MaximizeBox = False
+        editForm.MinimizeBox = False
         Dim handle As List(Of Object)
         handle = New List(Of Object)
         Dim yPos As Integer = 8
@@ -444,6 +445,8 @@
         Dim helpForm As Form = New Form
         helpForm.Text = "Help"
         helpForm.FormBorderStyle = FormBorderStyle.FixedDialog
+        helpForm.MaximizeBox = False
+        helpForm.MinimizeBox = False
         Dim nameLabel As Label = New Label
         nameLabel.Text = attrClass.displayName & ":"
         nameLabel.Size = New Drawing.Size(190, 12)
@@ -454,7 +457,7 @@
         While Not EOF(7)
             Dim label As Label = New Label
             label.Text = LineInput(7)
-            label.Size = New Drawing.Size(200, 12)
+            label.Size = New Drawing.Size(200, 14)
             label.Location = New Drawing.Point(10, yPos)
             helpForm.Controls.Add(label)
             yPos += 14
@@ -592,9 +595,8 @@
     End Sub
 
     Private Sub readRes()
-        ' this should be reshunt unless you fix up rexhunters menu
+        'this should be reshunt unless you fix up rexhunters menu
         'gotta print to res and reshunt
-        Console.WriteLine(dir)
         If Not My.Computer.FileSystem.FileExists(dir & "\HUNTDAT\_RESHUNT.TXT") Then
             DoHalt("_RESHUNT.TXT not found")
         End If
@@ -734,6 +736,13 @@
                                 ByVal min As Integer, ByVal max As Integer, ByVal hide As Boolean, ByVal tempFolder As String,
                                 ByVal gameFolder As String, ByVal ext As String, ByVal edit As Boolean)
             attributeClasses.Add(New AttributeClass(name, res, type, defaultValue, min, max, hide, tempFolder, gameFolder, ext, edit))
+            'clear temp folder
+            If type = AttributeType.attrFile Then
+                Dim path As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).Remove(0, 6) & "\" & tempFolder & "\"
+                For Each fi In New IO.DirectoryInfo(path).GetFiles("*." & ext)
+                    My.Computer.FileSystem.DeleteFile(path & fi.Name)
+                Next
+            End If
         End Sub
 
         Public Sub addRecord()
