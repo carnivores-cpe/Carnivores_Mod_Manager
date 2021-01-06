@@ -97,14 +97,14 @@
         tabs(WeaponTab).recordMax = 10
         tabs(WeaponTab).recordLock = False
         tabs(WeaponTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", "", True)
+        tabs(WeaponTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", "", True)
         tabs(WeaponTab).addAttribute("CAR File", "file", AttributeType.attrFile, "", 0, 509, False, "Temp\WeaponCar\", "\HUNTDAT\WEAPONS\", "car", True)
         tabs(WeaponTab).addAttribute("Bullet Image", "pic", AttributeType.attrFile, "", 0, 509, False, "Temp\Bullet\", "\HUNTDAT\WEAPONS\", "tga", True)
         tabs(WeaponTab).addAttribute("Gunshot Sound", "gunshot", AttributeType.attrFile, "", 0, 509, True, "Temp\Gunshot\", "\MULTIPLAYER\GUNSHOTS\", "wav", True)
-        tabs(WeaponTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", "", True)
+        tabs(WeaponTab).addAttribute("Ammo Count", "shots", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", "", True)
+        tabs(WeaponTab).addAttribute("Magazine Capacity", "reload", AttributeType.attrTogglableInteger, 0, 0, 2147483647, False, "", "", "", True) 'togglableint - if off, value is 0
+        tabs(WeaponTab).addAttribute("Projectile Count", "trace", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", "", True)
         tabs(WeaponTab).addAttribute("Power", "power", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", "", True)
-        tabs(WeaponTab).addAttribute("Shots", "shots", AttributeType.attrInteger, 0, 1, 2147483647, False, "", "", "", True)
-        tabs(WeaponTab).addAttribute("Reload", "reload", AttributeType.attrInteger, 0, 1, 2147483647, False, "", "", "", True) 'togglableint - if off, value is 0
-        tabs(WeaponTab).addAttribute("Trace", "trace", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", "", True)
         tabs(WeaponTab).addAttribute("Precision", "prec", AttributeType.attrDouble, 0, 0, 2, False, "", "", "", True)
         tabs(WeaponTab).addAttribute("Volume", "loud", AttributeType.attrDouble, 0, 0, 2, False, "", "", "", True)
         tabs(WeaponTab).addAttribute("Rate of Fire", "rate", AttributeType.attrDouble, 0, 0, 2, False, "", "", "", True)
@@ -192,7 +192,7 @@
     End Sub
 
     Private Sub editrecord()
-        openEditForm(tabs(TabControl1.SelectedIndex).records(tabs(TabControl1.SelectedIndex).listBox.SelectedIndex), tabs(TabControl1.SelectedIndex).attributeClasses, "Edit " & tabs(TabControl1.SelectedIndex).getAttr(tabs(TabControl1.SelectedIndex).listBox.SelectedIndex, "name"))
+        openEditForm(tabs(TabControl1.SelectedIndex).listBox.SelectedIndex, tabs(TabControl1.SelectedIndex).attributeClasses, "Edit " & tabs(TabControl1.SelectedIndex).getAttr(tabs(TabControl1.SelectedIndex).listBox.SelectedIndex, "name"))
         ListBoxControlUpdate()
     End Sub
 
@@ -240,7 +240,8 @@
         End If
     End Sub
 
-    Private Sub openEditForm(ByRef record As Record, ByRef attrclasses As List(Of AttributeClass), ByRef task As String)
+    Private Sub openEditForm(ByRef recordIndex As Integer, ByRef attrclasses As List(Of AttributeClass), ByRef task As String)
+        Dim record As Record = tabs(TabControl1.SelectedIndex).records(recordIndex)
         editForm = New Form
         editForm.Text = task
         Dim panel1 As Panel = New Panel
@@ -255,24 +256,30 @@
         Dim handle As List(Of Object)
         handle = New List(Of Object)
         Dim yPos As Integer = 8
-        For attrIndex As Integer = 0 To record.attributes.Count - 1
+        For attrIndex As Integer = 0 To Record.attributes.Count - 1
             If attrclasses(attrIndex).hidden = False Then
                 Dim label As New Label
                 label.Size = New Drawing.Size(100, 15)
                 label.Location = New Drawing.Point(8, yPos)
                 label.Text = attrclasses(attrIndex).displayName
                 panel1.Controls.Add(label)
+
+                Dim yIncrement As Integer = 0
+                Dim helpIncrement As Integer = 0
+
                 Select Case attrclasses(attrIndex).type
 
                     Case AttributeType.attrString
                         Dim textBox As TextBox = New TextBox
                         textBox.Size = New Drawing.Size(100, 15)
                         textBox.Location = New Drawing.Point(116, yPos)
-                        textBox.Text = record.attributes(attrIndex).value
+                        textBox.Text = Record.attributes(attrIndex).value
                         panel1.Controls.Add(textBox)
                         handle.Add(textBox)
 
                         If attrclasses(attrIndex).editable = False Then textBox.Enabled = False
+
+                        yIncrement = 22
 
                     'todo string max length
 
@@ -280,7 +287,7 @@
                         Dim numBox As NumericUpDown = New MyNumericUpDown 'custom class overrides scroll wheeling through options
                         numBox.Size = New Drawing.Size(100, 15)
                         numBox.Location = New Drawing.Point(116, yPos)
-                        numBox.Text = record.attributes(attrIndex).value
+                        numBox.Text = Record.attributes(attrIndex).value
                         numBox.Maximum = attrclasses(attrIndex).maxValue
                         numBox.Minimum = attrclasses(attrIndex).minValue
                         panel1.Controls.Add(numBox)
@@ -288,11 +295,56 @@
 
                         If attrclasses(attrIndex).editable = False Then numBox.Enabled = False
 
+                        yIncrement = 22
+
+                    Case AttributeType.attrTogglableInteger
+
+                        Dim label1 As Label = New Label
+                        label1.Text = "Default"
+                        label1.Size = New Drawing.Size(45, 15)
+                        label1.Location = New Drawing.Point(116, yPos + 1)
+                        panel1.Controls.Add(label1)
+
+                        Dim checkBox1 As MyCheckBox = New MyCheckBox()
+                        checkBox1.Size = New Drawing.Size(15, 15)
+                        checkBox1.Location = New Drawing.Point(161, yPos + 2)
+                        panel1.Controls.Add(checkBox1)
+
+                        Dim numBox As NumericUpDown = New MyNumericUpDown 'custom class overrides scroll wheeling through options
+                        numBox.Size = New Drawing.Size(100, 15)
+                        numBox.Location = New Drawing.Point(116, yPos + 17)
+
+                        'set value to empty when box ticked - this way dont have to update when shots textbox changes
+
+                        If record.attributes(attrIndex).value = 0 Then
+                            checkBox1.Checked = True
+                            numBox.Text = ""
+                            numBox.Enabled = False
+                        Else
+                            checkBox1.Checked = False
+                            numBox.Text = record.attributes(attrIndex).value
+                            numBox.Enabled = True
+                        End If
+
+                        checkBox1.attrIndex = attrIndex
+                        checkBox1.numBox = numBox
+                        AddHandler checkBox1.CheckedChanged, AddressOf updateToggleableInteger
+
+                        numBox.Maximum = attrclasses(attrIndex).maxValue
+                        numBox.Minimum = attrclasses(attrIndex).minValue
+                        panel1.Controls.Add(numBox)
+                        handle.Add(numBox)
+
+                        If attrclasses(attrIndex).editable = False Then numBox.Enabled = False
+
+                        yIncrement = 42
+                        helpIncrement = 7
+
                     Case AttributeType.attrDouble
                         Dim numBox As NumericUpDown = New MyNumericUpDown 'custom class overrides scroll wheeling through options
                         numBox.Size = New Drawing.Size(100, 15)
                         numBox.Location = New Drawing.Point(116, yPos)
-                        numBox.Text = record.attributes(attrIndex).value
+                        numBox.Text = Record.attributes(attrIndex).value
                         numBox.Maximum = attrclasses(attrIndex).maxValue
                         numBox.Minimum = attrclasses(attrIndex).minValue
                         numBox.DecimalPlaces = 2
@@ -302,14 +354,16 @@
 
                         If attrclasses(attrIndex).editable = False Then numBox.Enabled = False
 
+                        yIncrement = 22
+
                     Case AttributeType.attrIntBool
                         Dim comboBox As ComboBox = New MyComboBox 'custom class overrides scroll wheeling through options
                         comboBox.Size = New Drawing.Size(100, 15)
                         comboBox.Location = New Drawing.Point(116, yPos)
-                        comboBox.Text = record.attributes(attrIndex).value
+                        comboBox.Text = Record.attributes(attrIndex).value
                         comboBox.Items.Add("True")
                         comboBox.Items.Add("False")
-                        If record.attributes(attrIndex).value = True Then
+                        If Record.attributes(attrIndex).value = True Then
                             comboBox.SelectedIndex = 0
                         Else
                             comboBox.SelectedIndex = 1
@@ -318,15 +372,17 @@
                         handle.Add(comboBox)
 
                         If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
+
+                        yIncrement = 22
 
                     Case AttributeType.attrBoolean
                         Dim comboBox As ComboBox = New MyComboBox 'custom class overrides scroll wheeling through options
                         comboBox.Size = New Drawing.Size(100, 15)
                         comboBox.Location = New Drawing.Point(116, yPos)
-                        comboBox.Text = record.attributes(attrIndex).value
+                        comboBox.Text = Record.attributes(attrIndex).value
                         comboBox.Items.Add("True")
                         comboBox.Items.Add("False")
-                        If record.attributes(attrIndex).value = True Then
+                        If Record.attributes(attrIndex).value = True Then
                             comboBox.SelectedIndex = 0
                         Else
                             comboBox.SelectedIndex = 1
@@ -335,13 +391,15 @@
                         handle.Add(comboBox)
 
                         If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
+
+                        yIncrement = 22
 
                     Case AttributeType.attrFile
 
                         Dim textBox As TextBox = New TextBox
                         textBox.Size = New Drawing.Size(78, 15)
                         textBox.Location = New Drawing.Point(116, yPos)
-                        textBox.Text = record.attributes(attrIndex).value
+                        textBox.Text = Record.attributes(attrIndex).value
                         textBox.Enabled = False
                         panel1.Controls.Add(textBox)
                         handle.Add(textBox)
@@ -349,7 +407,7 @@
                         Dim tooltip = New ToolTip
                         tooltip.ShowAlways = True
                         Dim button As LoadDataButton = New LoadDataButton
-                        button.record = record
+                        button.record = Record
                         button.attrIndex = attrIndex
                         button.handle2 = textBox
                         button.Size = New Drawing.Size(23, 22)
@@ -361,20 +419,22 @@
 
                         If attrclasses(attrIndex).editable = False Then button.Enabled = False
 
+                        yIncrement = 22
+
                 End Select
 
                 Dim helptooltip = New ToolTip
                 helptooltip.ShowAlways = True
                 Dim helpButton As HelpButton = New HelpButton
                 helpButton.Size = New Drawing.Size(22, 22)
-                helpButton.Location = New Drawing.Point(228, yPos + 2)
+                helpButton.Location = New Drawing.Point(228, yPos + 2 + helpIncrement)
                 helpButton.Image = New Bitmap(Image.FromFile("Resources\help.png"), New Size(19, 19))
                 helptooltip.SetToolTip(helpButton, "Help")
                 helpButton.attrIndex = attrIndex
                 AddHandler helpButton.Click, AddressOf showHelp
                 panel1.Controls.Add(helpButton)
 
-                yPos += 22
+                yPos += yIncrement
             Else
                 handle.Add(Nothing)
             End If
@@ -401,30 +461,30 @@
         editForm.ShowDialog()
 
         If editFormResult = True Then
-            For attrIndex As Integer = 0 To record.attributes.Count - 1
+            For attrIndex As Integer = 0 To Record.attributes.Count - 1
                 If attrclasses(attrIndex).hidden = False Then
                     Select Case attrclasses(attrIndex).type
                         Case AttributeType.attrString
-                            record.attributes(attrIndex).value = handle(attrIndex).Text
+                            Record.attributes(attrIndex).value = handle(attrIndex).Text
                         Case AttributeType.attrFile
-                            record.attributes(attrIndex).value = handle(attrIndex).Text
+                            Record.attributes(attrIndex).value = handle(attrIndex).Text
                         Case AttributeType.attrInteger
-                            'todo - rest of these
+                            Record.attributes(attrIndex).value = handle(attrIndex).Text
+                        Case AttributeType.attrTogglableInteger
                             record.attributes(attrIndex).value = handle(attrIndex).Text
                         Case AttributeType.attrDouble
-                            'todo - rest of these
-                            record.attributes(attrIndex).value = handle(attrIndex).Text
+                            Record.attributes(attrIndex).value = handle(attrIndex).Text
                         Case AttributeType.attrIntBool
                             If handle(attrIndex).selectedIndex = 0 Then
-                                record.attributes(attrIndex).value = True
+                                Record.attributes(attrIndex).value = True
                             Else
-                                record.attributes(attrIndex).value = False
+                                Record.attributes(attrIndex).value = False
                             End If
                         Case AttributeType.attrBoolean
                             If handle(attrIndex).selectedIndex = 0 Then
-                                record.attributes(attrIndex).value = True
+                                Record.attributes(attrIndex).value = True
                             Else
-                                record.attributes(attrIndex).value = False
+                                Record.attributes(attrIndex).value = False
                             End If
                     End Select
                 End If
@@ -440,6 +500,22 @@
 
     End Sub
 
+    Private Sub updateToggleableInteger(sender As Object, e As EventArgs)
+        Dim tabIndex As Integer = TabControl1.SelectedIndex
+        Dim recordIndex As Integer = tabs(tabIndex).listBox.SelectedIndex
+        If sender.checked = True Then
+            tabs(tabIndex).records(recordIndex).attributes(sender.attrIndex).value = 0
+            sender.numBox.Text = ""
+            sender.numbox.enabled = False
+        Else
+            Dim val As Integer = tabs(tabIndex).attributeClasses(sender.attrIndex).defaultValue
+            tabs(tabIndex).records(recordIndex).attributes(sender.attrIndex).value = val
+            sender.numBox.text = val
+            sender.numbox.enabled = True
+        End If
+
+    End Sub
+
     Private Sub showHelp(sender As Object, e As EventArgs)
         Dim attrClass As AttributeClass = tabs(TabControl1.SelectedIndex).attributeClasses(sender.attrIndex)
         Dim helpForm As Form = New Form
@@ -448,11 +524,11 @@
         helpForm.MaximizeBox = False
         helpForm.MinimizeBox = False
         Dim nameLabel As Label = New Label
-        nameLabel.Text = attrClass.displayName & ":"
-        nameLabel.Size = New Drawing.Size(190, 12)
+        nameLabel.Text = attrClass.displayName & " (" & attrClass.resName & ")" & ":"
+        nameLabel.Size = New Drawing.Size(190, 14)
         nameLabel.Location = New Drawing.Point(10, 5)
         helpForm.Controls.Add(nameLabel)
-        Dim yPos As Integer = 20
+        Dim yPos As Integer = 25
         FileOpen(7, "HInfo/" & TabControl1.SelectedIndex & "_" & attrClass.resName, OpenMode.Input)
         While Not EOF(7)
             Dim label As Label = New Label
@@ -504,6 +580,14 @@
         If My.Computer.FileSystem.FileExists(dir & gamefolder & filename) Then Return True
         Return False
     End Function
+
+    Friend Class MyCheckBox
+        Inherits CheckBox
+
+        Public attrIndex As Integer
+        Public numBox As NumericUpDown
+
+    End Class
 
     Friend Class HelpButton
         Inherits PictureBox
@@ -628,6 +712,8 @@
                             Case AttributeType.attrFile
                                 value = Trim(line.Substring(line.IndexOf("'") + 1)).TrimEnd(CChar("'"))
                             Case AttributeType.attrInteger
+                                value = Trim(line.Substring(line.IndexOf("=") + 1))
+                            Case AttributeType.attrTogglableInteger
                                 value = Trim(line.Substring(line.IndexOf("=") + 1))
                             Case AttributeType.attrDouble
                                 value = Trim(line.Substring(line.IndexOf("=") + 1))
@@ -818,6 +904,7 @@
     Enum AttributeType
         attrString  'basic text
         attrInteger 'whole numbers
+        attrTogglableInteger 'whole numbers
         attrDouble  'decimal numbers
         attrBoolean ' true/false
         attrIntBool ' true/false - written with numbers in the res

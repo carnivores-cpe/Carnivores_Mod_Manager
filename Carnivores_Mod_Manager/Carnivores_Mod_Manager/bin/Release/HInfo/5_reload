@@ -1,0 +1,4 @@
+The maximum number of rounds
+that can be fired before reloading.
+If set to default, the magazine
+capacity will equal the ammo count.
