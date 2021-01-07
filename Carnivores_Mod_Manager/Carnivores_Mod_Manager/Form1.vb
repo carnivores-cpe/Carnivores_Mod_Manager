@@ -12,14 +12,21 @@
     Const EquipmentTab = 6
     Const OtherTab = 7
 
-    Dim editForm As Form
-    Dim editFormResult As Boolean
-
     Dim startMoney As Integer
 
     Dim tabs(7) As Tab '8 tabs
 
     Dim version(0) As String
+    Dim modVersion As Integer
+    Dim lastSupportedVersion As Integer
+    Dim managerVersion As String = "1.0.0"
+
+    Dim imgAdd As Bitmap = New Bitmap(Image.FromFile("Resources\add.png"), New Size(32, 32))
+    Dim imgEdit As Bitmap = New Bitmap(Image.FromFile("Resources\edit.png"), New Size(32, 32))
+    Dim imgDelete As Bitmap = New Bitmap(Image.FromFile("Resources\delete.png"), New Size(32, 32))
+    Dim imgExpand As Bitmap = New Bitmap(Image.FromFile("Resources\expand.png"), New Size(20, 20))
+    Dim imgOpenFile As Bitmap = New Bitmap(Image.FromFile("Resources\openfile.png"), New Size(20, 20))
+    Dim imgHelp As Bitmap = New Bitmap(Image.FromFile("Resources\help.png"), New Size(19, 19))
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -32,11 +39,11 @@
     End Sub
 
     Private Sub init()
-        version(0) = "0.1.0"
         FileOpen(2, "MODMANAGER.LOG", OpenMode.Output)
         printLog("")
         debug = False
         startMoney = 0
+
     End Sub
 
     Private Sub setupTabData()
@@ -44,9 +51,6 @@
         tabs(AreaTab) = New Tab()
         tabs(AreaTab).name = "Areas"
         tabs(AreaTab).nameS = "Area"
-        tabs(AreaTab).addImage = "Resources\add.png"
-        tabs(AreaTab).editImage = "Resources\edit.png"
-        tabs(AreaTab).removeImage = "Resources\delete.png"
         tabs(AreaTab).recordMax = 10
         tabs(AreaTab).recordLock = False
         tabs(AreaTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", "", True)
@@ -54,9 +58,6 @@
         tabs(1) = New Tab()
         tabs(HuntableTab).name = "Huntable Creatures"
         tabs(HuntableTab).nameS = "Huntable Creature"
-        tabs(HuntableTab).addImage = "Resources\addhuntable.png"
-        tabs(HuntableTab).editImage = "Resources\edit.png"
-        tabs(HuntableTab).removeImage = "Resources\deletehuntable.png"
         tabs(HuntableTab).recordMax = 10
         tabs(HuntableTab).recordLock = False
         tabs(HuntableTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", "", True)
@@ -64,39 +65,28 @@
         tabs(AmbientTab) = New Tab()
         tabs(AmbientTab).name = "Ambient Creatures"
         tabs(AmbientTab).nameS = "Ambient Creature"
-        tabs(AmbientTab).addImage = "Resources\add.png"
-        tabs(AmbientTab).editImage = "Resources\edit.png"
-        tabs(AmbientTab).removeImage = "Resources\delete.png"
         tabs(AmbientTab).recordMax = 5
         tabs(AmbientTab).recordLock = False
 
         tabs(AmbientCorpseTab) = New Tab()
         tabs(AmbientCorpseTab).name = "Ambient Corpses"
         tabs(AmbientCorpseTab).nameS = "Ambient Corpse"
-        tabs(AmbientCorpseTab).addImage = "Resources\add.png"
-        tabs(AmbientCorpseTab).editImage = "Resources\edit.png"
-        tabs(AmbientCorpseTab).removeImage = "Resources\delete.png"
         tabs(AmbientCorpseTab).recordMax = 4
         tabs(AmbientCorpseTab).recordLock = False
 
         tabs(MapAmbientTab) = New Tab()
         tabs(MapAmbientTab).name = "Map Ambient Creatures"
         tabs(MapAmbientTab).nameS = "Map Ambient Creature"
-        tabs(MapAmbientTab).addImage = "Resources\add.png"
-        tabs(MapAmbientTab).editImage = "Resources\edit.png"
-        tabs(MapAmbientTab).removeImage = "Resources\delete.png"
         tabs(MapAmbientTab).recordMax = 1024
         tabs(MapAmbientTab).recordLock = False
 
         tabs(WeaponTab) = New Tab()
         tabs(WeaponTab).name = "Weapons"
         tabs(WeaponTab).nameS = "Weapon"
-        tabs(WeaponTab).addImage = "Resources\add.png"
-        tabs(WeaponTab).editImage = "Resources\edit.png"
-        tabs(WeaponTab).removeImage = "Resources\delete.png"
         tabs(WeaponTab).recordMax = 10
         tabs(WeaponTab).recordLock = False
         tabs(WeaponTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", "", True)
+        tabs(WeaponTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "", "\HUNTDAT\MENU\TXT\WEAPON", "txt", True)
         tabs(WeaponTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", "", True)
         tabs(WeaponTab).addAttribute("CAR File", "file", AttributeType.attrFile, "", 0, 509, False, "Temp\WeaponCar\", "\HUNTDAT\WEAPONS\", "car", True)
         tabs(WeaponTab).addAttribute("Bullet Image", "pic", AttributeType.attrFile, "", 0, 509, False, "Temp\Bullet\", "\HUNTDAT\WEAPONS\", "tga", True)
@@ -104,8 +94,8 @@
         tabs(WeaponTab).addAttribute("Ammo Count", "shots", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", "", True)
         tabs(WeaponTab).addAttribute("Magazine Capacity", "reload", AttributeType.attrTogglableInteger, 0, 0, 2147483647, False, "", "", "", True) 'togglableint - if off, value is 0
         tabs(WeaponTab).addAttribute("Projectile Count", "trace", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", "", True)
-        tabs(WeaponTab).addAttribute("Power", "power", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", "", True)
-        tabs(WeaponTab).addAttribute("Precision", "prec", AttributeType.attrDouble, 0, 0, 2, False, "", "", "", True)
+        tabs(WeaponTab).addAttribute("Fire Power", "power", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", "", True)
+        tabs(WeaponTab).addAttribute("Shot Precision", "prec", AttributeType.attrDouble, 0, 0, 2, False, "", "", "", True)
         tabs(WeaponTab).addAttribute("Volume", "loud", AttributeType.attrDouble, 0, 0, 2, False, "", "", "", True)
         tabs(WeaponTab).addAttribute("Rate of Fire", "rate", AttributeType.attrDouble, 0, 0, 2, False, "", "", "", True)
         tabs(WeaponTab).addAttribute("Scope Zoom", "optic", AttributeType.attrIntBool, False, 0, 0, False, "", "", "", True)
@@ -114,9 +104,6 @@
         tabs(EquipmentTab) = New Tab()
         tabs(EquipmentTab).name = "Equipment"
         tabs(EquipmentTab).nameS = "Equipment"
-        tabs(EquipmentTab).addImage = "Resources\add.png"
-        tabs(EquipmentTab).editImage = "Resources\edit.png"
-        tabs(EquipmentTab).removeImage = "Resources\delete.png"
         tabs(EquipmentTab).recordMax = 4
         tabs(EquipmentTab).recordLock = True
         tabs(EquipmentTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", "", False)
@@ -140,7 +127,7 @@
                 tabs(tabIndex).addToolTip = New ToolTip
                 tabs(tabIndex).addToolTip.ShowAlways = True
                 tabs(tabIndex).addButton = New Button
-                tabs(tabIndex).addButton.Image = New Bitmap(Image.FromFile(tabs(tabIndex).addImage), New Size(32, 32))
+                tabs(tabIndex).addButton.Image = imgAdd
                 tabs(tabIndex).addButton.Size = New Drawing.Size(38, 38)
                 tabs(tabIndex).addButton.Location = New Drawing.Point(366, 8)
                 tabs(tabIndex).addToolTip.SetToolTip(tabs(tabIndex).addButton, "Add " & tabs(tabIndex).nameS)
@@ -149,7 +136,7 @@
                 tabs(tabIndex).editToolTip = New ToolTip
                 tabs(tabIndex).editToolTip.ShowAlways = True
                 tabs(tabIndex).editButton = New Button
-                tabs(tabIndex).editButton.Image = New Bitmap(Image.FromFile(tabs(tabIndex).editImage), New Size(32, 32))
+                tabs(tabIndex).editButton.Image = imgEdit
                 tabs(tabIndex).editButton.Size = New Drawing.Size(38, 38)
                 tabs(tabIndex).editButton.Location = New Drawing.Point(366, 54)
                 tabs(tabIndex).editButton.Enabled = False
@@ -159,7 +146,7 @@
                 tabs(tabIndex).removeToolTip = New ToolTip
                 tabs(tabIndex).removeToolTip.ShowAlways = True
                 tabs(tabIndex).removeButton = New Button
-                tabs(tabIndex).removeButton.Image = New Bitmap(Image.FromFile(tabs(tabIndex).removeImage), New Size(32, 32))
+                tabs(tabIndex).removeButton.Image = imgDelete
                 tabs(tabIndex).removeButton.Size = New Drawing.Size(38, 38)
                 tabs(tabIndex).removeButton.Location = New Drawing.Point(366, 100)
                 tabs(tabIndex).removeButton.Enabled = False
@@ -242,7 +229,7 @@
 
     Private Sub openEditForm(ByRef recordIndex As Integer, ByRef attrclasses As List(Of AttributeClass), ByRef task As String)
         Dim record As Record = tabs(TabControl1.SelectedIndex).records(recordIndex)
-        editForm = New Form
+        Dim editForm As Form = New Form
         editForm.Text = task
         Dim panel1 As Panel = New Panel
         editForm.Size = New Drawing.Size(300, 325)
@@ -258,11 +245,6 @@
         Dim yPos As Integer = 8
         For attrIndex As Integer = 0 To Record.attributes.Count - 1
             If attrclasses(attrIndex).hidden = False Then
-                Dim label As New Label
-                label.Size = New Drawing.Size(100, 15)
-                label.Location = New Drawing.Point(8, yPos)
-                label.Text = attrclasses(attrIndex).displayName
-                panel1.Controls.Add(label)
 
                 Dim yIncrement As Integer = 0
                 Dim helpIncrement As Integer = 0
@@ -273,13 +255,46 @@
                         Dim textBox As TextBox = New TextBox
                         textBox.Size = New Drawing.Size(100, 15)
                         textBox.Location = New Drawing.Point(116, yPos)
-                        textBox.Text = Record.attributes(attrIndex).value
+                        textBox.Text = record.attributes(attrIndex).value
                         panel1.Controls.Add(textBox)
                         handle.Add(textBox)
 
                         If attrclasses(attrIndex).editable = False Then textBox.Enabled = False
 
-                        yIncrement = 22
+                    'todo string max length
+
+                    Case AttributeType.attrTextFile
+                        Dim textBox As TextBox = New TextBox
+                        textBox.Size = New Drawing.Size(100, 80)
+                        textBox.Multiline = True
+                        textBox.WordWrap = False
+                        textBox.ScrollBars = ScrollBars.Both
+                        textBox.Location = New Drawing.Point(116, yPos)
+                        textBox.Text = record.attributes(attrIndex).value
+                        panel1.Controls.Add(textBox)
+                        handle.Add(textBox)
+
+                        Dim tooltip = New ToolTip
+                        tooltip.ShowAlways = True
+                        Dim expandButton As LoadDataButton = New LoadDataButton
+                        expandButton.record = record
+                        expandButton.attrIndex = attrIndex
+                        expandButton.handle2 = textBox
+                        expandButton.Size = New Drawing.Size(23, 22)
+                        expandButton.Location = New Drawing.Point(90, yPos - 1)
+                        expandButton.Image = imgExpand
+                        AddHandler expandButton.Click, AddressOf showTextEditor
+                        tooltip.SetToolTip(expandButton, "Expand")
+                        panel1.Controls.Add(expandButton)
+
+                        'increase size button enabled
+                        If attrclasses(attrIndex).editable = False Then
+                            textBox.Enabled = False
+                            expandButton.Enabled = False
+                        End If
+
+                        yIncrement = 65
+                        helpIncrement = 32
 
                     'todo string max length
 
@@ -287,15 +302,13 @@
                         Dim numBox As NumericUpDown = New MyNumericUpDown 'custom class overrides scroll wheeling through options
                         numBox.Size = New Drawing.Size(100, 15)
                         numBox.Location = New Drawing.Point(116, yPos)
-                        numBox.Text = Record.attributes(attrIndex).value
+                        numBox.Text = record.attributes(attrIndex).value
                         numBox.Maximum = attrclasses(attrIndex).maxValue
                         numBox.Minimum = attrclasses(attrIndex).minValue
                         panel1.Controls.Add(numBox)
                         handle.Add(numBox)
 
                         If attrclasses(attrIndex).editable = False Then numBox.Enabled = False
-
-                        yIncrement = 22
 
                     Case AttributeType.attrTogglableInteger
 
@@ -335,16 +348,19 @@
                         panel1.Controls.Add(numBox)
                         handle.Add(numBox)
 
-                        If attrclasses(attrIndex).editable = False Then numBox.Enabled = False
+                        If attrclasses(attrIndex).editable = False Then
+                            numBox.Enabled = False
+                            checkBox1.Enabled = False
+                        End If
 
-                        yIncrement = 42
+                        yIncrement = 20
                         helpIncrement = 7
 
                     Case AttributeType.attrDouble
                         Dim numBox As NumericUpDown = New MyNumericUpDown 'custom class overrides scroll wheeling through options
                         numBox.Size = New Drawing.Size(100, 15)
                         numBox.Location = New Drawing.Point(116, yPos)
-                        numBox.Text = Record.attributes(attrIndex).value
+                        numBox.Text = record.attributes(attrIndex).value
                         numBox.Maximum = attrclasses(attrIndex).maxValue
                         numBox.Minimum = attrclasses(attrIndex).minValue
                         numBox.DecimalPlaces = 2
@@ -354,16 +370,14 @@
 
                         If attrclasses(attrIndex).editable = False Then numBox.Enabled = False
 
-                        yIncrement = 22
-
                     Case AttributeType.attrIntBool
                         Dim comboBox As ComboBox = New MyComboBox 'custom class overrides scroll wheeling through options
                         comboBox.Size = New Drawing.Size(100, 15)
                         comboBox.Location = New Drawing.Point(116, yPos)
-                        comboBox.Text = Record.attributes(attrIndex).value
+                        comboBox.Text = record.attributes(attrIndex).value
                         comboBox.Items.Add("True")
                         comboBox.Items.Add("False")
-                        If Record.attributes(attrIndex).value = True Then
+                        If record.attributes(attrIndex).value = True Then
                             comboBox.SelectedIndex = 0
                         Else
                             comboBox.SelectedIndex = 1
@@ -372,17 +386,15 @@
                         handle.Add(comboBox)
 
                         If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
-
-                        yIncrement = 22
 
                     Case AttributeType.attrBoolean
                         Dim comboBox As ComboBox = New MyComboBox 'custom class overrides scroll wheeling through options
                         comboBox.Size = New Drawing.Size(100, 15)
                         comboBox.Location = New Drawing.Point(116, yPos)
-                        comboBox.Text = Record.attributes(attrIndex).value
+                        comboBox.Text = record.attributes(attrIndex).value
                         comboBox.Items.Add("True")
                         comboBox.Items.Add("False")
-                        If Record.attributes(attrIndex).value = True Then
+                        If record.attributes(attrIndex).value = True Then
                             comboBox.SelectedIndex = 0
                         Else
                             comboBox.SelectedIndex = 1
@@ -391,15 +403,13 @@
                         handle.Add(comboBox)
 
                         If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
-
-                        yIncrement = 22
 
                     Case AttributeType.attrFile
 
                         Dim textBox As TextBox = New TextBox
                         textBox.Size = New Drawing.Size(78, 15)
                         textBox.Location = New Drawing.Point(116, yPos)
-                        textBox.Text = Record.attributes(attrIndex).value
+                        textBox.Text = record.attributes(attrIndex).value
                         textBox.Enabled = False
                         panel1.Controls.Add(textBox)
                         handle.Add(textBox)
@@ -407,34 +417,38 @@
                         Dim tooltip = New ToolTip
                         tooltip.ShowAlways = True
                         Dim button As LoadDataButton = New LoadDataButton
-                        button.record = Record
+                        button.record = record
                         button.attrIndex = attrIndex
                         button.handle2 = textBox
                         button.Size = New Drawing.Size(23, 22)
                         button.Location = New Drawing.Point(194, yPos - 1)
-                        button.Image = New Bitmap(Image.FromFile("Resources\openfile.png"), New Size(20, 20))
+                        button.Image = imgOpenFile
                         AddHandler button.Click, AddressOf OpenFile
                         tooltip.SetToolTip(button, "Open " & attrclasses(attrIndex).ext.ToUpper & " File")
                         panel1.Controls.Add(button)
 
                         If attrclasses(attrIndex).editable = False Then button.Enabled = False
 
-                        yIncrement = 22
-
                 End Select
+
+                Dim label As New Label
+                label.Size = New Drawing.Size(100, 15)
+                label.Location = New Drawing.Point(8, yPos + helpIncrement)
+                label.Text = attrclasses(attrIndex).displayName
+                panel1.Controls.Add(label)
 
                 Dim helptooltip = New ToolTip
                 helptooltip.ShowAlways = True
                 Dim helpButton As HelpButton = New HelpButton
                 helpButton.Size = New Drawing.Size(22, 22)
                 helpButton.Location = New Drawing.Point(228, yPos + 2 + helpIncrement)
-                helpButton.Image = New Bitmap(Image.FromFile("Resources\help.png"), New Size(19, 19))
+                helpButton.Image = imgHelp
                 helptooltip.SetToolTip(helpButton, "Help")
                 helpButton.attrIndex = attrIndex
                 AddHandler helpButton.Click, AddressOf showHelp
                 panel1.Controls.Add(helpButton)
 
-                yPos += yIncrement
+                yPos += yIncrement + 25
             Else
                 handle.Add(Nothing)
             End If
@@ -442,49 +456,56 @@
 
         editForm.Controls.Add(panel1)
 
-        Dim buttonOk As New Button
+        Dim buttonOk As New FormButton
         buttonOk.Size = New Drawing.Size(60, 28)
         buttonOk.Location = New Drawing.Point(145, 254)
         buttonOk.Text = "Ok"
-        AddHandler buttonOk.Click, AddressOf editFormOk
+        buttonOk.result = False
+        buttonOk.form = editForm
+        AddHandler buttonOk.Click, AddressOf formOk
         editForm.Controls.Add(buttonOk)
 
-        Dim buttonCancel As New Button
+        Dim buttonCancel As New FormButton
         buttonCancel.Size = New Drawing.Size(60, 28)
         buttonCancel.Location = New Drawing.Point(205, 254)
         buttonCancel.Text = "Cancel"
-        AddHandler buttonCancel.Click, AddressOf editFormCancel
+        buttonCancel.form = editForm
+        AddHandler buttonCancel.Click, AddressOf formCancel
         editForm.Controls.Add(buttonCancel)
-
-        editFormResult = False ' defualt value if user quits using X button
 
         editForm.ShowDialog()
 
-        If editFormResult = True Then
-            For attrIndex As Integer = 0 To Record.attributes.Count - 1
+        If buttonOk.result = True Then
+            For attrIndex As Integer = 0 To record.attributes.Count - 1
                 If attrclasses(attrIndex).hidden = False Then
                     Select Case attrclasses(attrIndex).type
                         Case AttributeType.attrString
-                            Record.attributes(attrIndex).value = handle(attrIndex).Text
-                        Case AttributeType.attrFile
-                            Record.attributes(attrIndex).value = handle(attrIndex).Text
-                        Case AttributeType.attrInteger
-                            Record.attributes(attrIndex).value = handle(attrIndex).Text
-                        Case AttributeType.attrTogglableInteger
                             record.attributes(attrIndex).value = handle(attrIndex).Text
+                        Case AttributeType.attrTextFile
+                            record.attributes(attrIndex).value = handle(attrIndex).Text
+                        Case AttributeType.attrFile
+                            record.attributes(attrIndex).value = handle(attrIndex).Text
+                        Case AttributeType.attrInteger
+                            record.attributes(attrIndex).value = handle(attrIndex).Text
+                        Case AttributeType.attrTogglableInteger
+                            If handle(attrIndex).Text = "" Then
+                                record.attributes(attrIndex).value = 0
+                            Else
+                                record.attributes(attrIndex).value = handle(attrIndex).Text
+                            End If
                         Case AttributeType.attrDouble
-                            Record.attributes(attrIndex).value = handle(attrIndex).Text
+                            record.attributes(attrIndex).value = handle(attrIndex).Text
                         Case AttributeType.attrIntBool
                             If handle(attrIndex).selectedIndex = 0 Then
-                                Record.attributes(attrIndex).value = True
+                                record.attributes(attrIndex).value = True
                             Else
-                                Record.attributes(attrIndex).value = False
+                                record.attributes(attrIndex).value = False
                             End If
                         Case AttributeType.attrBoolean
                             If handle(attrIndex).selectedIndex = 0 Then
-                                Record.attributes(attrIndex).value = True
+                                record.attributes(attrIndex).value = True
                             Else
-                                Record.attributes(attrIndex).value = False
+                                record.attributes(attrIndex).value = False
                             End If
                     End Select
                 End If
@@ -516,6 +537,53 @@
 
     End Sub
 
+    Private Sub showTextEditor(sender As Object, e As EventArgs)
+
+        Dim tabIndex As Integer = TabControl1.SelectedIndex
+        Dim recordIndex As Integer = tabs(tabIndex).listBox.SelectedIndex
+        Dim attrIndex As Integer = sender.attrIndex
+
+        Dim textForm As Form = New Form
+        textForm.Text = "Edit " & tabs(tabIndex).attributeClasses(attrIndex).displayName 'todo and name
+        textForm.FormBorderStyle = FormBorderStyle.FixedDialog
+        textForm.MaximizeBox = False
+        textForm.MinimizeBox = False
+        textForm.Size = New Drawing.Size(390, 346)
+
+        Dim textBox As TextBox = New TextBox
+        textBox.Size = New Drawing.Size(350, 250)
+        textBox.Multiline = True
+        textBox.WordWrap = False
+        'textBox.ScrollBars = ScrollBars.Both
+        textBox.Location = New Drawing.Point(10, 10)
+        textBox.Text = sender.handle2.text
+        textForm.Controls.Add(textBox)
+
+        Dim buttonOk As New FormButton
+        buttonOk.Size = New Drawing.Size(60, 28)
+        buttonOk.Location = New Drawing.Point(230, 270)
+        buttonOk.Text = "Ok"
+        buttonOk.result = False
+        buttonOk.form = textForm
+        AddHandler buttonOk.Click, AddressOf formOk
+        textForm.Controls.Add(buttonOk)
+
+        Dim buttonCancel As New FormButton
+        buttonCancel.Size = New Drawing.Size(60, 28)
+        buttonCancel.Location = New Drawing.Point(300, 270)
+        buttonCancel.Text = "Cancel"
+        buttonCancel.form = textForm
+        AddHandler buttonCancel.Click, AddressOf formCancel
+        textForm.Controls.Add(buttonCancel)
+
+        textForm.ShowDialog()
+
+        If buttonOk.result = True Then
+            sender.handle2.text = textBox.Text
+        End If
+
+    End Sub
+
     Private Sub showHelp(sender As Object, e As EventArgs)
         Dim attrClass As AttributeClass = tabs(TabControl1.SelectedIndex).attributeClasses(sender.attrIndex)
         Dim helpForm As Form = New Form
@@ -524,7 +592,11 @@
         helpForm.MaximizeBox = False
         helpForm.MinimizeBox = False
         Dim nameLabel As Label = New Label
-        nameLabel.Text = attrClass.displayName & " (" & attrClass.resName & ")" & ":"
+        If attrClass.resName.Contains("&") Then
+            nameLabel.Text = attrClass.displayName & ":"
+        Else
+            nameLabel.Text = attrClass.displayName & " (" & attrClass.resName & ")" & ":"
+        End If
         nameLabel.Size = New Drawing.Size(190, 14)
         nameLabel.Location = New Drawing.Point(10, 5)
         helpForm.Controls.Add(nameLabel)
@@ -596,6 +668,14 @@
 
     End Class
 
+    Friend Class FormButton
+        Inherits Button
+
+        Public form As Form
+        Public result As Boolean
+
+    End Class
+
     Friend Class LoadDataButton
         Inherits Button
 
@@ -624,13 +704,13 @@
     End Class
 
 
-    Private Sub editFormOk()
-        editFormResult = True
-        editForm.Close()
+    Private Sub formOk(sender As Object, e As EventArgs)
+        sender.result = True
+        sender.form.Close()
     End Sub
 
-    Private Sub editFormCancel()
-        editForm.Close()
+    Private Sub formCancel(sender As Object, e As EventArgs)
+        sender.form.Close()
     End Sub
 
 
@@ -653,6 +733,29 @@
             'If commandArgs(argIndex) = "-debug" Then debug = True
         Next
 
+        version(0) = "0.1.0"
+        lastSupportedVersion = 0
+
+
+        printLog("Mod Manager Version: " & managerVersion & " last supported version " & version(lastSupportedVersion))
+
+        Me.Text = "Carnivores Mod Manager v" & managerVersion
+
+        If My.Computer.FileSystem.FileExists(dir & "\MODDAT\VINFO") Then
+            Dim vinfo = My.Computer.FileSystem.ReadAllBytes(dir & "\MODDAT\VINFO")
+            modVersion = vinfo(0)
+            If modVersion > lastSupportedVersion Then
+                DoHalt("This version of Modders Edition is not supported. Please install the lastest version of Mod Manager.")
+            Else
+                If modVersion < lastSupportedVersion Then
+                    'TODO IN FUTURE MOD MANAGER VERSIONS - OFFER TO UPGRADE MODDERS EDITION TO LATEST SUPPORTED VERSION, else run in old mode!!!
+                End If
+                printLog("Mod Version: " & version(modVersion))
+            End If
+        Else
+            DoHalt("Modders Edition is not installed on this copy of Carnivores")
+        End If
+
         tempdir = dir
 
         tabs(EquipmentTab).addRecord()
@@ -665,6 +768,25 @@
         tabs(EquipmentTab).setAttr(3, "name", "Double Ammo")
 
         readRes()
+
+        'read textfiles
+        For tabIndex As Integer = 0 To 7
+            For recordIndex As Integer = 0 To tabs(tabIndex).records.Count - 1
+                For attrIndex As Integer = 0 To tabs(tabIndex).attributeClasses.Count - 1
+                    If tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrTextFile Then
+                        FileOpen(128, dir & tabs(tabIndex).attributeClasses(attrIndex).gameFolder & recordIndex + 1 & "." & tabs(tabIndex).attributeClasses(attrIndex).ext, OpenMode.Input)
+                        tabs(tabIndex).records(recordIndex).attributes(attrIndex).value = ""
+                        While Not EOF(128)
+                            tabs(tabIndex).records(recordIndex).attributes(attrIndex).value &= LineInput(128)
+                            tabs(tabIndex).records(recordIndex).attributes(attrIndex).value &= vbCrLf
+                        End While
+                        FileClose(128)
+                    End If
+                Next
+            Next
+        Next
+
+
 
     End Sub
 
@@ -681,10 +803,10 @@
     Private Sub readRes()
         'this should be reshunt unless you fix up rexhunters menu
         'gotta print to res and reshunt
-        If Not My.Computer.FileSystem.FileExists(dir & "\HUNTDAT\_RESHUNT.TXT") Then
-            DoHalt("_RESHUNT.TXT not found")
+        If Not My.Computer.FileSystem.FileExists(dir & "\HUNTDAT\_RES.TXT") Then
+            DoHalt("_RES.TXT not found")
         End If
-        FileOpen(1, dir & "\HUNTDAT\_RESHUNT.TXT", OpenMode.Input)
+        FileOpen(1, dir & "\HUNTDAT\_RES.TXT", OpenMode.Input)
 
         Dim line As String = LineInput(1)
         Do
@@ -803,7 +925,8 @@
 
 
     Public Class Tab
-        Public name, nameS, addImage, editImage, removeImage As String
+        Public name, nameS As String
+        'Public addImage, editImage, removeImage As string
         Public addButton, removeButton, editButton As Button
         Public addToolTip, removeToolTip, editToolTip As ToolTip
         Public listBox As ListBox
@@ -903,6 +1026,7 @@
 
     Enum AttributeType
         attrString  'basic text
+        attrTextFile
         attrInteger 'whole numbers
         attrTogglableInteger 'whole numbers
         attrDouble  'decimal numbers
