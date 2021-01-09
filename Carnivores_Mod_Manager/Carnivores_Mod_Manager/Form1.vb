@@ -53,14 +53,14 @@
         tabs(AreaTab).nameS = "Area"
         tabs(AreaTab).recordMax = 10
         tabs(AreaTab).recordLock = False
-        tabs(AreaTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", "", True)
+        tabs(AreaTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True)
 
         tabs(1) = New Tab()
         tabs(HuntableTab).name = "Huntable Creatures"
         tabs(HuntableTab).nameS = "Huntable Creature"
         tabs(HuntableTab).recordMax = 10
         tabs(HuntableTab).recordLock = False
-        tabs(HuntableTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", "", True)
+        tabs(HuntableTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True)
 
         tabs(AmbientTab) = New Tab()
         tabs(AmbientTab).name = "Ambient Creatures"
@@ -85,29 +85,30 @@
         tabs(WeaponTab).nameS = "Weapon"
         tabs(WeaponTab).recordMax = 10
         tabs(WeaponTab).recordLock = False
-        tabs(WeaponTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", "", True)
-        tabs(WeaponTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "", "\HUNTDAT\MENU\TXT\WEAPON", "txt", True)
-        tabs(WeaponTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", "", True)
-        tabs(WeaponTab).addAttribute("CAR File", "file", AttributeType.attrFile, "", 0, 509, False, "Temp\WeaponCar\", "\HUNTDAT\WEAPONS\", "car", True)
-        tabs(WeaponTab).addAttribute("Bullet Image", "pic", AttributeType.attrFile, "", 0, 509, False, "Temp\Bullet\", "\HUNTDAT\WEAPONS\", "tga", True)
-        tabs(WeaponTab).addAttribute("Gunshot Sound", "gunshot", AttributeType.attrFile, "", 0, 509, True, "Temp\Gunshot\", "\MULTIPLAYER\GUNSHOTS\", "wav", True)
-        tabs(WeaponTab).addAttribute("Ammo Count", "shots", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", "", True)
-        tabs(WeaponTab).addAttribute("Magazine Capacity", "reload", AttributeType.attrTogglableInteger, 0, 0, 2147483647, False, "", "", "", True) 'togglableint - if off, value is 0
-        tabs(WeaponTab).addAttribute("Projectile Count", "trace", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", "", True)
-        tabs(WeaponTab).addAttribute("Fire Power", "power", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", "", True)
-        tabs(WeaponTab).addAttribute("Shot Precision", "prec", AttributeType.attrDouble, 0, 0, 2, False, "", "", "", True)
-        tabs(WeaponTab).addAttribute("Volume", "loud", AttributeType.attrDouble, 0, 0, 2, False, "", "", "", True)
-        tabs(WeaponTab).addAttribute("Rate of Fire", "rate", AttributeType.attrDouble, 0, 0, 2, False, "", "", "", True)
-        tabs(WeaponTab).addAttribute("Scope Zoom", "optic", AttributeType.attrIntBool, False, 0, 0, False, "", "", "", True)
-        tabs(WeaponTab).addAttribute("Bullet Fall", "fall", AttributeType.attrIntBool, False, 0, 0, False, "", "", "", True)
+        tabs(WeaponTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True)
+        tabs(WeaponTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\WEAPON", "txt", True)
+        tabs(WeaponTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\WEAPON", "tga", True)
+        tabs(WeaponTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True)
+        tabs(WeaponTab).addAttribute("CAR File", "file", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "car", True)
+        tabs(WeaponTab).addAttribute("Bullet Image", "pic", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "tga", True)
+        tabs(WeaponTab).addAttribute("Gunshot Sound", "gunshot", AttributeType.attrFile, "", 0, 509, True, "\MULTIPLAYER\GUNSHOTS\", "wav", True)
+        tabs(WeaponTab).addAttribute("Ammo Count", "shots", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True)
+        tabs(WeaponTab).addAttribute("Magazine Capacity", "reload", AttributeType.attrTogglableInteger, 0, 0, 2147483647, False, "", "", True) 'togglableint - if off, value is 0
+        tabs(WeaponTab).addAttribute("Projectile Count", "trace", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True)
+        tabs(WeaponTab).addAttribute("Fire Power", "power", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True)
+        tabs(WeaponTab).addAttribute("Shot Precision", "prec", AttributeType.attrDouble, 0, 0, 2, False, "", "", True)
+        tabs(WeaponTab).addAttribute("Volume", "loud", AttributeType.attrDouble, 0, 0, 2, False, "", "", True)
+        tabs(WeaponTab).addAttribute("Rate of Fire", "rate", AttributeType.attrDouble, 0, 0, 2, False, "", "", True)
+        tabs(WeaponTab).addAttribute("Scope Zoom", "optic", AttributeType.attrIntBool, False, 0, 0, False, "", "", True)
+        tabs(WeaponTab).addAttribute("Bullet Fall", "fall", AttributeType.attrIntBool, False, 0, 0, False, "", "", True)
 
         tabs(EquipmentTab) = New Tab()
         tabs(EquipmentTab).name = "Equipment"
         tabs(EquipmentTab).nameS = "Equipment"
         tabs(EquipmentTab).recordMax = 4
         tabs(EquipmentTab).recordLock = True
-        tabs(EquipmentTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", "", False)
-        tabs(EquipmentTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", "", True)
+        tabs(EquipmentTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", False)
+        tabs(EquipmentTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True)
 
         tabs(OtherTab) = New Tab()
         tabs(OtherTab).name = "Other"
@@ -299,7 +300,7 @@
                     'todo string max length
 
                     Case AttributeType.attrInteger
-                        Dim numBox As NumericUpDown = New MyNumericUpDown 'custom class overrides scroll wheeling through options
+                        Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
                         numBox.Size = New Drawing.Size(100, 15)
                         numBox.Location = New Drawing.Point(116, yPos)
                         numBox.Text = record.attributes(attrIndex).value
@@ -323,7 +324,7 @@
                         checkBox1.Location = New Drawing.Point(161, yPos + 2)
                         panel1.Controls.Add(checkBox1)
 
-                        Dim numBox As NumericUpDown = New MyNumericUpDown 'custom class overrides scroll wheeling through options
+                        Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
                         numBox.Size = New Drawing.Size(100, 15)
                         numBox.Location = New Drawing.Point(116, yPos + 17)
 
@@ -357,7 +358,7 @@
                         helpIncrement = 7
 
                     Case AttributeType.attrDouble
-                        Dim numBox As NumericUpDown = New MyNumericUpDown 'custom class overrides scroll wheeling through options
+                        Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
                         numBox.Size = New Drawing.Size(100, 15)
                         numBox.Location = New Drawing.Point(116, yPos)
                         numBox.Text = record.attributes(attrIndex).value
@@ -371,7 +372,7 @@
                         If attrclasses(attrIndex).editable = False Then numBox.Enabled = False
 
                     Case AttributeType.attrIntBool
-                        Dim comboBox As ComboBox = New MyComboBox 'custom class overrides scroll wheeling through options
+                        Dim comboBox As UnscrollableComboBox = New UnscrollableComboBox 'custom class overrides scroll wheeling through options
                         comboBox.Size = New Drawing.Size(100, 15)
                         comboBox.Location = New Drawing.Point(116, yPos)
                         comboBox.Text = record.attributes(attrIndex).value
@@ -388,7 +389,7 @@
                         If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
 
                     Case AttributeType.attrBoolean
-                        Dim comboBox As ComboBox = New MyComboBox 'custom class overrides scroll wheeling through options
+                        Dim comboBox As UnscrollableComboBox = New UnscrollableComboBox 'custom class overrides scroll wheeling through options
                         comboBox.Size = New Drawing.Size(100, 15)
                         comboBox.Location = New Drawing.Point(116, yPos)
                         comboBox.Text = record.attributes(attrIndex).value
@@ -423,7 +424,7 @@
                         button.Size = New Drawing.Size(23, 22)
                         button.Location = New Drawing.Point(194, yPos - 1)
                         button.Image = imgOpenFile
-                        AddHandler button.Click, AddressOf OpenFile
+                        AddHandler button.Click, AddressOf OpenFileDialog
                         tooltip.SetToolTip(button, "Open " & attrclasses(attrIndex).ext.ToUpper & " File")
                         panel1.Controls.Add(button)
 
@@ -615,10 +616,10 @@
         helpForm.ShowDialog()
     End Sub
 
-    Private Sub OpenFile(sender As Object, e As EventArgs)
+    Private Sub OpenFileDialog(sender As Object, e As EventArgs)
         Dim dialog As New OpenFileDialog()
         Dim ext As String = tabs(TabControl1.SelectedIndex).attributeClasses(sender.attrindex).ext
-        Dim tempFolder As String = tabs(TabControl1.SelectedIndex).attributeClasses(sender.attrindex).tempFolder
+        Dim resName As String = tabs(TabControl1.SelectedIndex).attributeClasses(sender.attrindex).resName
         Dim gameFolder As String = tabs(TabControl1.SelectedIndex).attributeClasses(sender.attrindex).gameFolder
         dialog.InitialDirectory = tempdir
         dialog.Filter = ext & " files (*." & ext & ")|*." & ext
@@ -628,16 +629,19 @@
 
             'check if file exists in temp or game folder - if not auto rename
             Dim filename As String = System.IO.Path.GetFileName(dialog.FileName)
-            If OpenFileChecker(tempFolder, gameFolder, filename) = True Then
+            If OpenFileChecker(resName, gameFolder, filename) = True Then
                 Dim fileno As Integer = 1
                 Do
                     fileno += 1
                     filename = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName) & " (" & fileno & ").car"
-                Loop Until Not OpenFileChecker(tempFolder, gameFolder, filename)
+                Loop Until Not OpenFileChecker(resName, gameFolder, filename)
             End If
 
+            'update data
+            My.Computer.FileSystem.ReadAllBytes(System.IO.Path.GetFullPath(dialog.FileName))
+
             'copy file to temp folder
-            FileSystem.FileCopy(System.IO.Path.GetFullPath(dialog.FileName), tempFolder & filename)
+            'FileSystem.FileCopy(System.IO.Path.GetFullPath(dialog.FileName), tempFolder & filename)
 
             'update textbox
             sender.handle2.text = filename
@@ -647,8 +651,11 @@
         End If
     End Sub
 
-    Private Function OpenFileChecker(tempFolder, gamefolder, filename)
-        If My.Computer.FileSystem.FileExists(tempFolder & filename) Then Return True
+    Private Function OpenFileChecker(resName, gamefolder, filename)
+        'If My.Computer.FileSystem.FileExists(tempFolder & filename) Then Return True
+        For recordIndex = 0 To tabs(TabControl1.SelectedIndex).records.Count - 1
+            If tabs(TabControl1.SelectedIndex).getAttr(recordIndex, resName).value = filename Then Return True
+        Next
         If My.Computer.FileSystem.FileExists(dir & gamefolder & filename) Then Return True
         Return False
     End Function
@@ -685,7 +692,7 @@
 
     End Class
 
-    Friend Class MyComboBox
+    Friend Class UnscrollableComboBox
         Inherits ComboBox
 
         Protected Overrides Sub OnMouseWheel(ByVal e As MouseEventArgs)
@@ -694,7 +701,7 @@
         End Sub
     End Class
 
-    Friend Class MyNumericUpDown
+    Friend Class UnscrollableNumericUpDown
         Inherits NumericUpDown
 
         Protected Overrides Sub OnMouseWheel(ByVal e As MouseEventArgs)
@@ -759,29 +766,44 @@
         tempdir = dir
 
         tabs(EquipmentTab).addRecord()
-        tabs(EquipmentTab).setAttr(0, "name", "Camoflauge")
+        tabs(EquipmentTab).setAttr(0, "name", "Camoflauge", Nothing)
         tabs(EquipmentTab).addRecord()
-        tabs(EquipmentTab).setAttr(1, "name", "Radar")
+        tabs(EquipmentTab).setAttr(1, "name", "Radar", Nothing)
         tabs(EquipmentTab).addRecord()
-        tabs(EquipmentTab).setAttr(2, "name", "Cover Scent")
+        tabs(EquipmentTab).setAttr(2, "name", "Cover Scent", Nothing)
         tabs(EquipmentTab).addRecord()
-        tabs(EquipmentTab).setAttr(3, "name", "Double Ammo")
+        tabs(EquipmentTab).setAttr(3, "name", "Double Ammo", Nothing)
 
         readRes()
 
-        'read textfiles
+        'read non-res files
         For tabIndex As Integer = 0 To 7
             For recordIndex As Integer = 0 To tabs(tabIndex).records.Count - 1
                 For attrIndex As Integer = 0 To tabs(tabIndex).attributeClasses.Count - 1
-                    If tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrTextFile Then
-                        FileOpen(128, dir & tabs(tabIndex).attributeClasses(attrIndex).gameFolder & recordIndex + 1 & "." & tabs(tabIndex).attributeClasses(attrIndex).ext, OpenMode.Input)
-                        tabs(tabIndex).records(recordIndex).attributes(attrIndex).value = ""
-                        While Not EOF(128)
-                            tabs(tabIndex).records(recordIndex).attributes(attrIndex).value &= LineInput(128)
-                            tabs(tabIndex).records(recordIndex).attributes(attrIndex).value &= vbCrLf
-                        End While
-                        FileClose(128)
+
+                    If tabs(tabIndex).attributeClasses(attrIndex).resName.Contains("&") Then
+
+                        If tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrTextFile Then
+
+                            FileOpen(128, dir & tabs(tabIndex).attributeClasses(attrIndex).gameFolder & recordIndex + 1 & "." & tabs(tabIndex).attributeClasses(attrIndex).ext, OpenMode.Input)
+                            tabs(tabIndex).records(recordIndex).attributes(attrIndex).value = ""
+                            While Not EOF(128)
+                                tabs(tabIndex).records(recordIndex).attributes(attrIndex).value &= LineInput(128)
+                                tabs(tabIndex).records(recordIndex).attributes(attrIndex).value &= vbCrLf
+                            End While
+                            FileClose(128)
+
+                        Else
+
+                            tabs(tabIndex).records(recordIndex).attributes(attrIndex).data = My.Computer.FileSystem.ReadAllBytes(dir & tabs(tabIndex).attributeClasses(attrIndex).gameFolder & recordIndex + 1 & "." & tabs(tabIndex).attributeClasses(attrIndex).ext)
+                            Dim str As String = tabs(tabIndex).attributeClasses(attrIndex).gameFolder
+                            Dim pos As Integer = str.LastIndexOf("\") + 1
+                            tabs(tabIndex).records(recordIndex).attributes(attrIndex).value = str.Substring(pos, str.Length - pos) & recordIndex + 1 & "." & tabs(tabIndex).attributeClasses(attrIndex).ext
+
+                        End If
+
                     End If
+
                 Next
             Next
         Next
@@ -828,7 +850,7 @@
                     If line.Contains("=") Then
                         Dim resName As String = Trim(line.Substring(0, line.IndexOf("=")))
                         Dim value
-                        Select Case tabs(tabIndex).getAttrType(resName)
+                        Select Case tabs(tabIndex).getAttrClass(resName).Type
                             Case AttributeType.attrString
                                 value = Trim(line.Substring(line.IndexOf("'") + 1)).TrimEnd(CChar("'"))
                             Case AttributeType.attrFile
@@ -844,7 +866,17 @@
                             Case AttributeType.attrIntBool
                                 If Trim(line.Substring(line.IndexOf("=") + 1)) > 0 Then value = True Else value = False
                         End Select
-                        tabs(tabIndex).setAttr(tabs(tabIndex).records.Count - 1, resName, value)
+                        Dim recordIndex = tabs(tabIndex).records.Count - 1
+
+                        If tabs(tabIndex).getAttrClass(resName).type = AttributeType.attrFile Then
+                            If tabs(tabIndex).getAttrClass(resName).resname.contains("&") Then
+                                tabs(tabIndex).setAttr(recordIndex, resName, value, My.Computer.FileSystem.ReadAllBytes(dir & tabs(tabIndex).getAttrClass(resName).gameFolder & recordIndex + 1 & "." & tabs(tabIndex).getAttrClass(resName).ext))
+                            Else
+                                tabs(tabIndex).setAttr(recordIndex, resName, value, My.Computer.FileSystem.ReadAllBytes(dir & tabs(tabIndex).getAttrClass(resName).gameFolder & value))
+                            End If
+                        Else
+                            tabs(tabIndex).setAttr(recordIndex, resName, value, Nothing)
+                        End If
                     End If
                     line = LineInput(1)
                 Loop Until line.Contains("}")
@@ -884,10 +916,10 @@
                 'tabs(HuntableTab).setAttr(h, "price", Trim(line.Substring(line.IndexOf("=") + 1)))
                 'h += 1
             ElseIf line.Contains("weapon") Then
-                tabs(WeaponTab).setAttr(w, "price", Trim(line.Substring(line.IndexOf("=") + 1)))
+                tabs(WeaponTab).setAttr(w, "price", Trim(line.Substring(line.IndexOf("=") + 1)), Nothing)
                 w += 1
             ElseIf line.Contains("acces") Then
-                tabs(EquipmentTab).setAttr(e, "price", Trim(line.Substring(line.IndexOf("=") + 1)))
+                tabs(EquipmentTab).setAttr(e, "price", Trim(line.Substring(line.IndexOf("=") + 1)), Nothing)
                 e += 1
             End If
             line = LineInput(1)
@@ -942,16 +974,16 @@
         End Sub
 
         Public Sub addAttribute(ByVal name As String, ByVal res As String, ByVal type As AttributeType, ByVal defaultValue As Object,
-                                ByVal min As Integer, ByVal max As Integer, ByVal hide As Boolean, ByVal tempFolder As String,
-                                ByVal gameFolder As String, ByVal ext As String, ByVal edit As Boolean)
-            attributeClasses.Add(New AttributeClass(name, res, type, defaultValue, min, max, hide, tempFolder, gameFolder, ext, edit))
+                                ByVal min As Integer, ByVal max As Integer, ByVal hide As Boolean, ByVal gameFolder As String,
+                                ByVal ext As String, ByVal edit As Boolean)
+            attributeClasses.Add(New AttributeClass(name, res, type, defaultValue, min, max, hide, gameFolder, ext, edit))
             'clear temp folder
-            If type = AttributeType.attrFile Then
-                Dim path As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).Remove(0, 6) & "\" & tempFolder & "\"
-                For Each fi In New IO.DirectoryInfo(path).GetFiles("*." & ext)
-                    My.Computer.FileSystem.DeleteFile(path & fi.Name)
-                Next
-            End If
+            'If type = AttributeType.attrFile Then
+            'Dim path As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).Remove(0, 6) & "\" & tempFolder & "\"
+            'For Each fi In New IO.DirectoryInfo(path).GetFiles("*." & ext)
+            'My.Computer.FileSystem.DeleteFile(path & fi.Name)
+            'Next
+            'End If
         End Sub
 
         Public Sub addRecord()
@@ -962,10 +994,11 @@
             Next
         End Sub
 
-        Public Sub setAttr(ByVal recordIndex As Integer, ByVal resName As String, ByVal value As Object)
+        Public Sub setAttr(ByVal recordIndex As Integer, ByVal resName As String, ByVal _value As Object, ByVal _data() As Byte)
             For attrIndex As Integer = 0 To attributeClasses.Count - 1
                 If attributeClasses(attrIndex).resName = resName Then
-                    records(recordIndex).attributes(attrIndex).value = value
+                    records(recordIndex).attributes(attrIndex).value = _value
+                    records(recordIndex).attributes(attrIndex).data = _data
                 End If
             Next
         End Sub
@@ -979,10 +1012,10 @@
             Return -1
         End Function
 
-        Public Function getAttrType(resName As String)
+        Public Function getAttrClass(resName As String)
             For attrIndex As Integer = 0 To attributeClasses.Count - 1
                 If attributeClasses(attrIndex).resName = resName Then
-                    Return attributeClasses(attrIndex).type
+                    Return attributeClasses(attrIndex)
                 End If
             Next
             Return -1
@@ -1004,10 +1037,13 @@
         Public hidden As Boolean
         Public editable As Boolean
 
-        Public tempFolder, gameFolder, ext As String 'file data only
+        Public gameFolder, ext As String 'file data only
+
+        Public data As List(Of Byte())
+        Public dInd As List(Of String)
 
         Public Sub New(ByVal _name As String, ByVal _res As String, ByVal _type As AttributeType, ByVal defVal As Object,
-                       ByVal min As Integer, ByVal max As Integer, ByVal _hidden As Boolean, ByVal _tempFolder As String,
+                       ByVal min As Integer, ByVal max As Integer, ByVal _hidden As Boolean,
                        ByVal _gameFolder As String, ByVal _ext As String, ByVal _edit As Boolean)
             displayName = _name
             resName = _res
@@ -1016,10 +1052,13 @@
             minValue = min
             maxValue = max
             hidden = _hidden
-            tempFolder = _tempFolder
             gameFolder = _gameFolder
             ext = _ext
             editable = _edit
+            If type = AttributeType.attrFile Then
+                data = New List(Of Byte())
+                dInd = New List(Of String)
+            End If
         End Sub
 
     End Class
@@ -1038,6 +1077,8 @@
 
     Public Class Attribute
         Public value As Object
+        Public data() As Byte
+
         Public Sub New(ByVal _value As Object)
             value = _value
         End Sub

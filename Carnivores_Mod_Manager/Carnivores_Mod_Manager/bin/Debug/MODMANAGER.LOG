@@ -4,6 +4,7 @@ Mod Version: 0.1.0
 READ Weapon : 0
 Name=Pistol
 Description=
+Menu Image=
 Price=0
 CAR File=pistol.car
 Bullet Image=bullet1.tga
@@ -21,6 +22,7 @@ Bullet Fall=False
 READ Weapon : 1
 Name=Shotgun
 Description=
+Menu Image=
 Price=0
 CAR File=shotgun.car
 Bullet Image=bullet2.tga
@@ -38,6 +40,7 @@ Bullet Fall=False
 READ Weapon : 2
 Name=DB Shotgun
 Description=
+Menu Image=
 Price=0
 CAR File=dbsgun.car
 Bullet Image=bullet2.tga
@@ -55,6 +58,7 @@ Bullet Fall=True
 READ Weapon : 3
 Name=X-Bow
 Description=
+Menu Image=
 Price=0
 CAR File=x_bow.car
 Bullet Image=bullet4.tga
@@ -72,6 +76,7 @@ Bullet Fall=False
 READ Weapon : 4
 Name=Rifle
 Description=
+Menu Image=
 Price=0
 CAR File=rifle.car
 Bullet Image=bullet3.tga
@@ -89,6 +94,7 @@ Bullet Fall=False
 READ Weapon : 5
 Name=Sniper rifle
 Description=
+Menu Image=
 Price=0
 CAR File=sniper.car
 Bullet Image=bullet3.tga
@@ -116,3 +122,9 @@ AREA1=0
 AREA2=0
 AREA3=0
 ---------------------------------------------------------------------
+WEAPON1.tga
+WEAPON2.tga
+WEAPON3.tga
+WEAPON4.tga
+WEAPON5.tga
+WEAPON6.tga
