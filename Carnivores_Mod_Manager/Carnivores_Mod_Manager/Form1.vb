@@ -52,15 +52,22 @@
         tabs(AreaTab).name = "Areas"
         tabs(AreaTab).nameS = "Area"
         tabs(AreaTab).recordMax = 10
+        tabs(AreaTab).recordMin = 0
         tabs(AreaTab).recordLock = False
-        tabs(AreaTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True)
+        tabs(AreaTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True)
+        tabs(AreaTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\AREA", "txt", True, False)
+        tabs(AreaTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\AREA", "tga", True, True)
+        tabs(AreaTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False)
+        tabs(AreaTab).addAttribute("MAP File", "map&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\AREAS\AREA", "map", True, True)
+        tabs(AreaTab).addAttribute("RSC File", "rsc&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\AREAS\AREA", "rsc", True, True)
 
         tabs(1) = New Tab()
         tabs(HuntableTab).name = "Huntable Creatures"
         tabs(HuntableTab).nameS = "Huntable Creature"
         tabs(HuntableTab).recordMax = 10
+        tabs(HuntableTab).recordMin = 0
         tabs(HuntableTab).recordLock = False
-        tabs(HuntableTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True)
+        tabs(HuntableTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False)
 
         tabs(AmbientTab) = New Tab()
         tabs(AmbientTab).name = "Ambient Creatures"
@@ -84,31 +91,35 @@
         tabs(WeaponTab).name = "Weapons"
         tabs(WeaponTab).nameS = "Weapon"
         tabs(WeaponTab).recordMax = 10
+        tabs(WeaponTab).recordMin = 0
         tabs(WeaponTab).recordLock = False
-        tabs(WeaponTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True)
-        tabs(WeaponTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\WEAPON", "txt", True)
-        tabs(WeaponTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\WEAPON", "tga", True)
-        tabs(WeaponTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True)
-        tabs(WeaponTab).addAttribute("CAR File", "file", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "car", True)
-        tabs(WeaponTab).addAttribute("Bullet Image", "pic", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "tga", True)
-        tabs(WeaponTab).addAttribute("Gunshot Sound", "gunshot", AttributeType.attrFile, "", 0, 509, True, "\MULTIPLAYER\GUNSHOTS\", "wav", True)
-        tabs(WeaponTab).addAttribute("Ammo Count", "shots", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True)
-        tabs(WeaponTab).addAttribute("Magazine Capacity", "reload", AttributeType.attrTogglableInteger, 0, 0, 2147483647, False, "", "", True) 'togglableint - if off, value is 0
-        tabs(WeaponTab).addAttribute("Projectile Count", "trace", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True)
-        tabs(WeaponTab).addAttribute("Fire Power", "power", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True)
-        tabs(WeaponTab).addAttribute("Shot Precision", "prec", AttributeType.attrDouble, 0, 0, 2, False, "", "", True)
-        tabs(WeaponTab).addAttribute("Volume", "loud", AttributeType.attrDouble, 0, 0, 2, False, "", "", True)
-        tabs(WeaponTab).addAttribute("Rate of Fire", "rate", AttributeType.attrDouble, 0, 0, 2, False, "", "", True)
-        tabs(WeaponTab).addAttribute("Scope Zoom", "optic", AttributeType.attrIntBool, False, 0, 0, False, "", "", True)
-        tabs(WeaponTab).addAttribute("Bullet Fall", "fall", AttributeType.attrIntBool, False, 0, 0, False, "", "", True)
+        tabs(WeaponTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True)
+        tabs(WeaponTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\WEAPON", "txt", True, False)
+        tabs(WeaponTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\WEAPON", "tga", True, True)
+        tabs(WeaponTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False)
+        tabs(WeaponTab).addAttribute("CAR File", "file", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "car", True, True)
+        tabs(WeaponTab).addAttribute("Bullet Image", "pic", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "tga", True, True)
+        tabs(WeaponTab).addAttribute("Gunshot Sound", "gunshot", AttributeType.attrFile, "", 0, 509, True, "\MULTIPLAYER\GUNSHOTS\", "wav", True, False)
+        tabs(WeaponTab).addAttribute("Ammo Count", "shots", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True, False)
+        tabs(WeaponTab).addAttribute("Magazine Capacity", "reload", AttributeType.attrTogglableInteger, 0, 0, 2147483647, False, "", "", True, False) 'togglableint - if off, value is 0
+        tabs(WeaponTab).addAttribute("Projectile Count", "trace", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True, False)
+        tabs(WeaponTab).addAttribute("Fire Power", "power", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False)
+        tabs(WeaponTab).addAttribute("Accuracy", "prec", AttributeType.attrDouble, 0D, -10D, 2D, False, "", "", True, False)
+        tabs(WeaponTab).addAttribute("Volume", "loud", AttributeType.attrDouble, 0D, -10D, 10D, False, "", "", True, False)
+        tabs(WeaponTab).addAttribute("Rate of Fire", "rate", AttributeType.attrDouble, 0D, -10D, 10D, False, "", "", True, False)
+        tabs(WeaponTab).addAttribute("Scope Zoom", "optic", AttributeType.attrIntBool, False, 0, 0, False, "", "", True, False)
+        tabs(WeaponTab).addAttribute("Bullet Fall", "fall", AttributeType.attrIntBool, False, 0, 0, False, "", "", True, False)
 
         tabs(EquipmentTab) = New Tab()
         tabs(EquipmentTab).name = "Equipment"
         tabs(EquipmentTab).nameS = "Equipment"
         tabs(EquipmentTab).recordMax = 4
+        tabs(EquipmentTab).recordMin = 0
         tabs(EquipmentTab).recordLock = True
-        tabs(EquipmentTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", False)
-        tabs(EquipmentTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True)
+        tabs(EquipmentTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", False, True)
+        tabs(EquipmentTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\EQUIP", "nfo", True, False)
+        tabs(EquipmentTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\EQUIP", "tga", True, True)
+        tabs(EquipmentTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False)
 
         tabs(OtherTab) = New Tab()
         tabs(OtherTab).name = "Other"
@@ -216,7 +227,7 @@
             Else
                 tabs(tabindex).addButton.Enabled = True
             End If
-            If tabs(tabindex).records.Count = 0 Then
+            If tabs(tabindex).records.Count = tabs(tabindex).recordMin Then
                 tabs(tabindex).editButton.Enabled = False
                 tabs(tabindex).removeButton.Enabled = False
             Else
@@ -303,9 +314,9 @@
                         Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
                         numBox.Size = New Drawing.Size(130, 15)
                         numBox.Location = New Drawing.Point(116, yPos)
-                        numBox.Text = record.attributes(attrIndex).value
                         numBox.Maximum = attrclasses(attrIndex).maxValue
                         numBox.Minimum = attrclasses(attrIndex).minValue
+                        numBox.Value = record.attributes(attrIndex).value
                         panel1.Controls.Add(numBox)
                         handle.Add(numBox)
 
@@ -327,16 +338,18 @@
                         Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
                         numBox.Size = New Drawing.Size(130, 15)
                         numBox.Location = New Drawing.Point(116, yPos + 17)
+                        numBox.Maximum = attrclasses(attrIndex).maxValue
+                        numBox.Minimum = attrclasses(attrIndex).minValue
 
                         'set value to empty when box ticked - this way dont have to update when shots textbox changes
 
                         If record.attributes(attrIndex).value = 0 Then
                             checkBox1.Checked = True
-                            numBox.Text = ""
+                            numBox.Value = 0
                             numBox.Enabled = False
                         Else
                             checkBox1.Checked = False
-                            numBox.Text = record.attributes(attrIndex).value
+                            numBox.Value = record.attributes(attrIndex).value
                             numBox.Enabled = True
                         End If
 
@@ -344,8 +357,6 @@
                         checkBox1.numBox = numBox
                         AddHandler checkBox1.CheckedChanged, AddressOf updateToggleableInteger
 
-                        numBox.Maximum = attrclasses(attrIndex).maxValue
-                        numBox.Minimum = attrclasses(attrIndex).minValue
                         panel1.Controls.Add(numBox)
                         handle.Add(numBox)
 
@@ -361,11 +372,11 @@
                         Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
                         numBox.Size = New Drawing.Size(130, 15)
                         numBox.Location = New Drawing.Point(116, yPos)
-                        numBox.Text = record.attributes(attrIndex).value
                         numBox.Maximum = attrclasses(attrIndex).maxValue
                         numBox.Minimum = attrclasses(attrIndex).minValue
-                        numBox.DecimalPlaces = 2
                         numBox.Increment = 0.01D
+                        numBox.DecimalPlaces = 2
+                        numBox.Text = record.attributes(attrIndex).value
                         panel1.Controls.Add(numBox)
                         handle.Add(numBox)
 
@@ -378,6 +389,7 @@
                         comboBox.Text = record.attributes(attrIndex).value
                         comboBox.Items.Add("True")
                         comboBox.Items.Add("False")
+                        comboBox.DropDownStyle = ComboBoxStyle.DropDownList
                         If record.attributes(attrIndex).value = True Then
                             comboBox.SelectedIndex = 0
                         Else
@@ -395,6 +407,7 @@
                         comboBox.Text = record.attributes(attrIndex).value
                         comboBox.Items.Add("True")
                         comboBox.Items.Add("False")
+                        comboBox.DropDownStyle = ComboBoxStyle.DropDownList
                         If record.attributes(attrIndex).value = True Then
                             comboBox.SelectedIndex = 0
                         Else
@@ -414,6 +427,7 @@
                             textBox.Enabled = False
                         Else
                             textBox = New UnscrollableComboBox
+                            textBox.DropDownStyle = ComboBoxStyle.DropDownList
                             For index = 0 To attrclasses(attrIndex).dInd.Count - 1
                                 textBox.Items.Add(attrclasses(attrIndex).dInd(index))
                             Next
@@ -477,8 +491,9 @@
         buttonOk.Location = New Drawing.Point(175, 254)
         buttonOk.Text = "Ok"
         buttonOk.result = False
+        buttonOk.handle2 = handle
         buttonOk.form = editForm
-        AddHandler buttonOk.Click, AddressOf formOk
+        AddHandler buttonOk.Click, AddressOf editFormOk
         editForm.Controls.Add(buttonOk)
 
         Dim buttonCancel As New FormButton
@@ -494,36 +509,7 @@
         If buttonOk.result = True Then
             For attrIndex As Integer = 0 To record.attributes.Count - 1
                 If attrclasses(attrIndex).hidden = False Then
-                    Select Case attrclasses(attrIndex).type
-                        Case AttributeType.attrString
-                            record.attributes(attrIndex).value = handle(attrIndex).Text
-                        Case AttributeType.attrTextFile
-                            record.attributes(attrIndex).value = handle(attrIndex).Text
-                        Case AttributeType.attrFile
-                            record.attributes(attrIndex).value = handle(attrIndex).Text
-                        Case AttributeType.attrInteger
-                            record.attributes(attrIndex).value = handle(attrIndex).Text
-                        Case AttributeType.attrTogglableInteger
-                            If handle(attrIndex).Text = "" Then
-                                record.attributes(attrIndex).value = 0
-                            Else
-                                record.attributes(attrIndex).value = handle(attrIndex).Text
-                            End If
-                        Case AttributeType.attrDouble
-                            record.attributes(attrIndex).value = handle(attrIndex).Text
-                        Case AttributeType.attrIntBool
-                            If handle(attrIndex).selectedIndex = 0 Then
-                                record.attributes(attrIndex).value = True
-                            Else
-                                record.attributes(attrIndex).value = False
-                            End If
-                        Case AttributeType.attrBoolean
-                            If handle(attrIndex).selectedIndex = 0 Then
-                                record.attributes(attrIndex).value = True
-                            Else
-                                record.attributes(attrIndex).value = False
-                            End If
-                    End Select
+                    record.attributes(attrIndex).value = getHandleValue(attrclasses(attrIndex), handle(attrIndex))
                 End If
             Next
 
@@ -536,6 +522,53 @@
         End If
 
     End Sub
+
+    Function validateField(ByRef handle As Object)
+        If handle.text.trim = "" Then Return False
+        Return True
+    End Function
+
+    Function getHandleValue(ByRef attrClass As AttributeClass, ByRef handle As Object)
+        Select Case attrClass.type
+            Case AttributeType.attrString
+                Return handle.text
+            Case AttributeType.attrTextFile
+                Return handle.text
+            Case AttributeType.attrFile
+                Return handle.text
+            Case AttributeType.attrInteger
+                If handle.Text = "" Then
+                    Return 0
+                Else
+                    Return handle.value
+                End If
+            Case AttributeType.attrTogglableInteger
+                If handle.Text = "" Then
+                    Return 0
+                Else
+                    Return handle.value
+                End If
+            Case AttributeType.attrDouble
+                If handle.Text = "" Then
+                    Return 0
+                Else
+                    Return handle.value
+                End If
+            Case AttributeType.attrIntBool
+                If handle.selectedIndex = 0 Then
+                    Return True
+                Else
+                    Return False
+                End If
+            Case AttributeType.attrBoolean
+                If handle.selectedIndex = 0 Then
+                    Return True
+                Else
+                    Return False
+                End If
+        End Select
+        Return Nothing
+    End Function
 
     Private Sub updateToggleableInteger(sender As Object, e As EventArgs)
         Dim tabIndex As Integer = TabControl1.SelectedIndex
@@ -616,18 +649,16 @@
         nameLabel.Size = New Drawing.Size(190, 14)
         nameLabel.Location = New Drawing.Point(10, 5)
         helpForm.Controls.Add(nameLabel)
-        Dim yPos As Integer = 25
+        Dim label As Label = New Label
+        label.Size = New Drawing.Size(170, 150)
+        label.MaximumSize = New Drawing.Size(170, 150)
+        label.Location = New Drawing.Point(10, 25)
+        label.AutoSize = True
         FileOpen(7, "HInfo/" & TabControl1.SelectedIndex & "_" & attrClass.resName, OpenMode.Input)
-        While Not EOF(7)
-            Dim label As Label = New Label
-            label.Text = LineInput(7)
-            label.Size = New Drawing.Size(200, 14)
-            label.Location = New Drawing.Point(10, yPos)
-            helpForm.Controls.Add(label)
-            yPos += 14
-        End While
+        label.Text = LineInput(7)
         FileClose(7)
-        helpForm.Size = New Drawing.Size(200, yPos + 45)
+        helpForm.Controls.Add(label)
+        helpForm.Size = New Drawing.Size(200, label.Size.Height + 80)
         helpForm.ShowDialog()
     End Sub
 
@@ -700,6 +731,8 @@
     Friend Class FormButton
         Inherits Button
 
+        Public handle2 As List(Of Object)
+
         Public form As Form
         Public result As Boolean
 
@@ -735,6 +768,20 @@
 
     Private Sub formOk(sender As Object, e As EventArgs)
         sender.result = True
+        sender.form.Close()
+    End Sub
+
+    Private Sub editFormOk(sender As Object, e As EventArgs)
+        sender.result = True
+        For index = 0 To sender.handle2.count - 1
+            If tabs(TabControl1.SelectedIndex).attributeClasses(index).validation = True Then
+                If Not validateField(sender.handle2(index)) Then
+                    sender.result = False
+                    mess(tabs(TabControl1.SelectedIndex).attributeClasses(index).displayName & " invalid")
+                    Return
+                End If
+            End If
+        Next
         sender.form.Close()
     End Sub
 
@@ -788,13 +835,24 @@
         tempdir = dir
 
         tabs(EquipmentTab).addRecord()
-        tabs(EquipmentTab).setAttr(0, "name", "Camoflauge")
+        tabs(EquipmentTab).setAttr(0, "name", "Camouflage")
         tabs(EquipmentTab).addRecord()
         tabs(EquipmentTab).setAttr(1, "name", "Radar")
         tabs(EquipmentTab).addRecord()
         tabs(EquipmentTab).setAttr(2, "name", "Cover Scent")
         tabs(EquipmentTab).addRecord()
         tabs(EquipmentTab).setAttr(3, "name", "Double Ammo")
+
+        'add area records
+        Dim mapInd As Integer = tabs(AreaTab).getAttrIndex("map&")
+        Dim mapTemp As Integer
+        Do
+            mapTemp = tabs(AreaTab).records.Count
+            If My.Computer.FileSystem.FileExists(dir & tabs(AreaTab).attributeClasses(mapInd).gameFolder & tabs(AreaTab).records.Count + 1 & "." & tabs(AreaTab).attributeClasses(mapInd).ext) Then
+                tabs(AreaTab).addRecord()
+                tabs(AreaTab).setAttr(mapTemp, "name", "test") 'temp
+            End If
+        Loop Until tabs(AreaTab).records.Count = mapTemp
 
         readRes()
 
@@ -841,8 +899,12 @@
         Console.WriteLine(txt)
     End Sub
 
-    Private Sub DoHalt(ByVal mess As String)
-        MsgBox(mess, vbOKOnly, "Error")
+    Private Sub mess(ByVal _mess As String)
+        MsgBox(_mess, vbOKOnly, "Error")
+    End Sub
+
+    Private Sub DoHalt(ByVal _mess As String)
+        mess(_mess)
         shutDown()
     End Sub
 
@@ -939,8 +1001,8 @@
             If line.Contains("start") Then
                 startMoney = Trim(line.Substring(line.IndexOf("=") + 1))
             ElseIf line.Contains("area") Then
-                'tabs(AreaTab).setAttr(a, "price", Trim(line.Substring(line.IndexOf("=") + 1)))
-                'a += 1
+                tabs(AreaTab).setAttr(a, "price", Trim(line.Substring(line.IndexOf("=") + 1)))
+                a += 1
             ElseIf line.Contains("dino") Then
                 'tabs(HuntableTab).setAttr(h, "price", Trim(line.Substring(line.IndexOf("=") + 1)))
                 'h += 1
@@ -974,7 +1036,7 @@
             End If
             If e Then
                 For i As Integer = 0 To e - 1
-                    printLog("AREA" & i & "=" & tabs(EquipmentTab).getAttr(i, "price"))
+                    printLog("EQUIPMENT" & i & "=" & tabs(EquipmentTab).getAttr(i, "price"))
                 Next
             End If
             printLog("---------------------------------------------------------------------")
@@ -992,7 +1054,7 @@
         Public recordLock As Boolean ' prevent adding/deleting records
 
         Public attributeClasses As List(Of AttributeClass)
-        Public recordMax As Integer
+        Public recordMax, recordMin As Integer
         Public records As List(Of Record)
 
         Public Sub New()
@@ -1002,8 +1064,8 @@
 
         Public Sub addAttribute(ByVal name As String, ByVal res As String, ByVal type As AttributeType, ByVal defaultValue As Object,
                                 ByVal min As Integer, ByVal max As Integer, ByVal hide As Boolean, ByVal gameFolder As String,
-                                ByVal ext As String, ByVal edit As Boolean)
-            attributeClasses.Add(New AttributeClass(name, res, type, defaultValue, min, max, hide, gameFolder, ext, edit))
+                                ByVal ext As String, ByVal edit As Boolean, ByVal valida As Boolean)
+            attributeClasses.Add(New AttributeClass(name, res, type, defaultValue, min, max, hide, gameFolder, ext, edit, valida))
             'clear temp folder
             'If type = AttributeType.attrFile Then
             'Dim path As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).Remove(0, 6) & "\" & tempFolder & "\"
@@ -1071,6 +1133,7 @@
         Public maxValue, minValue As Integer
         Public hidden As Boolean
         Public editable As Boolean
+        Public validation As Boolean
 
         Public gameFolder, ext As String 'file data only
 
@@ -1079,7 +1142,7 @@
 
         Public Sub New(ByVal _name As String, ByVal _res As String, ByVal _type As AttributeType, ByVal defVal As Object,
                        ByVal min As Integer, ByVal max As Integer, ByVal _hidden As Boolean,
-                       ByVal _gameFolder As String, ByVal _ext As String, ByVal _edit As Boolean)
+                       ByVal _gameFolder As String, ByVal _ext As String, ByVal _edit As Boolean, ByVal _validation As Boolean)
             displayName = _name
             resName = _res
             type = _type
@@ -1090,6 +1153,8 @@
             gameFolder = _gameFolder
             ext = _ext
             editable = _edit
+            validation = _validation
+
             If type = AttributeType.attrFile Then
                 data = New List(Of Byte())
                 dInd = New List(Of String)

@@ -1,4 +1,1 @@
-The rate of fire for the
-weapon - this value only
-effects the menu stats and
-doesn't effect gameplay.
+The rate of fire for the weapon - this value only effects the menu stats and doesn't effect gameplay. Note: the vanilla menu can only display values between 0.00 and 2.00.
