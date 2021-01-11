@@ -407,13 +407,25 @@
 
                     Case AttributeType.attrFile
 
-                        Dim textBox As TextBox = New TextBox
+                        Dim textBox
+
+                        If attrclasses(attrIndex).resName.Contains("&") Then
+                            textBox = New TextBox
+                            textBox.Enabled = False
+                        Else
+                            textBox = New UnscrollableComboBox
+                            For index = 0 To attrclasses(attrIndex).dInd.Count - 1
+                                textBox.Items.Add(attrclasses(attrIndex).dInd(index))
+                            Next
+                        End If
+
+                        textBox.Text = record.attributes(attrIndex).value
                         textBox.Size = New Drawing.Size(78, 15)
                         textBox.Location = New Drawing.Point(116, yPos)
-                        textBox.Text = record.attributes(attrIndex).value
-                        textBox.Enabled = False
                         panel1.Controls.Add(textBox)
                         handle.Add(textBox)
+
+
 
                         Dim tooltip = New ToolTip
                         tooltip.ShowAlways = True
@@ -428,7 +440,10 @@
                         tooltip.SetToolTip(button, "Open " & attrclasses(attrIndex).ext.ToUpper & " File")
                         panel1.Controls.Add(button)
 
-                        If attrclasses(attrIndex).editable = False Then button.Enabled = False
+                        If attrclasses(attrIndex).editable = False Then
+                            button.Enabled = False
+                            textBox.enabled = False 'disable in case it's a combo box
+                        End If
 
                 End Select
 
@@ -620,7 +635,6 @@
         Dim dialog As New OpenFileDialog()
         Dim ext As String = tabs(TabControl1.SelectedIndex).attributeClasses(sender.attrindex).ext
         Dim resName As String = tabs(TabControl1.SelectedIndex).attributeClasses(sender.attrindex).resName
-        Dim gameFolder As String = tabs(TabControl1.SelectedIndex).attributeClasses(sender.attrindex).gameFolder
         dialog.InitialDirectory = tempdir
         dialog.Filter = ext & " files (*." & ext & ")|*." & ext
         dialog.FilterIndex = 0
@@ -628,35 +642,43 @@
         If dialog.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
 
             'check if file exists in temp or game folder - if not auto rename
-            Dim filename As String = System.IO.Path.GetFileName(dialog.FileName)
-            If OpenFileChecker(resName, gameFolder, filename) = True Then
+            Dim filename As String = System.IO.Path.GetFileName(dialog.FileName).ToLower
+            If OpenFileChecker(resName, filename) = True Then
                 Dim fileno As Integer = 1
                 Do
                     fileno += 1
                     filename = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName) & " (" & fileno & ").car"
-                Loop Until Not OpenFileChecker(resName, gameFolder, filename)
+                Loop Until Not OpenFileChecker(resName, filename)
             End If
 
             'update data
-            My.Computer.FileSystem.ReadAllBytes(System.IO.Path.GetFullPath(dialog.FileName))
+            tabs(TabControl1.SelectedIndex).getAttrClass(resName).dind.add(filename.ToLower)
+            tabs(TabControl1.SelectedIndex).getAttrClass(resName).data.add(My.Computer.FileSystem.ReadAllBytes(System.IO.Path.GetFullPath(dialog.FileName)))
 
             'copy file to temp folder
             'FileSystem.FileCopy(System.IO.Path.GetFullPath(dialog.FileName), tempFolder & filename)
 
             'update textbox
-            sender.handle2.text = filename
+            If resName.Contains("&") Then
+                sender.handle2.text = filename
+            Else
+                sender.handle2.items.add(filename.ToLower)
+                sender.handle2.selectedindex = sender.handle2.items.count - 1
+            End If
+
 
             tempdir = System.IO.Path.GetFullPath(dialog.FileName)
 
         End If
     End Sub
 
-    Private Function OpenFileChecker(resName, gamefolder, filename)
+    Private Function OpenFileChecker(ByVal resName As String, ByVal filename As String)
         'If My.Computer.FileSystem.FileExists(tempFolder & filename) Then Return True
-        For recordIndex = 0 To tabs(TabControl1.SelectedIndex).records.Count - 1
-            If tabs(TabControl1.SelectedIndex).getAttr(recordIndex, resName).value = filename Then Return True
+        Dim attrIndex = tabs(TabControl1.SelectedIndex).getAttrIndex(resName)
+        For index = 0 To tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).dInd.Count - 1
+            If tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).dInd(index).ToLower = filename.ToLower Then Return True
         Next
-        If My.Computer.FileSystem.FileExists(dir & gamefolder & filename) Then Return True
+        'If My.Computer.FileSystem.FileExists(dir & gamefolder & filename) Then Return True
         Return False
     End Function
 
@@ -688,7 +710,7 @@
 
         Public record As Record
         Public attrIndex As Integer
-        Public handle2 As TextBox
+        Public handle2
 
     End Class
 
@@ -766,13 +788,13 @@
         tempdir = dir
 
         tabs(EquipmentTab).addRecord()
-        tabs(EquipmentTab).setAttr(0, "name", "Camoflauge", Nothing)
+        tabs(EquipmentTab).setAttr(0, "name", "Camoflauge")
         tabs(EquipmentTab).addRecord()
-        tabs(EquipmentTab).setAttr(1, "name", "Radar", Nothing)
+        tabs(EquipmentTab).setAttr(1, "name", "Radar")
         tabs(EquipmentTab).addRecord()
-        tabs(EquipmentTab).setAttr(2, "name", "Cover Scent", Nothing)
+        tabs(EquipmentTab).setAttr(2, "name", "Cover Scent")
         tabs(EquipmentTab).addRecord()
-        tabs(EquipmentTab).setAttr(3, "name", "Double Ammo", Nothing)
+        tabs(EquipmentTab).setAttr(3, "name", "Double Ammo")
 
         readRes()
 
@@ -795,10 +817,12 @@
 
                         Else
 
-                            tabs(tabIndex).records(recordIndex).attributes(attrIndex).data = My.Computer.FileSystem.ReadAllBytes(dir & tabs(tabIndex).attributeClasses(attrIndex).gameFolder & recordIndex + 1 & "." & tabs(tabIndex).attributeClasses(attrIndex).ext)
+
                             Dim str As String = tabs(tabIndex).attributeClasses(attrIndex).gameFolder
                             Dim pos As Integer = str.LastIndexOf("\") + 1
                             tabs(tabIndex).records(recordIndex).attributes(attrIndex).value = str.Substring(pos, str.Length - pos) & recordIndex + 1 & "." & tabs(tabIndex).attributeClasses(attrIndex).ext
+                            tabs(tabIndex).attributeClasses(attrIndex).dInd.Add(tabs(tabIndex).records(recordIndex).attributes(attrIndex).value)
+                            tabs(tabIndex).attributeClasses(attrIndex).data.Add(My.Computer.FileSystem.ReadAllBytes(dir & tabs(tabIndex).attributeClasses(attrIndex).gameFolder & recordIndex + 1 & "." & tabs(tabIndex).attributeClasses(attrIndex).ext))
 
                         End If
 
@@ -849,8 +873,9 @@
                 Do
                     If line.Contains("=") Then
                         Dim resName As String = Trim(line.Substring(0, line.IndexOf("=")))
+                        Dim attrIndex = tabs(tabIndex).getAttrIndex(resName)
                         Dim value
-                        Select Case tabs(tabIndex).getAttrClass(resName).Type
+                        Select Case tabs(tabIndex).attributeClasses(attrIndex).type
                             Case AttributeType.attrString
                                 value = Trim(line.Substring(line.IndexOf("'") + 1)).TrimEnd(CChar("'"))
                             Case AttributeType.attrFile
@@ -868,22 +893,26 @@
                         End Select
                         Dim recordIndex = tabs(tabIndex).records.Count - 1
 
-                        If tabs(tabIndex).getAttrClass(resName).type = AttributeType.attrFile Then
-                            If tabs(tabIndex).getAttrClass(resName).resname.contains("&") Then
-                                tabs(tabIndex).setAttr(recordIndex, resName, value, My.Computer.FileSystem.ReadAllBytes(dir & tabs(tabIndex).getAttrClass(resName).gameFolder & recordIndex + 1 & "." & tabs(tabIndex).getAttrClass(resName).ext))
-                            Else
-                                tabs(tabIndex).setAttr(recordIndex, resName, value, My.Computer.FileSystem.ReadAllBytes(dir & tabs(tabIndex).getAttrClass(resName).gameFolder & value))
+                        If tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrFile Then
+                            Dim newFile As Boolean = True
+                            For index = 0 To tabs(tabIndex).attributeClasses(attrIndex).dInd.Count - 1
+                                If tabs(tabIndex).attributeClasses(attrIndex).dInd(index) = value Then
+                                    newFile = False
+                                End If
+                            Next
+                            If newFile = True Then
+                                tabs(tabIndex).attributeClasses(attrIndex).dInd.Add(value)
+                                tabs(tabIndex).attributeClasses(attrIndex).data.Add(My.Computer.FileSystem.ReadAllBytes(dir & tabs(tabIndex).getAttrClass(resName).gameFolder & value))
                             End If
-                        Else
-                            tabs(tabIndex).setAttr(recordIndex, resName, value, Nothing)
                         End If
+                        tabs(tabIndex).setAttr(recordIndex, resName, value)
                     End If
                     line = LineInput(1)
                 Loop Until line.Contains("}")
                 If debug Then
                     printLog("READ " & tabs(tabIndex).nameS & " : " & tabs(tabIndex).records.Count - 1)
-                    For attrIndex As Integer = 0 To tabs(tabIndex).attributeClasses.Count - 1
-                        printLog(tabs(tabIndex).attributeClasses(attrIndex).displayName & "=" & tabs(tabIndex).records(tabs(tabIndex).records.Count - 1).attributes(attrIndex).value)
+                    For atrIndex As Integer = 0 To tabs(tabIndex).attributeClasses.Count - 1
+                        printLog(tabs(tabIndex).attributeClasses(atrIndex).displayName & "=" & tabs(tabIndex).records(tabs(tabIndex).records.Count - 1).attributes(atrIndex).value)
                     Next
                     printLog("---------------------------------------------------------------------")
                 End If
@@ -916,16 +945,14 @@
                 'tabs(HuntableTab).setAttr(h, "price", Trim(line.Substring(line.IndexOf("=") + 1)))
                 'h += 1
             ElseIf line.Contains("weapon") Then
-                tabs(WeaponTab).setAttr(w, "price", Trim(line.Substring(line.IndexOf("=") + 1)), Nothing)
+                tabs(WeaponTab).setAttr(w, "price", Trim(line.Substring(line.IndexOf("=") + 1)))
                 w += 1
             ElseIf line.Contains("acces") Then
-                tabs(EquipmentTab).setAttr(e, "price", Trim(line.Substring(line.IndexOf("=") + 1)), Nothing)
+                tabs(EquipmentTab).setAttr(e, "price", Trim(line.Substring(line.IndexOf("=") + 1)))
                 e += 1
             End If
             line = LineInput(1)
         Loop Until line.Contains("}")
-
-
 
         If debug Then
             printLog("READ PRICES:")
@@ -994,11 +1021,10 @@
             Next
         End Sub
 
-        Public Sub setAttr(ByVal recordIndex As Integer, ByVal resName As String, ByVal _value As Object, ByVal _data() As Byte)
+        Public Sub setAttr(ByVal recordIndex As Integer, ByVal resName As String, ByVal _value As Object)
             For attrIndex As Integer = 0 To attributeClasses.Count - 1
                 If attributeClasses(attrIndex).resName = resName Then
                     records(recordIndex).attributes(attrIndex).value = _value
-                    records(recordIndex).attributes(attrIndex).data = _data
                 End If
             Next
         End Sub
@@ -1007,6 +1033,15 @@
             For attrIndex As Integer = 0 To attributeClasses.Count - 1
                 If attributeClasses(attrIndex).resName = resName Then
                     Return records(recordIndex).attributes(attrIndex).value
+                End If
+            Next
+            Return -1
+        End Function
+
+        Public Function getAttrIndex(ByVal resName As String)
+            For attrIndex As Integer = 0 To attributeClasses.Count - 1
+                If attributeClasses(attrIndex).resName = resName Then
+                    Return attrIndex
                 End If
             Next
             Return -1
@@ -1077,7 +1112,7 @@
 
     Public Class Attribute
         Public value As Object
-        Public data() As Byte
+        'Public data() As Byte
 
         Public Sub New(ByVal _value As Object)
             value = _value
