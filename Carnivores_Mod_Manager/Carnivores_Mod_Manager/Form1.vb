@@ -233,10 +233,10 @@
         Dim editForm As Form = New Form
         editForm.Text = task
         Dim panel1 As Panel = New Panel
-        editForm.Size = New Drawing.Size(300, 325)
+        editForm.Size = New Drawing.Size(330, 325)
         panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
         panel1.Location = New Drawing.Point(0, 0)
-        panel1.Size = New Drawing.Size(285, 250)
+        panel1.Size = New Drawing.Size(315, 250)
         panel1.AutoScroll = True
         editForm.FormBorderStyle = FormBorderStyle.FixedDialog
         editForm.MaximizeBox = False
@@ -254,7 +254,7 @@
 
                     Case AttributeType.attrString
                         Dim textBox As TextBox = New TextBox
-                        textBox.Size = New Drawing.Size(100, 15)
+                        textBox.Size = New Drawing.Size(130, 15)
                         textBox.Location = New Drawing.Point(116, yPos)
                         textBox.Text = record.attributes(attrIndex).value
                         panel1.Controls.Add(textBox)
@@ -266,7 +266,7 @@
 
                     Case AttributeType.attrTextFile
                         Dim textBox As TextBox = New TextBox
-                        textBox.Size = New Drawing.Size(100, 80)
+                        textBox.Size = New Drawing.Size(130, 80)
                         textBox.Multiline = True
                         textBox.WordWrap = False
                         textBox.ScrollBars = ScrollBars.Both
@@ -301,7 +301,7 @@
 
                     Case AttributeType.attrInteger
                         Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
-                        numBox.Size = New Drawing.Size(100, 15)
+                        numBox.Size = New Drawing.Size(130, 15)
                         numBox.Location = New Drawing.Point(116, yPos)
                         numBox.Text = record.attributes(attrIndex).value
                         numBox.Maximum = attrclasses(attrIndex).maxValue
@@ -325,7 +325,7 @@
                         panel1.Controls.Add(checkBox1)
 
                         Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
-                        numBox.Size = New Drawing.Size(100, 15)
+                        numBox.Size = New Drawing.Size(130, 15)
                         numBox.Location = New Drawing.Point(116, yPos + 17)
 
                         'set value to empty when box ticked - this way dont have to update when shots textbox changes
@@ -359,7 +359,7 @@
 
                     Case AttributeType.attrDouble
                         Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
-                        numBox.Size = New Drawing.Size(100, 15)
+                        numBox.Size = New Drawing.Size(130, 15)
                         numBox.Location = New Drawing.Point(116, yPos)
                         numBox.Text = record.attributes(attrIndex).value
                         numBox.Maximum = attrclasses(attrIndex).maxValue
@@ -373,7 +373,7 @@
 
                     Case AttributeType.attrIntBool
                         Dim comboBox As UnscrollableComboBox = New UnscrollableComboBox 'custom class overrides scroll wheeling through options
-                        comboBox.Size = New Drawing.Size(100, 15)
+                        comboBox.Size = New Drawing.Size(130, 15)
                         comboBox.Location = New Drawing.Point(116, yPos)
                         comboBox.Text = record.attributes(attrIndex).value
                         comboBox.Items.Add("True")
@@ -390,7 +390,7 @@
 
                     Case AttributeType.attrBoolean
                         Dim comboBox As UnscrollableComboBox = New UnscrollableComboBox 'custom class overrides scroll wheeling through options
-                        comboBox.Size = New Drawing.Size(100, 15)
+                        comboBox.Size = New Drawing.Size(130, 15)
                         comboBox.Location = New Drawing.Point(116, yPos)
                         comboBox.Text = record.attributes(attrIndex).value
                         comboBox.Items.Add("True")
@@ -420,7 +420,7 @@
                         End If
 
                         textBox.Text = record.attributes(attrIndex).value
-                        textBox.Size = New Drawing.Size(78, 15)
+                        textBox.Size = New Drawing.Size(108, 15)
                         textBox.Location = New Drawing.Point(116, yPos)
                         panel1.Controls.Add(textBox)
                         handle.Add(textBox)
@@ -434,7 +434,7 @@
                         button.attrIndex = attrIndex
                         button.handle2 = textBox
                         button.Size = New Drawing.Size(23, 22)
-                        button.Location = New Drawing.Point(194, yPos - 1)
+                        button.Location = New Drawing.Point(224, yPos - 1)
                         button.Image = imgOpenFile
                         AddHandler button.Click, AddressOf OpenFileDialog
                         tooltip.SetToolTip(button, "Open " & attrclasses(attrIndex).ext.ToUpper & " File")
@@ -457,7 +457,7 @@
                 helptooltip.ShowAlways = True
                 Dim helpButton As HelpButton = New HelpButton
                 helpButton.Size = New Drawing.Size(22, 22)
-                helpButton.Location = New Drawing.Point(228, yPos + 2 + helpIncrement)
+                helpButton.Location = New Drawing.Point(258, yPos + 2 + helpIncrement)
                 helpButton.Image = imgHelp
                 helptooltip.SetToolTip(helpButton, "Help")
                 helpButton.attrIndex = attrIndex
@@ -474,7 +474,7 @@
 
         Dim buttonOk As New FormButton
         buttonOk.Size = New Drawing.Size(60, 28)
-        buttonOk.Location = New Drawing.Point(145, 254)
+        buttonOk.Location = New Drawing.Point(175, 254)
         buttonOk.Text = "Ok"
         buttonOk.result = False
         buttonOk.form = editForm
@@ -483,7 +483,7 @@
 
         Dim buttonCancel As New FormButton
         buttonCancel.Size = New Drawing.Size(60, 28)
-        buttonCancel.Location = New Drawing.Point(205, 254)
+        buttonCancel.Location = New Drawing.Point(235, 254)
         buttonCancel.Text = "Cancel"
         buttonCancel.form = editForm
         AddHandler buttonCancel.Click, AddressOf formCancel
