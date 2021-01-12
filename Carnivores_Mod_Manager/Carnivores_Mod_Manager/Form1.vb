@@ -54,12 +54,12 @@
         tabs(AreaTab).recordMax = 10
         tabs(AreaTab).recordMin = 0
         tabs(AreaTab).recordLock = False
-        tabs(AreaTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True)
-        tabs(AreaTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\AREA", "txt", True, False)
-        tabs(AreaTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\AREA", "tga", True, True)
-        tabs(AreaTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False)
-        tabs(AreaTab).addAttribute("Map File", "map&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\AREAS\AREA", "map", True, True)
-        tabs(AreaTab).addAttribute("Resource File", "rsc&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\AREAS\AREA", "rsc", True, True)
+        tabs(AreaTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, "The display name for the area in the hunt menu.")
+        tabs(AreaTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\AREA", "txt", True, False, "The description for the area in the hunt menu.")
+        tabs(AreaTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\AREA", "tga", True, True, "The image for the area in the hunt menu. Must be saved as a 16 bit uncompressed TGA.")
+        tabs(AreaTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, "The cost of hunting in the area.")
+        tabs(AreaTab).addAttribute("Map File", "map&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\AREAS\AREA", "map", True, True, "The file that stores the terrain information, texture positions, object positions, sound positions, water and fog information.")
+        tabs(AreaTab).addAttribute("Resource File", "rsc&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\AREAS\AREA", "rsc", True, True, "The file that stores textures, objects, animations, hitbox information and sounds for the map.")
 
         tabs(1) = New Tab()
         tabs(HuntableTab).name = "Huntable Creatures"
@@ -67,7 +67,7 @@
         tabs(HuntableTab).recordMax = 10
         tabs(HuntableTab).recordMin = 0
         tabs(HuntableTab).recordLock = False
-        tabs(HuntableTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False)
+        tabs(HuntableTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, "The cost of hunting the creature.")
 
         tabs(AmbientTab) = New Tab()
         tabs(AmbientTab).name = "Ambient Creatures"
@@ -93,22 +93,22 @@
         tabs(WeaponTab).recordMax = 10
         tabs(WeaponTab).recordMin = 0
         tabs(WeaponTab).recordLock = False
-        tabs(WeaponTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True)
-        tabs(WeaponTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\WEAPON", "txt", True, False)
-        tabs(WeaponTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\WEAPON", "tga", True, True)
-        tabs(WeaponTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False)
-        tabs(WeaponTab).addAttribute("CAR File", "file", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "car", True, True)
-        tabs(WeaponTab).addAttribute("Bullet Image", "pic", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "tga", True, True)
-        tabs(WeaponTab).addAttribute("Gunshot Sound", "gunshot", AttributeType.attrFile, "", 0, 509, True, "\MULTIPLAYER\GUNSHOTS\", "wav", True, False)
-        tabs(WeaponTab).addAttribute("Ammo Count", "shots", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True, False)
-        tabs(WeaponTab).addAttribute("Magazine Capacity", "reload", AttributeType.attrTogglableInteger, 0, 0, 2147483647, False, "", "", True, False) 'togglableint - if off, value is 0
-        tabs(WeaponTab).addAttribute("Projectile Count", "trace", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True, False)
-        tabs(WeaponTab).addAttribute("Fire Power", "power", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False)
-        tabs(WeaponTab).addAttribute("Accuracy", "prec", AttributeType.attrDouble, 0D, -10D, 2D, False, "", "", True, False)
-        tabs(WeaponTab).addAttribute("Volume", "loud", AttributeType.attrDouble, 0D, -10D, 10D, False, "", "", True, False)
-        tabs(WeaponTab).addAttribute("Rate of Fire", "rate", AttributeType.attrDouble, 0D, -10D, 10D, False, "", "", True, False)
-        tabs(WeaponTab).addAttribute("Scope Zoom", "optic", AttributeType.attrIntBool, False, 0, 0, False, "", "", True, False)
-        tabs(WeaponTab).addAttribute("Bullet Fall", "fall", AttributeType.attrIntBool, False, 0, 0, False, "", "", True, False)
+        tabs(WeaponTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, "The display name for the weapon in the menu.")
+        tabs(WeaponTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\WEAPON", "txt", True, False, "The description for the weapon in the hunt menu.")
+        tabs(WeaponTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\WEAPON", "tga", True, True, "The image for the weapon in the hunt menu. Must be saved as a 16 bit uncompressed TGA.")
+        tabs(WeaponTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, "The cost of using the weapon on a hunt.")
+        tabs(WeaponTab).addAttribute("CAR File", "file", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "car", True, True, "The file that stores the weapon model, texture, animations and sound effects.")
+        tabs(WeaponTab).addAttribute("Bullet Image", "pic", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "tga", True, True, "The bullet image used to display remaining ammo. Must be saved as a 16 bit uncompressed TGA.")
+        tabs(WeaponTab).addAttribute("Gunshot Sound", "gunshot", AttributeType.attrFile, "", 0, 509, True, "\MULTIPLAYER\GUNSHOTS\", "wav", True, False, "The gunshot sound effect which other players can hear from a distance in multiplayer. Must be saved as a 22050 Hz rate mono WAV.")
+        tabs(WeaponTab).addAttribute("Ammo Count", "shots", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True, False, "The amount of ammo the hunter takes for this weapon on a hunt (Will be doubled if the hunter selects double ammo in equipment).")
+        tabs(WeaponTab).addAttribute("Magazine Capacity", "reload", AttributeType.attrTogglableInteger, 0, 0, 2147483647, False, "", "", True, False, "The maximum number of rounds that can be fired before reloading. If set to default, the magazine capacity will equal the ammo count.") 'togglableint - if off, value is 0
+        tabs(WeaponTab).addAttribute("Projectile Count", "trace", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True, False, "The number of projectiles fired with each shot.")
+        tabs(WeaponTab).addAttribute("Fire Power", "power", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, "The damage inflicted by the weapon. Note: the vanilla menu can only display values between 0 and 8.")
+        tabs(WeaponTab).addAttribute("Accuracy", "prec", AttributeType.attrDouble, 0D, -10D, 2D, False, "", "", True, False, "Average bullet precision - 2.00 gives 100% accuracy. Note: the vanilla menu can only display values between 0.00 and 2.00.")
+        tabs(WeaponTab).addAttribute("Volume", "loud", AttributeType.attrDouble, 0D, -10D, 10D, False, "", "", True, False, "The maximum distance creatures can hear gunshots (depending on wind direction). Note: the vanilla menu can only display values between 0.00 and 2.00.")
+        tabs(WeaponTab).addAttribute("Rate of Fire", "rate", AttributeType.attrDouble, 0D, -10D, 10D, False, "", "", True, False, "The rate of fire for the weapon - this value only effects the menu stats and doesn't effect gameplay. Note: the vanilla menu can only display values between 0.00 and 2.00.")
+        tabs(WeaponTab).addAttribute("Scope Zoom", "optic", AttributeType.attrIntBool, False, 0, 0, False, "", "", True, False, "When set to true, the hunter's screen will zoom in when the weapon is equipped.")
+        tabs(WeaponTab).addAttribute("Bullet Fall", "fall", AttributeType.attrIntBool, False, 0, 0, False, "", "", True, False, "When set to true, projectile trajectory will drop over time.")
 
         tabs(EquipmentTab) = New Tab()
         tabs(EquipmentTab).name = "Equipment"
@@ -116,10 +116,10 @@
         tabs(EquipmentTab).recordMax = 4
         tabs(EquipmentTab).recordMin = 0
         tabs(EquipmentTab).recordLock = True
-        tabs(EquipmentTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", False, True)
-        tabs(EquipmentTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\EQUIP", "nfo", True, False)
-        tabs(EquipmentTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\EQUIP", "tga", True, True)
-        tabs(EquipmentTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False)
+        tabs(EquipmentTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", False, True, "The display name for the equipment item in the menu.")
+        tabs(EquipmentTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\EQUIP", "nfo", True, False, "The description for the equipment item in the hunt menu.")
+        tabs(EquipmentTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\EQUIP", "tga", True, True, "The image for the equipment item in the hunt menu. Must be saved as a 16 bit uncompressed TGA.")
+        tabs(EquipmentTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, "The display name for the equipment item in the menu.")
 
         tabs(OtherTab) = New Tab()
         tabs(OtherTab).name = "Other"
@@ -682,9 +682,7 @@
         label.MaximumSize = New Drawing.Size(170, 150)
         label.Location = New Drawing.Point(10, 25)
         label.AutoSize = True
-        FileOpen(7, "HInfo/" & TabControl1.SelectedIndex & "_" & attrClass.resName, OpenMode.Input)
-        label.Text = LineInput(7)
-        FileClose(7)
+        label.Text = attrClass.helpInfo
         helpForm.Controls.Add(label)
         helpForm.Size = New Drawing.Size(200, label.Size.Height + 80)
         helpForm.ShowDialog()
@@ -852,7 +850,7 @@
                 DoHalt("This version of Modders Edition is not supported. Please install the lastest version of Mod Manager.")
             Else
                 If modVersion < lastSupportedVersion Then
-                    'TODO IN FUTURE MOD MANAGER VERSIONS - OFFER TO UPGRADE MODDERS EDITION TO LATEST SUPPORTED VERSION, else run in old mode!!!
+                    'TODO IN FUTURE MOD MANAGER VERSIONS - OFFER TO UPGRADE COPY OF MODDERS EDITION TO LATEST SUPPORTED VERSION, else run in old mode!!!
                 End If
                 printLog("Mod Version: " & version(modVersion))
             End If
@@ -1101,8 +1099,8 @@
 
         Public Sub addAttribute(ByVal name As String, ByVal res As String, ByVal type As AttributeType, ByVal defaultValue As Object,
                                 ByVal min As Integer, ByVal max As Integer, ByVal hide As Boolean, ByVal gameFolder As String,
-                                ByVal ext As String, ByVal edit As Boolean, ByVal valida As Boolean)
-            attributeClasses.Add(New AttributeClass(name, res, type, defaultValue, min, max, hide, gameFolder, ext, edit, valida))
+                                ByVal ext As String, ByVal edit As Boolean, ByVal valida As Boolean, ByVal help As String)
+            attributeClasses.Add(New AttributeClass(name, res, type, defaultValue, min, max, hide, gameFolder, ext, edit, valida, help))
             'clear temp folder
             'If type = AttributeType.attrFile Then
             'Dim path As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).Remove(0, 6) & "\" & tempFolder & "\"
@@ -1174,12 +1172,14 @@
 
         Public gameFolder, ext As String 'file data only
 
+        Public helpInfo As String
+
         Public data As List(Of Byte())
         Public dInd As List(Of String)
 
         Public Sub New(ByVal _name As String, ByVal _res As String, ByVal _type As AttributeType, ByVal defVal As Object,
-                       ByVal min As Integer, ByVal max As Integer, ByVal _hidden As Boolean,
-                       ByVal _gameFolder As String, ByVal _ext As String, ByVal _edit As Boolean, ByVal _validation As Boolean)
+                       ByVal min As Integer, ByVal max As Integer, ByVal _hidden As Boolean, ByVal _gameFolder As String,
+                       ByVal _ext As String, ByVal _edit As Boolean, ByVal _validation As Boolean, ByVal help As String)
             displayName = _name
             resName = _res
             type = _type
@@ -1191,6 +1191,7 @@
             ext = _ext
             editable = _edit
             validation = _validation
+            helpInfo = help
 
             If type = AttributeType.attrFile Then
                 data = New List(Of Byte())
