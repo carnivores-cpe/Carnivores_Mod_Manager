@@ -58,8 +58,8 @@
         tabs(AreaTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\AREA", "txt", True, False)
         tabs(AreaTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\AREA", "tga", True, True)
         tabs(AreaTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False)
-        tabs(AreaTab).addAttribute("MAP File", "map&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\AREAS\AREA", "map", True, True)
-        tabs(AreaTab).addAttribute("RSC File", "rsc&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\AREAS\AREA", "rsc", True, True)
+        tabs(AreaTab).addAttribute("Map File", "map&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\AREAS\AREA", "map", True, True)
+        tabs(AreaTab).addAttribute("Resource File", "rsc&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\AREAS\AREA", "rsc", True, True)
 
         tabs(1) = New Tab()
         tabs(HuntableTab).name = "Huntable Creatures"
@@ -143,6 +143,7 @@
                 tabs(tabIndex).addButton.Size = New Drawing.Size(38, 38)
                 tabs(tabIndex).addButton.Location = New Drawing.Point(366, 8)
                 tabs(tabIndex).addToolTip.SetToolTip(tabs(tabIndex).addButton, "Add " & tabs(tabIndex).nameS)
+                AddHandler tabs(tabIndex).addButton.Click, AddressOf addrecord
                 TabControl1.TabPages(tabIndex).Controls.Add(tabs(tabIndex).addButton)
 
                 tabs(tabIndex).editToolTip = New ToolTip
@@ -162,6 +163,7 @@
                 tabs(tabIndex).removeButton.Size = New Drawing.Size(38, 38)
                 tabs(tabIndex).removeButton.Location = New Drawing.Point(366, 100)
                 tabs(tabIndex).removeButton.Enabled = False
+                AddHandler tabs(tabIndex).removeButton.Click, AddressOf deleteRecord
                 TabControl1.TabPages(tabIndex).Controls.Add(tabs(tabIndex).removeButton)
 
                 tabs(tabIndex).listBox = New ListBox()
@@ -187,7 +189,21 @@
         'create new record
         'openEditForm( - "Add " tab().nameS as task)
         'add record to tab if editformresult = true
-        ListBoxControlUpdate()
+
+        tabs(TabControl1.SelectedIndex).addRecord()
+        'tabs(TabControl1.SelectedIndex).setAttr(tabs(TabControl1.SelectedIndex).records.Count - 1, "name", "test")
+
+        openEditForm(tabs(TabControl1.SelectedIndex).records.Count - 1, tabs(TabControl1.SelectedIndex).attributeClasses, "New " & tabs(TabControl1.SelectedIndex).nameS)
+
+        Dim name As String = tabs(TabControl1.SelectedIndex).getAttr(tabs(TabControl1.SelectedIndex).records.Count - 1, "name")
+
+        If name.Trim = "" Then
+            removeRecord(tabs(TabControl1.SelectedIndex).records.Count - 1)
+        Else
+            tabs(TabControl1.SelectedIndex).listBox.Items.Add(name)
+            tabs(TabControl1.SelectedIndex).listBox.SelectedIndex = tabs(TabControl1.SelectedIndex).records.Count - 1
+            ListBoxControlUpdate()
+        End If
     End Sub
 
     Private Sub editrecord()
@@ -196,9 +212,21 @@
     End Sub
 
     Private Sub deleteRecord()
-        'confirmation
-        'remove from list box
-        ListBoxControlUpdate()
+        Dim recordIndex As Integer = tabs(TabControl1.SelectedIndex).listBox.SelectedIndex
+        If conf("Are you sure you want to delete " & tabs(TabControl1.SelectedIndex).getAttr(recordIndex, "name") & "?") Then
+            removeRecord(recordIndex)
+            tabs(TabControl1.SelectedIndex).listBox.Items.RemoveAt(recordIndex)
+            If recordIndex >= tabs(TabControl1.SelectedIndex).listBox.Items.Count Then
+                tabs(TabControl1.SelectedIndex).listBox.SelectedIndex = recordIndex - 1
+            Else
+                tabs(TabControl1.SelectedIndex).listBox.SelectedIndex = recordIndex
+            End If
+            ListBoxControlUpdate()
+        End If
+    End Sub
+
+    Private Sub removeRecord(ByVal recordIndex As Integer)
+        tabs(TabControl1.SelectedIndex).records.RemoveAt(recordIndex)
     End Sub
 
     Private Sub ListBoxControlUpdate()
@@ -678,7 +706,7 @@
                 Dim fileno As Integer = 1
                 Do
                     fileno += 1
-                    filename = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName) & " (" & fileno & ").car"
+                    filename = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName) & " (" & fileno & ")." & ext
                 Loop Until Not OpenFileChecker(resName, filename)
             End If
 
@@ -850,7 +878,6 @@
             mapTemp = tabs(AreaTab).records.Count
             If My.Computer.FileSystem.FileExists(dir & tabs(AreaTab).attributeClasses(mapInd).gameFolder & tabs(AreaTab).records.Count + 1 & "." & tabs(AreaTab).attributeClasses(mapInd).ext) Then
                 tabs(AreaTab).addRecord()
-                tabs(AreaTab).setAttr(mapTemp, "name", "test") 'temp
             End If
         Loop Until tabs(AreaTab).records.Count = mapTemp
 
@@ -865,9 +892,15 @@
 
                         If tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrTextFile Then
 
-                            FileOpen(128, dir & tabs(tabIndex).attributeClasses(attrIndex).gameFolder & recordIndex + 1 & "." & tabs(tabIndex).attributeClasses(attrIndex).ext, OpenMode.Input)
                             tabs(tabIndex).records(recordIndex).attributes(attrIndex).value = ""
+                            Dim areaType As Boolean = (tabIndex = AreaTab) 'area names are stored in menu text
+                            FileOpen(128, dir & tabs(tabIndex).attributeClasses(attrIndex).gameFolder & recordIndex + 1 & "." & tabs(tabIndex).attributeClasses(attrIndex).ext, OpenMode.Input)
                             While Not EOF(128)
+                                If areaType = True Then
+                                    tabs(AreaTab).setAttr(recordIndex, "name", LineInput(128)) 'temp
+                                    LineInput(128)
+                                    areaType = False
+                                End If
                                 tabs(tabIndex).records(recordIndex).attributes(attrIndex).value &= LineInput(128)
                                 tabs(tabIndex).records(recordIndex).attributes(attrIndex).value &= vbCrLf
                             End While
@@ -902,6 +935,10 @@
     Private Sub mess(ByVal _mess As String)
         MsgBox(_mess, vbOKOnly, "Error")
     End Sub
+
+    Function conf(ByVal _mess As String)
+        Return MsgBox(_mess, vbYesNo, "Confirmation") = DialogResult.Yes
+    End Function
 
     Private Sub DoHalt(ByVal _mess As String)
         mess(_mess)
