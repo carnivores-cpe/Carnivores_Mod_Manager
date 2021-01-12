@@ -44,9 +44,50 @@
         debug = False
         startMoney = 0
 
+
+        Dim commandArgs As String() = Environment.GetCommandLineArgs()
+
+        If commandArgs.Length < 1 Then DoHalt("No Carnivores folder selected")
+
+        For argIndex As Integer = 0 To commandArgs.Length - 1
+            If commandArgs(argIndex).Contains("dir=") Then
+                dir = commandArgs(argIndex).Substring(4)
+            End If
+            If commandArgs(argIndex) = "-debug" Then debug = True
+            'If commandArgs(argIndex) = "-debug" Then debug = True
+        Next
+
+        version(0) = "0.1.0"
+        lastSupportedVersion = 0
+
+
+        printLog("Mod Manager Version: " & managerVersion & " last supported version " & version(lastSupportedVersion))
+
+        Me.Text = "Carnivores Mod Manager v" & managerVersion
+
+        If My.Computer.FileSystem.FileExists(dir & "\MODDAT\VINFO") Then
+            Dim vinfo = My.Computer.FileSystem.ReadAllBytes(dir & "\MODDAT\VINFO")
+            modVersion = vinfo(0)
+            If modVersion > lastSupportedVersion Then
+                DoHalt("This version of Modders Edition is not supported. Please install the lastest version of Mod Manager.")
+            Else
+                If modVersion < lastSupportedVersion Then
+                    'TODO IN FUTURE MOD MANAGER VERSIONS - OFFER TO UPGRADE COPY OF MODDERS EDITION TO LATEST SUPPORTED VERSION, else run in old mode!!!
+                End If
+                printLog("Mod Version: " & version(modVersion))
+            End If
+        Else
+            DoHalt("Modders Edition is not installed on this copy of Carnivores")
+        End If
+
+        tempdir = dir
+
+
     End Sub
 
     Private Sub setupTabData()
+
+        'TODO THIS WILL ALL BE VERSION-SPECIFIC IN FUTURE
 
         tabs(AreaTab) = New Tab()
         tabs(AreaTab).name = "Areas"
@@ -123,8 +164,6 @@
 
         tabs(OtherTab) = New Tab()
         tabs(OtherTab).name = "Other"
-
-
 
     End Sub
 
@@ -822,43 +861,6 @@
     End Sub
 
     Public Sub loadData()
-
-        Dim commandArgs As String() = Environment.GetCommandLineArgs()
-
-        If commandArgs.Length < 1 Then DoHalt("No Carnivores folder selected")
-
-        For argIndex As Integer = 0 To commandArgs.Length - 1
-            If commandArgs(argIndex).Contains("dir=") Then
-                dir = commandArgs(argIndex).Substring(4)
-            End If
-            If commandArgs(argIndex) = "-debug" Then debug = True
-            'If commandArgs(argIndex) = "-debug" Then debug = True
-        Next
-
-        version(0) = "0.1.0"
-        lastSupportedVersion = 0
-
-
-        printLog("Mod Manager Version: " & managerVersion & " last supported version " & version(lastSupportedVersion))
-
-        Me.Text = "Carnivores Mod Manager v" & managerVersion
-
-        If My.Computer.FileSystem.FileExists(dir & "\MODDAT\VINFO") Then
-            Dim vinfo = My.Computer.FileSystem.ReadAllBytes(dir & "\MODDAT\VINFO")
-            modVersion = vinfo(0)
-            If modVersion > lastSupportedVersion Then
-                DoHalt("This version of Modders Edition is not supported. Please install the lastest version of Mod Manager.")
-            Else
-                If modVersion < lastSupportedVersion Then
-                    'TODO IN FUTURE MOD MANAGER VERSIONS - OFFER TO UPGRADE COPY OF MODDERS EDITION TO LATEST SUPPORTED VERSION, else run in old mode!!!
-                End If
-                printLog("Mod Version: " & version(modVersion))
-            End If
-        Else
-            DoHalt("Modders Edition is not installed on this copy of Carnivores")
-        End If
-
-        tempdir = dir
 
         tabs(EquipmentTab).addRecord()
         tabs(EquipmentTab).setAttr(0, "name", "Camouflage")
