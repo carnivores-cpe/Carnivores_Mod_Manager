@@ -705,7 +705,7 @@
         Dim recordIndex As Integer = tabs(tabIndex).listBox.SelectedIndex
         If sender.checked = True Then
             tabs(tabIndex).records(recordIndex).attributes(sender.attrIndex).value = 0
-            sender.numBox.Text = ""
+            sender.numBox.value = tabs(tabIndex).attributeClasses(sender.attrIndex).defaultValue
             sender.numbox.enabled = False
         Else
             Dim val As Integer = tabs(tabIndex).attributeClasses(sender.attrIndex).defaultValue
