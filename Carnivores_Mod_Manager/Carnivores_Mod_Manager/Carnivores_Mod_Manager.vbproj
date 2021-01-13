@@ -124,6 +124,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="bin\Debug\Resources\add.png" />
+    <None Include="bin\Debug\Resources\delete.png" />
+    <None Include="bin\Debug\Resources\down.png" />
+    <None Include="bin\Debug\Resources\edit.png" />
+    <None Include="bin\Debug\Resources\expand.png" />
+    <None Include="bin\Debug\Resources\help.png" />
+    <None Include="bin\Debug\Resources\openfile.png" />
+    <None Include="bin\Debug\Resources\up.png" />
     <Content Include="icon_NhP_icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />

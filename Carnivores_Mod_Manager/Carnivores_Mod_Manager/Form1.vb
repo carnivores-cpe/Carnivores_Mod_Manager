@@ -21,14 +21,14 @@
     Dim lastSupportedVersion As Integer
     Dim managerVersion As String = "1.0.0"
 
-    Dim imgAdd As Bitmap = New Bitmap(Image.FromFile("Resources\add.png"), New Size(32, 32))
-    Dim imgEdit As Bitmap = New Bitmap(Image.FromFile("Resources\edit.png"), New Size(32, 32))
-    Dim imgDelete As Bitmap = New Bitmap(Image.FromFile("Resources\delete.png"), New Size(32, 32))
-    Dim imgUp As Bitmap = New Bitmap(Image.FromFile("Resources\up.png"), New Size(32, 32))
-    Dim imgDown As Bitmap = New Bitmap(Image.FromFile("Resources\down.png"), New Size(32, 32))
-    Dim imgExpand As Bitmap = New Bitmap(Image.FromFile("Resources\expand.png"), New Size(20, 20))
-    Dim imgOpenFile As Bitmap = New Bitmap(Image.FromFile("Resources\openfile.png"), New Size(20, 20))
-    Dim imgHelp As Bitmap = New Bitmap(Image.FromFile("Resources\help.png"), New Size(19, 19))
+    Dim imgAdd As Bitmap = New Bitmap(My.Resources.addImg, New Size(32, 32))
+    Dim imgEdit As Bitmap = New Bitmap(My.Resources.editImg, New Size(32, 32))
+    Dim imgDelete As Bitmap = New Bitmap(My.Resources.deleteImg, New Size(32, 32))
+    Dim imgUp As Bitmap = New Bitmap(My.Resources.upImg, New Size(32, 32))
+    Dim imgDown As Bitmap = New Bitmap(My.Resources.downImg, New Size(32, 32))
+    Dim imgExpand As Bitmap = New Bitmap(My.Resources.expandImg, New Size(20, 20))
+    Dim imgOpenFile As Bitmap = New Bitmap(My.Resources.openfileImg, New Size(20, 20))
+    Dim imgHelp As Bitmap = New Bitmap(My.Resources.helpImg, New Size(19, 19))
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -45,7 +45,6 @@
         printLog("")
         debug = False
         startMoney = 0
-
 
         Dim commandArgs As String() = Environment.GetCommandLineArgs()
 

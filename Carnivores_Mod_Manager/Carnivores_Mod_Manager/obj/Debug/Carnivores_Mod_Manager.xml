@@ -22,5 +22,45 @@ Carnivores_Mod_Manager
   resource lookups using this strongly typed resource class.
 </summary>
 </member>
+<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.addImg">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.deleteImg">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.downImg">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.editImg">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.expandImg">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.helpImg">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.openfileImg">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.upImg">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
 </members>
 </doc>
