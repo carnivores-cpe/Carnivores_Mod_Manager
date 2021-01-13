@@ -24,6 +24,8 @@
     Dim imgAdd As Bitmap = New Bitmap(Image.FromFile("Resources\add.png"), New Size(32, 32))
     Dim imgEdit As Bitmap = New Bitmap(Image.FromFile("Resources\edit.png"), New Size(32, 32))
     Dim imgDelete As Bitmap = New Bitmap(Image.FromFile("Resources\delete.png"), New Size(32, 32))
+    Dim imgUp As Bitmap = New Bitmap(Image.FromFile("Resources\up.png"), New Size(32, 32))
+    Dim imgDown As Bitmap = New Bitmap(Image.FromFile("Resources\down.png"), New Size(32, 32))
     Dim imgExpand As Bitmap = New Bitmap(Image.FromFile("Resources\expand.png"), New Size(20, 20))
     Dim imgOpenFile As Bitmap = New Bitmap(Image.FromFile("Resources\openfile.png"), New Size(20, 20))
     Dim imgHelp As Bitmap = New Bitmap(Image.FromFile("Resources\help.png"), New Size(19, 19))
@@ -205,6 +207,26 @@
                 AddHandler tabs(tabIndex).removeButton.Click, AddressOf deleteRecord
                 TabControl1.TabPages(tabIndex).Controls.Add(tabs(tabIndex).removeButton)
 
+                tabs(tabIndex).upToolTip = New ToolTip
+                tabs(tabIndex).upToolTip.ShowAlways = True
+                tabs(tabIndex).upButton = New Button
+                tabs(tabIndex).upButton.Image = imgUp
+                tabs(tabIndex).upButton.Size = New Drawing.Size(38, 38)
+                tabs(tabIndex).upButton.Location = New Drawing.Point(366, 146)
+                tabs(tabIndex).upButton.Enabled = False
+                AddHandler tabs(tabIndex).upButton.Click, AddressOf upRecord
+                TabControl1.TabPages(tabIndex).Controls.Add(tabs(tabIndex).upButton)
+
+                tabs(tabIndex).downToolTip = New ToolTip
+                tabs(tabIndex).downToolTip.ShowAlways = True
+                tabs(tabIndex).downButton = New Button
+                tabs(tabIndex).downButton.Image = imgDown
+                tabs(tabIndex).downButton.Size = New Drawing.Size(38, 38)
+                tabs(tabIndex).downButton.Location = New Drawing.Point(366, 192)
+                tabs(tabIndex).downButton.Enabled = False
+                AddHandler tabs(tabIndex).downButton.Click, AddressOf downRecord
+                TabControl1.TabPages(tabIndex).Controls.Add(tabs(tabIndex).downButton)
+
                 tabs(tabIndex).listBox = New ListBox()
                 tabs(tabIndex).listBox.Size = New Drawing.Size(350, 360)
                 tabs(tabIndex).listBox.Location = New Drawing.Point(8, 8)
@@ -219,6 +241,31 @@
                 TabControl1.TabPages(tabIndex).Controls.Add(tabs(tabIndex).listBox)
             End If
         Next
+    End Sub
+
+    Private Sub upRecord()
+        Dim index As Integer = tabs(TabControl1.SelectedIndex).listBox.SelectedIndex
+        Dim record As Record = tabs(TabControl1.SelectedIndex).records(index)
+        tabs(TabControl1.SelectedIndex).records(index) = tabs(TabControl1.SelectedIndex).records(index - 1)
+        tabs(TabControl1.SelectedIndex).records(index - 1) = record
+        Dim name As String = tabs(TabControl1.SelectedIndex).listBox.Items(index).ToString
+        tabs(TabControl1.SelectedIndex).listBox.Items(index) = tabs(TabControl1.SelectedIndex).listBox.Items(index - 1)
+        tabs(TabControl1.SelectedIndex).listBox.Items(index - 1) = name
+        tabs(TabControl1.SelectedIndex).listBox.SelectedIndex -= 1
+        ListBoxControlUpdate()
+    End Sub
+
+    Private Sub downRecord()
+        Dim index As Integer = tabs(TabControl1.SelectedIndex).listBox.SelectedIndex
+        Dim record As Record = tabs(TabControl1.SelectedIndex).records(index)
+        tabs(TabControl1.SelectedIndex).records(index) = tabs(TabControl1.SelectedIndex).records(index + 1)
+        tabs(TabControl1.SelectedIndex).records(index + 1) = record
+        Dim name As String = tabs(TabControl1.SelectedIndex).listBox.Items(index).ToString
+        tabs(TabControl1.SelectedIndex).listBox.Items(index) = tabs(TabControl1.SelectedIndex).listBox.Items(index + 1)
+        tabs(TabControl1.SelectedIndex).listBox.Items(index + 1) = name
+        tabs(TabControl1.SelectedIndex).listBox.SelectedIndex += 1
+        ListBoxControlUpdate()
+
     End Sub
 
     Private Sub addrecord()
@@ -268,6 +315,7 @@
         tabs(TabControl1.SelectedIndex).records.RemoveAt(recordIndex)
     End Sub
 
+
     Private Sub ListBoxControlUpdate()
         ListBoxControlSetup(TabControl1.SelectedIndex)
     End Sub
@@ -284,9 +332,13 @@
             tabs(tabindex).addButton.Enabled = False
             tabs(tabindex).editButton.Enabled = True
             tabs(tabindex).removeButton.Enabled = False
+            tabs(tabindex).upButton.Enabled = False
+            tabs(tabindex).downButton.Enabled = False
             tabs(tabindex).addButton.Visible = False
             tabs(tabindex).editButton.Visible = True
             tabs(tabindex).removeButton.Visible = False
+            tabs(tabindex).upButton.Visible = False
+            tabs(tabindex).downButton.Visible = False
             tabs(tabindex).editToolTip.SetToolTip(tabs(tabindex).editButton, "Edit " & tabs(tabindex).getAttr(tabs(tabindex).listBox.SelectedIndex, "name"))
         Else
             If tabs(tabindex).records.Count = tabs(tabindex).recordMax Then
@@ -302,6 +354,20 @@
                 tabs(tabindex).editToolTip.SetToolTip(tabs(tabindex).editButton, "Edit " & tabs(tabindex).getAttr(tabs(tabindex).listBox.SelectedIndex, "name"))
                 tabs(tabindex).removeToolTip.SetToolTip(tabs(tabindex).removeButton, "Delete " & tabs(tabindex).getAttr(tabs(tabindex).listBox.SelectedIndex, "name"))
                 tabs(tabindex).removeButton.Enabled = True
+            End If
+            If tabs(tabindex).listBox.SelectedIndex = 0 Then
+                tabs(tabindex).upButton.Enabled = False
+                tabs(tabindex).upToolTip.SetToolTip(tabs(tabindex).upButton, "Move " & tabs(tabindex).getAttr(tabs(tabindex).listBox.SelectedIndex, "name") & " up")
+            Else
+                tabs(tabindex).upButton.Enabled = True
+                tabs(tabindex).upToolTip.SetToolTip(tabs(tabindex).upButton, "Move " & tabs(tabindex).getAttr(tabs(tabindex).listBox.SelectedIndex, "name") & " up")
+            End If
+            If tabs(tabindex).listBox.SelectedIndex = tabs(tabindex).listBox.Items.Count - 1 Then
+                tabs(tabindex).downButton.Enabled = False
+                tabs(tabindex).downToolTip.SetToolTip(tabs(tabindex).downButton, "Move " & tabs(tabindex).getAttr(tabs(tabindex).listBox.SelectedIndex, "name") & " down")
+            Else
+                tabs(tabindex).downButton.Enabled = True
+                tabs(tabindex).downToolTip.SetToolTip(tabs(tabindex).downButton, "Move " & tabs(tabindex).getAttr(tabs(tabindex).listBox.SelectedIndex, "name") & " down")
             End If
         End If
     End Sub
@@ -582,10 +648,7 @@
 
             'update name in listbox
             Dim ri As Integer = tabs(TabControl1.SelectedIndex).listBox.SelectedIndex
-            tabs(TabControl1.SelectedIndex).listBox.Items.RemoveAt(ri)
-            tabs(TabControl1.SelectedIndex).listBox.Items.Insert(ri, tabs(TabControl1.SelectedIndex).getAttr(ri, "name"))
-            tabs(TabControl1.SelectedIndex).listBox.SelectedIndex -= 1
-
+            tabs(TabControl1.SelectedIndex).listBox.Items(ri) = tabs(TabControl1.SelectedIndex).getAttr(ri, "name")
         End If
 
     End Sub
@@ -1085,8 +1148,8 @@
     Public Class Tab
         Public name, nameS As String
         'Public addImage, editImage, removeImage As string
-        Public addButton, removeButton, editButton As Button
-        Public addToolTip, removeToolTip, editToolTip As ToolTip
+        Public addButton, removeButton, editButton, upButton, downButton As Button
+        Public addToolTip, removeToolTip, editToolTip, upToolTip, downToolTip As ToolTip
         Public listBox As ListBox
         Public recordLock As Boolean ' prevent adding/deleting records
 
