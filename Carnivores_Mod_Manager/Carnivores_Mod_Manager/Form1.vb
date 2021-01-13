@@ -21,14 +21,14 @@
     Dim lastSupportedVersion As Integer
     Dim managerVersion As String = "1.0.0"
 
-    Dim imgAdd As Bitmap = New Bitmap(My.Resources.addImg, New Size(32, 32))
-    Dim imgEdit As Bitmap = New Bitmap(My.Resources.editImg, New Size(32, 32))
-    Dim imgDelete As Bitmap = New Bitmap(My.Resources.deleteImg, New Size(32, 32))
-    Dim imgUp As Bitmap = New Bitmap(My.Resources.upImg, New Size(32, 32))
-    Dim imgDown As Bitmap = New Bitmap(My.Resources.downImg, New Size(32, 32))
-    Dim imgExpand As Bitmap = New Bitmap(My.Resources.expandImg, New Size(20, 20))
-    Dim imgOpenFile As Bitmap = New Bitmap(My.Resources.openfileImg, New Size(20, 20))
-    Dim imgHelp As Bitmap = New Bitmap(My.Resources.helpImg, New Size(19, 19))
+    Dim imgAdd As Bitmap = New Bitmap(My.Resources.add, New Size(32, 32))
+    Dim imgEdit As Bitmap = New Bitmap(My.Resources.edit, New Size(32, 32))
+    Dim imgDelete As Bitmap = New Bitmap(My.Resources.delete, New Size(32, 32))
+    Dim imgUp As Bitmap = New Bitmap(My.Resources.up, New Size(32, 32))
+    Dim imgDown As Bitmap = New Bitmap(My.Resources.down, New Size(32, 32))
+    Dim imgExpand As Bitmap = New Bitmap(My.Resources.expand, New Size(20, 20))
+    Dim imgOpenFile As Bitmap = New Bitmap(My.Resources.openfile, New Size(20, 20))
+    Dim imgHelp As Bitmap = New Bitmap(My.Resources.help, New Size(19, 19))
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -115,6 +115,9 @@
         tabs(AmbientTab).name = "Ambient Creatures"
         tabs(AmbientTab).nameS = "Ambient Creature"
         tabs(AmbientTab).recordMax = 5
+        tabs(AmbientTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, "The display name for the creature in the binoculars.")
+        tabs(AmbientTab).addAttribute("Slot", "ai", AttributeType.attrSlot, 1, 1, 5, True, "", "", True, False, "")
+        tabs(AmbientTab).addAttribute("AI", "clone", AttributeType.attrAI, 1, 1, 5, False, "", "", True, False, "The AI used by the creature")
         tabs(AmbientTab).recordLock = False
 
         tabs(AmbientCorpseTab) = New Tab()
@@ -293,6 +296,8 @@
 
     Private Sub editrecord()
         openEditForm(tabs(TabControl1.SelectedIndex).listBox.SelectedIndex, tabs(TabControl1.SelectedIndex).attributeClasses, "Edit " & tabs(TabControl1.SelectedIndex).getAttr(tabs(TabControl1.SelectedIndex).listBox.SelectedIndex, "name"))
+        Dim ri As Integer = tabs(TabControl1.SelectedIndex).listBox.SelectedIndex
+        tabs(TabControl1.SelectedIndex).listBox.Items(ri) = tabs(TabControl1.SelectedIndex).getAttr(ri, "name")
         ListBoxControlUpdate()
     End Sub
 
@@ -346,27 +351,32 @@
                 tabs(tabindex).addButton.Enabled = True
             End If
             If tabs(tabindex).records.Count = tabs(tabindex).recordMin Then
-                tabs(tabindex).editButton.Enabled = False
                 tabs(tabindex).removeButton.Enabled = False
             Else
-                tabs(tabindex).editButton.Enabled = True
-                tabs(tabindex).editToolTip.SetToolTip(tabs(tabindex).editButton, "Edit " & tabs(tabindex).getAttr(tabs(tabindex).listBox.SelectedIndex, "name"))
                 tabs(tabindex).removeToolTip.SetToolTip(tabs(tabindex).removeButton, "Delete " & tabs(tabindex).getAttr(tabs(tabindex).listBox.SelectedIndex, "name"))
                 tabs(tabindex).removeButton.Enabled = True
             End If
-            If tabs(tabindex).listBox.SelectedIndex = 0 Then
+            If tabs(tabindex).records.Count = 0 Then
+                tabs(tabindex).editButton.Enabled = False
                 tabs(tabindex).upButton.Enabled = False
-                tabs(tabindex).upToolTip.SetToolTip(tabs(tabindex).upButton, "Move " & tabs(tabindex).getAttr(tabs(tabindex).listBox.SelectedIndex, "name") & " up")
-            Else
-                tabs(tabindex).upButton.Enabled = True
-                tabs(tabindex).upToolTip.SetToolTip(tabs(tabindex).upButton, "Move " & tabs(tabindex).getAttr(tabs(tabindex).listBox.SelectedIndex, "name") & " up")
-            End If
-            If tabs(tabindex).listBox.SelectedIndex = tabs(tabindex).listBox.Items.Count - 1 Then
                 tabs(tabindex).downButton.Enabled = False
-                tabs(tabindex).downToolTip.SetToolTip(tabs(tabindex).downButton, "Move " & tabs(tabindex).getAttr(tabs(tabindex).listBox.SelectedIndex, "name") & " down")
             Else
-                tabs(tabindex).downButton.Enabled = True
-                tabs(tabindex).downToolTip.SetToolTip(tabs(tabindex).downButton, "Move " & tabs(tabindex).getAttr(tabs(tabindex).listBox.SelectedIndex, "name") & " down")
+                tabs(tabindex).editButton.Enabled = True
+                tabs(tabindex).editToolTip.SetToolTip(tabs(tabindex).editButton, "Edit " & tabs(tabindex).getAttr(tabs(tabindex).listBox.SelectedIndex, "name"))
+                If tabs(tabindex).listBox.SelectedIndex = 0 Then
+                    tabs(tabindex).upButton.Enabled = False
+                    tabs(tabindex).upToolTip.SetToolTip(tabs(tabindex).upButton, "Move " & tabs(tabindex).getAttr(tabs(tabindex).listBox.SelectedIndex, "name") & " up")
+                Else
+                    tabs(tabindex).upButton.Enabled = True
+                    tabs(tabindex).upToolTip.SetToolTip(tabs(tabindex).upButton, "Move " & tabs(tabindex).getAttr(tabs(tabindex).listBox.SelectedIndex, "name") & " up")
+                End If
+                If tabs(tabindex).listBox.SelectedIndex = tabs(tabindex).listBox.Items.Count - 1 Then
+                    tabs(tabindex).downButton.Enabled = False
+                    tabs(tabindex).downToolTip.SetToolTip(tabs(tabindex).downButton, "Move " & tabs(tabindex).getAttr(tabs(tabindex).listBox.SelectedIndex, "name") & " down")
+                Else
+                    tabs(tabindex).downButton.Enabled = True
+                    tabs(tabindex).downToolTip.SetToolTip(tabs(tabindex).downButton, "Move " & tabs(tabindex).getAttr(tabs(tabindex).listBox.SelectedIndex, "name") & " down")
+                End If
             End If
         End If
     End Sub
@@ -644,10 +654,6 @@
                     record.attributes(attrIndex).value = getHandleValue(attrclasses(attrIndex), handle(attrIndex))
                 End If
             Next
-
-            'update name in listbox
-            Dim ri As Integer = tabs(TabControl1.SelectedIndex).listBox.SelectedIndex
-            tabs(TabControl1.SelectedIndex).listBox.Items(ri) = tabs(TabControl1.SelectedIndex).getAttr(ri, "name")
         End If
 
     End Sub
@@ -1273,8 +1279,9 @@
         attrDouble  'decimal numbers
         attrBoolean ' true/false
         attrIntBool ' true/false - written with numbers in the res
-
         attrFile
+        attrSlot ' AI
+        attrAI ' Clone
     End Enum
 
     Public Class Attribute

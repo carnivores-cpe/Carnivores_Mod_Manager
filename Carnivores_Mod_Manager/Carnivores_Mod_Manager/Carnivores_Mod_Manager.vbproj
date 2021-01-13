@@ -106,9 +106,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -124,6 +124,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\expand.png" />
+    <None Include="Resources\edit.png" />
+    <None Include="Resources\down.png" />
+    <None Include="Resources\delete.png" />
+    <None Include="Resources\add.png" />
+    <None Include="Resources\up.png" />
+    <None Include="Resources\openfile.png" />
+    <None Include="Resources\help.png" />
     <None Include="bin\Debug\Resources\add.png" />
     <None Include="bin\Debug\Resources\delete.png" />
     <None Include="bin\Debug\Resources\down.png" />

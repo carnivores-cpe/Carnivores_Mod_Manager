@@ -22,42 +22,42 @@ Carnivores_Mod_Manager
   resource lookups using this strongly typed resource class.
 </summary>
 </member>
-<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.addImg">
+<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.add">
 <summary>
   Looks up a localized resource of type System.Drawing.Bitmap.
 </summary>
 </member>
-<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.deleteImg">
+<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.delete">
 <summary>
   Looks up a localized resource of type System.Drawing.Bitmap.
 </summary>
 </member>
-<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.downImg">
+<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.down">
 <summary>
   Looks up a localized resource of type System.Drawing.Bitmap.
 </summary>
 </member>
-<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.editImg">
+<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.edit">
 <summary>
   Looks up a localized resource of type System.Drawing.Bitmap.
 </summary>
 </member>
-<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.expandImg">
+<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.expand">
 <summary>
   Looks up a localized resource of type System.Drawing.Bitmap.
 </summary>
 </member>
-<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.helpImg">
+<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.help">
 <summary>
   Looks up a localized resource of type System.Drawing.Bitmap.
 </summary>
 </member>
-<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.openfileImg">
+<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.openfile">
 <summary>
   Looks up a localized resource of type System.Drawing.Bitmap.
 </summary>
 </member>
-<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.upImg">
+<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.up">
 <summary>
   Looks up a localized resource of type System.Drawing.Bitmap.
 </summary>
