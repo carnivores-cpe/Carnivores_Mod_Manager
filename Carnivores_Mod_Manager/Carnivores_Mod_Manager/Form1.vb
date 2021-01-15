@@ -109,6 +109,7 @@
         tabs(HuntableTab).recordMax = 10
         tabs(HuntableTab).recordMin = 0
         tabs(HuntableTab).recordLock = False
+        tabs(HuntableTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, "The display name for the creature in the binoculars.")
         tabs(HuntableTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, "The cost of hunting the creature.")
 
         tabs(AmbientTab) = New Tab()
@@ -116,8 +117,8 @@
         tabs(AmbientTab).nameS = "Ambient Creature"
         tabs(AmbientTab).recordMax = 5
         tabs(AmbientTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, "The display name for the creature in the binoculars.")
-        tabs(AmbientTab).addAttribute("Slot", "ai", AttributeType.attrSlot, 1, 1, 5, True, "", "", True, False, "")
-        tabs(AmbientTab).addAttribute("AI", "clone", AttributeType.attrAI, 1, 1, 5, False, "", "", True, False, "The AI used by the creature")
+        'tabs(AmbientTab).addAttribute("Slot", "ai", AttributeType.attrSlot, 1, 1, 5, True, "", "", True, False, "")
+        'tabs(AmbientTab).addAttribute("AI", "clone", AttributeType.attrAI, 1, 1, 5, False, "", "", True, False, "The AI used by the creature")
         tabs(AmbientTab).recordLock = False
 
         tabs(AmbientCorpseTab) = New Tab()
@@ -125,12 +126,14 @@
         tabs(AmbientCorpseTab).nameS = "Ambient Corpse"
         tabs(AmbientCorpseTab).recordMax = 4
         tabs(AmbientCorpseTab).recordLock = False
+        tabs(AmbientCorpseTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, "The display name for the creature in the binoculars.")
 
         tabs(MapAmbientTab) = New Tab()
         tabs(MapAmbientTab).name = "Map Ambient Creatures"
         tabs(MapAmbientTab).nameS = "Map Ambient Creature"
         tabs(MapAmbientTab).recordMax = 1024
         tabs(MapAmbientTab).recordLock = False
+        tabs(MapAmbientTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, "The display name for the creature in the binoculars.")
 
         tabs(WeaponTab) = New Tab()
         tabs(WeaponTab).name = "Weapons"
@@ -144,7 +147,7 @@
         tabs(WeaponTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, "The cost of using the weapon on a hunt.")
         tabs(WeaponTab).addAttribute("CAR File", "file", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "car", True, True, "The file that stores the weapon model, texture, animations and sound effects.")
         tabs(WeaponTab).addAttribute("Bullet Image", "pic", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "tga", True, True, "The bullet image used to display remaining ammo. Must be saved as a 16 bit uncompressed TGA.")
-        tabs(WeaponTab).addAttribute("Gunshot Sound", "gunshot", AttributeType.attrFile, "", 0, 509, True, "\MULTIPLAYER\GUNSHOTS\", "wav", True, False, "The gunshot sound effect which other players can hear from a distance in multiplayer. Must be saved as a 22050 Hz rate mono WAV.")
+        'tabs(WeaponTab).addAttribute("Gunshot Sound", "gunshot", AttributeType.attrFile, "", 0, 509, True, "\MULTIPLAYER\GUNSHOTS\", "wav", True, False, "The gunshot sound effect which other players can hear from a distance in multiplayer. Must be saved as a 22050 Hz rate mono WAV.")
         tabs(WeaponTab).addAttribute("Ammo Count", "shots", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True, False, "The amount of ammo the hunter takes for this weapon on a hunt (Will be doubled if the hunter selects double ammo in equipment).")
         tabs(WeaponTab).addAttribute("Magazine Capacity", "reload", AttributeType.attrTogglableInteger, 0, 0, 2147483647, False, "", "", True, False, "The maximum number of rounds that can be fired before reloading. If set to default, the magazine capacity will equal the ammo count.") 'togglableint - if off, value is 0
         tabs(WeaponTab).addAttribute("Projectile Count", "trace", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True, False, "The number of projectiles fired with each shot.")
@@ -1024,8 +1027,11 @@
         Dim line As String = LineInput(1)
         Do
             If line.Contains("weapons {") Then readData(WeaponTab, line)
-            'If line.Contains("characters {") Then readCharacters(line)
-            'If line.Contains("mapambients {") Then readMapAmbients(line)
+            'If line.Contains("hunterinfo {") Then readData(WeaponTab, line)
+            If line.Contains("oldambients {") Then readData(AmbientTab, line)
+            If line.Contains("corpseambients {") Then readData(AmbientCorpseTab, line)
+            If line.Contains("characters {") Then readData(HuntableTab, line)
+            If line.Contains("mapambients {") Then readData(MapAmbientTab, line)
             If line.Contains("prices {") Then readPrices(line)
             line = LineInput(1)
         Loop Until line = "."
@@ -1034,45 +1040,66 @@
     End Sub
 
     Private Sub readData(ByVal tabIndex As Integer, ByVal line As String)
+        line = LineInput(1)
         Do
             If line.Contains("{") Then
                 tabs(tabIndex).addRecord()
+                line = LineInput(1) 'skip past this line, else { will be mistaken for a subsection
                 Do
                     If line.Contains("=") Then
                         Dim resName As String = Trim(line.Substring(0, line.IndexOf("=")))
                         Dim attrIndex = tabs(tabIndex).getAttrIndex(resName)
-                        Dim value
-                        Select Case tabs(tabIndex).attributeClasses(attrIndex).type
-                            Case AttributeType.attrString
-                                value = Trim(line.Substring(line.IndexOf("'") + 1)).TrimEnd(CChar("'"))
-                            Case AttributeType.attrFile
-                                value = Trim(line.Substring(line.IndexOf("'") + 1)).TrimEnd(CChar("'"))
-                            Case AttributeType.attrInteger
-                                value = Trim(line.Substring(line.IndexOf("=") + 1))
-                            Case AttributeType.attrTogglableInteger
-                                value = Trim(line.Substring(line.IndexOf("=") + 1))
-                            Case AttributeType.attrDouble
-                                value = Trim(line.Substring(line.IndexOf("=") + 1))
-                            Case AttributeType.attrBoolean
-                                If line.Contains("TRUE") Then value = True Else value = False
-                            Case AttributeType.attrIntBool
-                                If Trim(line.Substring(line.IndexOf("=") + 1)) > 0 Then value = True Else value = False
-                        End Select
-                        Dim recordIndex = tabs(tabIndex).records.Count - 1
 
-                        If tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrFile Then
-                            Dim newFile As Boolean = True
-                            For index = 0 To tabs(tabIndex).attributeClasses(attrIndex).dInd.Count - 1
-                                If tabs(tabIndex).attributeClasses(attrIndex).dInd(index) = value Then
-                                    newFile = False
+                        If attrIndex >= 0 Then
+
+                            Dim value
+                            Select Case tabs(tabIndex).attributeClasses(attrIndex).type
+                                Case AttributeType.attrString
+                                    value = Trim(line.Substring(line.IndexOf("'") + 1)).TrimEnd(CChar("'"))
+                                Case AttributeType.attrFile
+                                    value = Trim(line.Substring(line.IndexOf("'") + 1)).TrimEnd(CChar("'"))
+                                Case AttributeType.attrInteger
+                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                Case AttributeType.attrTogglableInteger
+                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                Case AttributeType.attrDouble
+                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                Case AttributeType.attrBoolean
+                                    If line.Contains("TRUE") Then value = True Else value = False
+                                Case AttributeType.attrIntBool
+                                    If Trim(line.Substring(line.IndexOf("=") + 1)) > 0 Then value = True Else value = False
+                            End Select
+                            Dim recordIndex = tabs(tabIndex).records.Count - 1
+
+                            If tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrFile Then
+                                Dim newFile As Boolean = True
+                                For index = 0 To tabs(tabIndex).attributeClasses(attrIndex).dInd.Count - 1
+                                    If tabs(tabIndex).attributeClasses(attrIndex).dInd(index) = value Then
+                                        newFile = False
+                                    End If
+                                Next
+                                If newFile = True And tabs(tabIndex).attributeClasses(attrIndex).hidden = False Then
+                                    tabs(tabIndex).attributeClasses(attrIndex).dInd.Add(value)
+                                    tabs(tabIndex).attributeClasses(attrIndex).data.Add(My.Computer.FileSystem.ReadAllBytes(dir & tabs(tabIndex).getAttrClass(resName).gameFolder & value))
                                 End If
-                            Next
-                            If newFile = True Then
-                                tabs(tabIndex).attributeClasses(attrIndex).dInd.Add(value)
-                                tabs(tabIndex).attributeClasses(attrIndex).data.Add(My.Computer.FileSystem.ReadAllBytes(dir & tabs(tabIndex).getAttrClass(resName).gameFolder & value))
                             End If
+                            tabs(tabIndex).setAttr(recordIndex, resName, value)
+
                         End If
-                        tabs(tabIndex).setAttr(recordIndex, resName, value)
+                    ElseIf line.Contains("{") Then
+                        Dim resName As String = Trim(line.Substring(0, line.IndexOf("{")))
+                        Dim attrIndex = tabs(tabIndex).getAttrIndex(resName)
+
+                        If attrIndex >= 0 Then
+
+                            'code here!!!!!
+
+                        Else
+                            Do
+                                line = LineInput(1)
+                            Loop Until line.Contains("}")
+                        End If
+
                     End If
                     line = LineInput(1)
                 Loop Until line.Contains("}")
@@ -1086,14 +1113,6 @@
             End If
             line = LineInput(1)
         Loop Until line.Contains("}") Or tabs(tabIndex).records.Count = tabs(tabIndex).recordMax
-    End Sub
-
-    Private Sub readCharacters(ByVal line As String)
-
-    End Sub
-
-    Private Sub readMapAmbients(ByVal line As String)
-
     End Sub
 
     Private Sub readPrices(ByVal line As String)
