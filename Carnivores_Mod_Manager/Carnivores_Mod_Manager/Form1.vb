@@ -30,6 +30,13 @@
     Dim imgOpenFile As Bitmap = New Bitmap(My.Resources.openfile, New Size(20, 20))
     Dim imgHelp As Bitmap = New Bitmap(My.Resources.help, New Size(19, 19))
 
+    Dim aiList As List(Of AI)
+
+
+
+    Dim editForm As Form
+    Dim handle As List(Of Object)
+
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         init()
@@ -51,11 +58,8 @@
         If commandArgs.Length < 1 Then DoHalt("No Carnivores folder selected")
 
         For argIndex As Integer = 0 To commandArgs.Length - 1
-            If commandArgs(argIndex).Contains("dir=") Then
-                dir = commandArgs(argIndex).Substring(4)
-            End If
+            If commandArgs(argIndex).Contains("dir=") Then dir = commandArgs(argIndex).Substring(4)
             If commandArgs(argIndex) = "-debug" Then debug = True
-            'If commandArgs(argIndex) = "-debug" Then debug = True
         Next
 
         version(0) = "0.1.0"
@@ -88,6 +92,43 @@
 
     Private Sub setupTabData()
 
+        aiList = New List(Of AI)
+        aiList.Add(New AI("Moshops", 1))                    '0
+        aiList.Add(New AI("Galimimus", 2))                  '1
+        aiList.Add(New AI("Dimorphodon", 3))                '2
+        aiList.Add(New AI("Pteranodon", 4))                 '3
+        aiList.Add(New AI("Dimetrodon", 5))                 '4
+        aiList.Add(New AI("Parasaurolophus", 10))           '5
+        aiList.Add(New AI("Pachycephalosaurus", 19))        '6
+        aiList.Add(New AI("Ankylosaurus", 11))              '7
+        aiList.Add(New AI("Stegosaurus", 12))               '8
+        aiList.Add(New AI("Allosaurus", 13))                '9
+        aiList.Add(New AI("Chasmosaurus", 14))              '10
+        aiList.Add(New AI("Velociraptor", 15))              '11
+        aiList.Add(New AI("Spinosaurus", 16))               '12
+        aiList.Add(New AI("Ceratosaurus", 17))              '13
+        aiList.Add(New AI("T-Rex", 18))                     '14
+        aiList.Add(New AI("Brachiosaurus", -1))             '15
+        aiList.Add(New AI("Dangerous Brachiosaurus", -5))   '16
+        aiList.Add(New AI("Land Brachiosaurus", -6))        '17
+        aiList.Add(New AI("Ichthyornis", -2))               '18
+        aiList.Add(New AI("Fish", -3))                      '19
+
+        For index = 0 To 19
+            aiList(index).active = New List(Of String)
+        Next
+
+        For Each index In {0, 1, 4}
+            aiList(index).active.Add("runAnim")
+            aiList(index).active.Add("walkAnim")
+            aiList(index).active.Add("idleAnim")
+        Next
+        aiList(1).active.Add("slideAnim")
+        For Each index In {2, 3}
+            aiList(index).active.Add("flyAnim")
+            aiList(index).active.Add("glideAnim")
+        Next
+
         'TODO THIS WILL ALL BE VERSION-SPECIFIC IN FUTURE
 
         tabs(AreaTab) = New Tab()
@@ -96,44 +137,63 @@
         tabs(AreaTab).recordMax = 10
         tabs(AreaTab).recordMin = 0
         tabs(AreaTab).recordLock = False
-        tabs(AreaTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, "The display name for the area in the hunt menu.")
-        tabs(AreaTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\AREA", "txt", True, False, "The description for the area in the hunt menu.")
-        tabs(AreaTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\AREA", "tga", True, True, "The image for the area in the hunt menu. Must be saved as a 16 bit uncompressed TGA.")
-        tabs(AreaTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, "The cost of hunting in the area.")
-        tabs(AreaTab).addAttribute("Map File", "map&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\AREAS\AREA", "map", True, True, "The file that stores the terrain information, texture positions, object positions, sound positions, water and fog information.")
-        tabs(AreaTab).addAttribute("Resource File", "rsc&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\AREAS\AREA", "rsc", True, True, "The file that stores textures, objects, animations, hitbox information and sounds for the map.")
+        tabs(AreaTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, "The display name for the area in the hunt menu.")
+        tabs(AreaTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\AREA", "txt", True, False, False, "The description for the area in the hunt menu.")
+        tabs(AreaTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\AREA", "tga", True, True, False, "The image for the area in the hunt menu. Must be saved as a 16 bit uncompressed TGA.")
+        tabs(AreaTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, False, "The cost of hunting in the area.")
+        tabs(AreaTab).addAttribute("Map File", "map&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\AREAS\AREA", "map", True, True, False, "The file that stores the terrain information, texture positions, object positions, sound positions, water and fog information.")
+        tabs(AreaTab).addAttribute("Resource File", "rsc&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\AREAS\AREA", "rsc", True, True, False, "The file that stores textures, objects, animations, hitbox information and sounds for the map.")
 
-        tabs(1) = New Tab()
+        tabs(HuntableTab) = New Tab()
         tabs(HuntableTab).name = "Huntable Creatures"
         tabs(HuntableTab).nameS = "Huntable Creature"
         tabs(HuntableTab).recordMax = 10
         tabs(HuntableTab).recordMin = 0
         tabs(HuntableTab).recordLock = False
-        tabs(HuntableTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, "The display name for the creature in the binoculars.")
-        tabs(HuntableTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, "The cost of hunting the creature.")
+        tabs(HuntableTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, "The display name for the creature in the hunt menu.")
+        tabs(HuntableTab).addAttribute("Description (Metric)", "desm&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\DINO", "txm", True, False, False, "The description for the creature in the hunt menu when the user has set measurements to 'metric' in options.")
+        tabs(HuntableTab).addAttribute("Description (US)", "desu&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\DINO", "txu", True, False, False, "The description for the creature in the hunt menu the user has set measurements to 'US' in options.")
+        tabs(HuntableTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\DINO", "tga", True, True, False, "The image for the creature in the hunt menu. Must be saved as a 16 bit uncompressed TGA.")
+        tabs(HuntableTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, False, "The cost of hunting the creature.")
+        Dim carFileClass As AttributeClass = New AttributeClass("CAR File", "file", AttributeType.attrCar, "", 0, 509, False, "\HUNTDAT\", "car", True, True, False, "The file that stores the creature model, texture, animations and sound effects.")
+        tabs(HuntableTab).addAttribute(carFileClass)
+        'tabs(HuntableTab).addAttribute("Call Icon", "callimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\CALL", "tga", True, True, "The image displayed in the top right when a call is selected during a hunt. Must be saved as a 16 bit uncompressed TGA.")
+        'TODO - CALL FILE NAME FORMATS NEED TO ADJUSTED in C:ME!!!!
 
         tabs(AmbientTab) = New Tab()
         tabs(AmbientTab).name = "Ambient Creatures"
         tabs(AmbientTab).nameS = "Ambient Creature"
         tabs(AmbientTab).recordMax = 5
-        tabs(AmbientTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, "The display name for the creature in the binoculars.")
-        'tabs(AmbientTab).addAttribute("Slot", "ai", AttributeType.attrSlot, 1, 1, 5, True, "", "", True, False, "")
-        'tabs(AmbientTab).addAttribute("AI", "clone", AttributeType.attrAI, 1, 1, 5, False, "", "", True, False, "The AI used by the creature")
         tabs(AmbientTab).recordLock = False
+        tabs(AmbientTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, "The display name for the creature in the binoculars.")
+        tabs(AmbientTab).addAttribute("Slot", "ai", AttributeType.attrSlot, 1, 1, 5, True, "", "", True, False, False, "")
+        'remember to change slot minmax
+        tabs(AmbientTab).addAttribute("AI", "clone", AttributeType.attrAI, 1, 0, 4, False, "", "", True, False, False, "The AI used by the creature")
+        'remember to change ai minmax 'default is AI number, min/max is listAi index
+        tabs(AmbientTab).addAttribute(carFileClass)
+        tabs(AmbientTab).addAttribute("Run Animation", "runAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, False, True, "The running animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Walk Animation", "walkAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, False, True, "The walking animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Slide Animation", "slideAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, False, True, "The sliding animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Fly Animation", "flyAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, False, True, "The flying animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Glide Animation", "glideAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, False, True, "The gliding animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+
 
         tabs(AmbientCorpseTab) = New Tab()
         tabs(AmbientCorpseTab).name = "Ambient Corpses"
         tabs(AmbientCorpseTab).nameS = "Ambient Corpse"
         tabs(AmbientCorpseTab).recordMax = 4
         tabs(AmbientCorpseTab).recordLock = False
-        tabs(AmbientCorpseTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, "The display name for the creature in the binoculars.")
+        tabs(AmbientCorpseTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, "The display name for the creature in the binoculars.")
+        tabs(AmbientCorpseTab).addAttribute(carFileClass)
+        'NOTE ALL AMBIENT CORPSES MUST HAVE AI 6,7,OR 8 and matching CLONE
 
         tabs(MapAmbientTab) = New Tab()
         tabs(MapAmbientTab).name = "Map Ambient Creatures"
         tabs(MapAmbientTab).nameS = "Map Ambient Creature"
         tabs(MapAmbientTab).recordMax = 1024
         tabs(MapAmbientTab).recordLock = False
-        tabs(MapAmbientTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, "The display name for the creature in the binoculars.")
+        tabs(MapAmbientTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, "The display name for the creature in the binoculars.")
+        tabs(MapAmbientTab).addAttribute(carFileClass)
 
         tabs(WeaponTab) = New Tab()
         tabs(WeaponTab).name = "Weapons"
@@ -141,22 +201,22 @@
         tabs(WeaponTab).recordMax = 10
         tabs(WeaponTab).recordMin = 0
         tabs(WeaponTab).recordLock = False
-        tabs(WeaponTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, "The display name for the weapon in the menu.")
-        tabs(WeaponTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\WEAPON", "txt", True, False, "The description for the weapon in the hunt menu.")
-        tabs(WeaponTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\WEAPON", "tga", True, True, "The image for the weapon in the hunt menu. Must be saved as a 16 bit uncompressed TGA.")
-        tabs(WeaponTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, "The cost of using the weapon on a hunt.")
-        tabs(WeaponTab).addAttribute("CAR File", "file", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "car", True, True, "The file that stores the weapon model, texture, animations and sound effects.")
-        tabs(WeaponTab).addAttribute("Bullet Image", "pic", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "tga", True, True, "The bullet image used to display remaining ammo. Must be saved as a 16 bit uncompressed TGA.")
+        tabs(WeaponTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, "The display name for the weapon in the menu.")
+        tabs(WeaponTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\WEAPON", "txt", True, False, False, "The description for the weapon in the hunt menu.")
+        tabs(WeaponTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\WEAPON", "tga", True, True, False, "The image for the weapon in the hunt menu. Must be saved as a 16 bit uncompressed TGA.")
+        tabs(WeaponTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, False, "The cost of using the weapon on a hunt.")
+        tabs(WeaponTab).addAttribute("CAR File", "file", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "car", True, True, False, "The file that stores the weapon model, texture, animations and sound effects.")
+        tabs(WeaponTab).addAttribute("Bullet Image", "pic", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "tga", True, True, False, "The bullet image used to display remaining ammo. Must be saved as a 16 bit uncompressed TGA.")
         'tabs(WeaponTab).addAttribute("Gunshot Sound", "gunshot", AttributeType.attrFile, "", 0, 509, True, "\MULTIPLAYER\GUNSHOTS\", "wav", True, False, "The gunshot sound effect which other players can hear from a distance in multiplayer. Must be saved as a 22050 Hz rate mono WAV.")
-        tabs(WeaponTab).addAttribute("Ammo Count", "shots", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True, False, "The amount of ammo the hunter takes for this weapon on a hunt (Will be doubled if the hunter selects double ammo in equipment).")
-        tabs(WeaponTab).addAttribute("Magazine Capacity", "reload", AttributeType.attrTogglableInteger, 0, 0, 2147483647, False, "", "", True, False, "The maximum number of rounds that can be fired before reloading. If set to default, the magazine capacity will equal the ammo count.") 'togglableint - if off, value is 0
-        tabs(WeaponTab).addAttribute("Projectile Count", "trace", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True, False, "The number of projectiles fired with each shot.")
-        tabs(WeaponTab).addAttribute("Fire Power", "power", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, "The damage inflicted by the weapon. Note: the vanilla menu can only display values between 0 and 8.")
-        tabs(WeaponTab).addAttribute("Accuracy", "prec", AttributeType.attrDouble, 0D, -10D, 2D, False, "", "", True, False, "Average bullet precision - 2.00 gives 100% accuracy. Note: the vanilla menu can only display values between 0.00 and 2.00.")
-        tabs(WeaponTab).addAttribute("Volume", "loud", AttributeType.attrDouble, 0D, -10D, 10D, False, "", "", True, False, "The maximum distance creatures can hear gunshots (depending on wind direction). Note: the vanilla menu can only display values between 0.00 and 2.00.")
-        tabs(WeaponTab).addAttribute("Rate of Fire", "rate", AttributeType.attrDouble, 0D, -10D, 10D, False, "", "", True, False, "The rate of fire for the weapon - this value only effects the menu stats and doesn't effect gameplay. Note: the vanilla menu can only display values between 0.00 and 2.00.")
-        tabs(WeaponTab).addAttribute("Scope Zoom", "optic", AttributeType.attrIntBool, False, 0, 0, False, "", "", True, False, "When set to true, the hunter's screen will zoom in when the weapon is equipped.")
-        tabs(WeaponTab).addAttribute("Bullet Fall", "fall", AttributeType.attrIntBool, False, 0, 0, False, "", "", True, False, "When set to true, projectile trajectory will drop over time.")
+        tabs(WeaponTab).addAttribute("Ammo Count", "shots", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True, False, False, "The amount of ammo the hunter takes for this weapon on a hunt (Will be doubled if the hunter selects double ammo in equipment).")
+        tabs(WeaponTab).addAttribute("Magazine Capacity", "reload", AttributeType.attrTogglableInteger, 0, 0, 2147483647, False, "", "", True, False, False, "The maximum number of rounds that can be fired before reloading. If set to default, the magazine capacity will equal the ammo count.") 'togglableint - if off, value is 0
+        tabs(WeaponTab).addAttribute("Projectile Count", "trace", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True, False, False, "The number of projectiles fired with each shot.")
+        tabs(WeaponTab).addAttribute("Fire Power", "power", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, False, "The damage inflicted by the weapon. Note: the vanilla menu can only display values between 0 and 8.")
+        tabs(WeaponTab).addAttribute("Accuracy", "prec", AttributeType.attrDouble, 0D, -10D, 2D, False, "", "", True, False, False, "Average bullet precision - 2.00 gives 100% accuracy. Note: the vanilla menu can only display values between 0.00 and 2.00.")
+        tabs(WeaponTab).addAttribute("Volume", "loud", AttributeType.attrDouble, 0D, -10D, 10D, False, "", "", True, False, False, "The maximum distance creatures can hear gunshots (depending on wind direction). Note: the vanilla menu can only display values between 0.00 and 2.00.")
+        tabs(WeaponTab).addAttribute("Rate of Fire", "rate", AttributeType.attrDouble, 0D, -10D, 10D, False, "", "", True, False, False, "The rate of fire for the weapon - this value only effects the menu stats and doesn't effect gameplay. Note: the vanilla menu can only display values between 0.00 and 2.00.")
+        tabs(WeaponTab).addAttribute("Scope Zoom", "optic", AttributeType.attrIntBool, False, 0, 0, False, "", "", True, False, False, "When set to true, the hunter's screen will zoom in when the weapon is equipped.")
+        tabs(WeaponTab).addAttribute("Bullet Fall", "fall", AttributeType.attrIntBool, False, 0, 0, False, "", "", True, False, False, "When set to true, projectile trajectory will drop over time.")
 
         tabs(EquipmentTab) = New Tab()
         tabs(EquipmentTab).name = "Equipment"
@@ -164,10 +224,10 @@
         tabs(EquipmentTab).recordMax = 4
         tabs(EquipmentTab).recordMin = 0
         tabs(EquipmentTab).recordLock = True
-        tabs(EquipmentTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", False, True, "The display name for the equipment item in the menu.")
-        tabs(EquipmentTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\EQUIP", "nfo", True, False, "The description for the equipment item in the hunt menu.")
-        tabs(EquipmentTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\EQUIP", "tga", True, True, "The image for the equipment item in the hunt menu. Must be saved as a 16 bit uncompressed TGA.")
-        tabs(EquipmentTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, "The display name for the equipment item in the menu.")
+        tabs(EquipmentTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", False, True, False, "The display name for the equipment item in the menu.")
+        tabs(EquipmentTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\EQUIP", "nfo", True, False, False, "The description for the equipment item in the hunt menu.")
+        tabs(EquipmentTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\EQUIP", "tga", True, True, False, "The image for the equipment item in the hunt menu. Must be saved as a 16 bit uncompressed TGA.")
+        tabs(EquipmentTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, False, "The display name for the equipment item in the menu.")
 
         tabs(OtherTab) = New Tab()
         tabs(OtherTab).name = "Other"
@@ -384,9 +444,27 @@
         End If
     End Sub
 
+    Function getAI(ByVal ai As Integer)
+        For index = 0 To aiList.Count - 1
+            If aiList(index).id = ai Then Return aiList(index)
+        Next
+    End Function
+
+    Function getAIIndex(ByVal ai As Integer)
+        For index = 0 To aiList.Count - 1
+            If aiList(index).id = ai Then Return index
+        Next
+    End Function
+
+    Function getAI(ByVal n As String)
+        For index = 0 To aiList.Count - 1
+            If aiList(index).name = n Then Return index
+        Next
+    End Function
+
     Private Sub openEditForm(ByRef recordIndex As Integer, ByRef attrclasses As List(Of AttributeClass), ByRef task As String)
         Dim record As Record = tabs(TabControl1.SelectedIndex).records(recordIndex)
-        Dim editForm As Form = New Form
+        editForm = New Form
         editForm.Text = task
         Dim panel1 As Panel = New Panel
         editForm.Size = New Drawing.Size(330, 325)
@@ -397,11 +475,20 @@
         editForm.FormBorderStyle = FormBorderStyle.FixedDialog
         editForm.MaximizeBox = False
         editForm.MinimizeBox = False
-        Dim handle As List(Of Object)
-        handle = New List(Of Object)
+        Handle = New List(Of Object)
         Dim yPos As Integer = 8
-        For attrIndex As Integer = 0 To Record.attributes.Count - 1
-            If attrclasses(attrIndex).hidden = False Then
+        For attrIndex As Integer = 0 To record.attributes.Count - 1
+
+            Dim active = True
+            If attrclasses(attrIndex).hidden = True Then
+                active = False
+            ElseIf attrclasses(attrIndex).AIdependant = True Then
+                If Not aiList(getAIIndex(tabs(TabControl1.SelectedIndex).getAttr(recordIndex, "clone"))).active.Contains(attrclasses(attrIndex).resName) Then
+                    active = False
+                End If
+            End If
+
+            If active = True Then
 
                 Dim yIncrement As Integer = 0
                 Dim helpIncrement As Integer = 0
@@ -419,6 +506,20 @@
                         If attrclasses(attrIndex).editable = False Then textBox.Enabled = False
 
                     'todo string max length
+
+                    Case AttributeType.attrAI
+                        Dim comboBox As UnscrollableComboBox = New UnscrollableComboBox 'custom class overrides scroll wheeling through options
+                        comboBox.Size = New Drawing.Size(130, 15)
+                        comboBox.Location = New Drawing.Point(116, yPos)
+                        For index = attrclasses(attrIndex).minValue To attrclasses(attrIndex).maxValue
+                            comboBox.Items.Add(aiList(index).name)
+                        Next
+                        comboBox.DropDownStyle = ComboBoxStyle.DropDownList
+                        comboBox.SelectedIndex = getAIIndex(record.attributes(attrIndex).value)
+                        panel1.Controls.Add(comboBox)
+                        handle.Add(comboBox)
+
+                        If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
 
                     Case AttributeType.attrTextFile
                         Dim textBox As TextBox = New TextBox
@@ -466,6 +567,25 @@
                         handle.Add(numBox)
 
                         If attrclasses(attrIndex).editable = False Then numBox.Enabled = False
+
+                    Case AttributeType.attrAnim
+
+                        Dim comboBox As UnscrollableAnimComboBox = New UnscrollableAnimComboBox 'custom class overrides scroll wheeling through options
+                        comboBox.Size = New Drawing.Size(130, 15)
+                        comboBox.Location = New Drawing.Point(116, yPos)
+                        For Each animName In record.animList
+                            comboBox.Items.Add(animName)
+                        Next
+                        comboBox.DropDownStyle = ComboBoxStyle.DropDownList
+                        comboBox.SelectedIndex = record.attributes(attrIndex).value
+                        panel1.Controls.Add(comboBox)
+                        comboBox.prevValue = comboBox.SelectedIndex
+                        comboBox.senderAttr = attrIndex
+                        comboBox.recordIndex = recordIndex
+                        AddHandler comboBox.SelectedIndexChanged, AddressOf animReorder
+                        handle.Add(comboBox)
+                        If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
+
 
                     Case AttributeType.attrTogglableInteger
 
@@ -604,6 +724,47 @@
                             textBox.enabled = False 'disable in case it's a combo box
                         End If
 
+                    Case AttributeType.attrCar
+
+                        Dim textBox
+
+                        If attrclasses(attrIndex).resName.Contains("&") Then
+                            textBox = New TextBox
+                            textBox.Enabled = False
+                        Else
+                            textBox = New UnscrollableComboBox
+                            textBox.DropDownStyle = ComboBoxStyle.DropDownList
+                            For index = 0 To attrclasses(attrIndex).dInd.Count - 1
+                                textBox.Items.Add(attrclasses(attrIndex).dInd(index))
+                            Next
+                        End If
+
+                        textBox.Text = record.attributes(attrIndex).value
+                        textBox.Size = New Drawing.Size(108, 15)
+                        textBox.Location = New Drawing.Point(116, yPos)
+                        panel1.Controls.Add(textBox)
+                        handle.Add(textBox)
+
+
+
+                        Dim tooltip = New ToolTip
+                        tooltip.ShowAlways = True
+                        Dim button As LoadDataButton = New LoadDataButton
+                        button.record = record
+                        button.attrIndex = attrIndex
+                        button.handle2 = textBox
+                        button.Size = New Drawing.Size(23, 22)
+                        button.Location = New Drawing.Point(224, yPos - 1)
+                        button.Image = imgOpenFile
+                        AddHandler button.Click, AddressOf OpenFileDialog
+                        tooltip.SetToolTip(button, "Open " & attrclasses(attrIndex).ext.ToUpper & " File")
+                        panel1.Controls.Add(button)
+
+                        If attrclasses(attrIndex).editable = False Then
+                            button.Enabled = False
+                            textBox.enabled = False 'disable in case it's a combo box
+                        End If
+
                 End Select
 
                 Dim label As New Label
@@ -653,12 +814,42 @@
 
         If buttonOk.result = True Then
             For attrIndex As Integer = 0 To record.attributes.Count - 1
-                If attrclasses(attrIndex).hidden = False Then
-                    record.attributes(attrIndex).value = getHandleValue(attrclasses(attrIndex), handle(attrIndex))
+                Dim active = True
+                If attrclasses(attrIndex).hidden = True Then
+                    active = False
+                ElseIf attrclasses(attrIndex).AIdependant = True Then
+                    If Not aiList(getAIIndex(tabs(TabControl1.SelectedIndex).getAttr(recordIndex, "clone"))).active.Contains(attrclasses(attrIndex).resName) Then
+                        active = False
+                    End If
+                End If
+
+                If active = True Then
+                    record.attributes(attrIndex).value = getHandleValue(attrclasses(attrIndex), handle(attrIndex), record)
                 End If
             Next
         End If
 
+    End Sub
+
+    Sub animReorder(sender As Object, e As EventArgs)
+        For attrIndex = 0 To tabs(TabControl1.SelectedIndex).attributeClasses.Count - 1
+            If tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).type = AttributeType.attrAnim And attrIndex <> sender.senderAttr Then
+                Dim active As Boolean = True
+                If tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).AIdependant = True Then
+                    If Not aiList(getAIIndex(tabs(TabControl1.SelectedIndex).getAttr(sender.recordIndex, "clone"))).active.Contains(tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).resName) Then
+                        active = False
+                    End If
+                End If
+                If active = True Then
+                    If handle(attrIndex).selectedIndex = handle(sender.senderAttr).selectedIndex Then
+                        handle(attrIndex).selectedIndex = sender.prevValue
+                        sender.prevValue = handle(sender.senderAttr).selectedIndex
+                        Return
+                    End If
+                End If
+            End If
+        Next
+        sender.prevValue = handle(sender.senderAttr).selectedIndex
     End Sub
 
     Function validateField(ByRef handle As Object)
@@ -666,14 +857,20 @@
         Return True
     End Function
 
-    Function getHandleValue(ByRef attrClass As AttributeClass, ByRef handle As Object)
+    Function getHandleValue(ByRef attrClass As AttributeClass, ByRef handle As Object, ByVal record As Record)
         Select Case attrClass.type
             Case AttributeType.attrString
                 Return handle.text
+            Case AttributeType.attrAI
+                Return aiList(getAI(handle.text)).id
             Case AttributeType.attrTextFile
                 Return handle.text
             Case AttributeType.attrFile
                 Return handle.text
+            Case AttributeType.attrCar
+                Return handle.text
+            Case AttributeType.attrAnim
+                Return handle.SelectedIndex
             Case AttributeType.attrInteger
                 If handle.Text = "" Then
                     Return 0
@@ -892,6 +1089,15 @@
         End Sub
     End Class
 
+    Friend Class UnscrollableAnimComboBox
+        Inherits UnscrollableComboBox
+
+        Public prevValue As Integer
+        Public senderAttr As Integer
+        Public recordIndex As Integer
+
+    End Class
+
     Friend Class UnscrollableNumericUpDown
         Inherits NumericUpDown
 
@@ -1027,7 +1233,7 @@
         Dim line As String = LineInput(1)
         Do
             If line.Contains("weapons {") Then readData(WeaponTab, line)
-            'If line.Contains("hunterinfo {") Then readData(WeaponTab, line)
+            'If line.Contains("hunterinfo {") Then readData(, line)
             If line.Contains("oldambients {") Then readData(AmbientTab, line)
             If line.Contains("corpseambients {") Then readData(AmbientCorpseTab, line)
             If line.Contains("characters {") Then readData(HuntableTab, line)
@@ -1047,9 +1253,9 @@
                 line = LineInput(1) 'skip past this line, else { will be mistaken for a subsection
                 Do
                     If line.Contains("=") Then
-                        Dim resName As String = Trim(line.Substring(0, line.IndexOf("=")))
-                        Dim attrIndex = tabs(tabIndex).getAttrIndex(resName)
 
+                        Dim resName As String = Replace(Trim(line.Substring(0, line.IndexOf("="))), Chr(0), "")
+                        Dim attrIndex = tabs(tabIndex).getAttrIndex(resName)
                         If attrIndex >= 0 Then
 
                             Dim value
@@ -1058,7 +1264,15 @@
                                     value = Trim(line.Substring(line.IndexOf("'") + 1)).TrimEnd(CChar("'"))
                                 Case AttributeType.attrFile
                                     value = Trim(line.Substring(line.IndexOf("'") + 1)).TrimEnd(CChar("'"))
+                                Case AttributeType.attrCar
+                                    value = Trim(line.Substring(line.IndexOf("'") + 1)).TrimEnd(CChar("'"))
                                 Case AttributeType.attrInteger
+                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                Case AttributeType.attrAnim
+                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                Case AttributeType.attrSlot
+                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                Case AttributeType.attrAI
                                     value = Trim(line.Substring(line.IndexOf("=") + 1))
                                 Case AttributeType.attrTogglableInteger
                                     value = Trim(line.Substring(line.IndexOf("=") + 1))
@@ -1071,7 +1285,7 @@
                             End Select
                             Dim recordIndex = tabs(tabIndex).records.Count - 1
 
-                            If tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrFile Then
+                            If tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrFile Or tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrCar Then
                                 Dim newFile As Boolean = True
                                 For index = 0 To tabs(tabIndex).attributeClasses(attrIndex).dInd.Count - 1
                                     If tabs(tabIndex).attributeClasses(attrIndex).dInd(index) = value Then
@@ -1081,6 +1295,11 @@
                                 If newFile = True And tabs(tabIndex).attributeClasses(attrIndex).hidden = False Then
                                     tabs(tabIndex).attributeClasses(attrIndex).dInd.Add(value)
                                     tabs(tabIndex).attributeClasses(attrIndex).data.Add(My.Computer.FileSystem.ReadAllBytes(dir & tabs(tabIndex).getAttrClass(resName).gameFolder & value))
+                                    If tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrCar Then
+
+                                        readAnimations(tabs(tabIndex).records(recordIndex), tabs(tabIndex).attributeClasses(attrIndex).data(tabs(tabIndex).attributeClasses(attrIndex).data.Count - 1))
+
+                                    End If
                                 End If
                             End If
                             tabs(tabIndex).setAttr(recordIndex, resName, value)
@@ -1114,6 +1333,39 @@
             line = LineInput(1)
         Loop Until line.Contains("}") Or tabs(tabIndex).records.Count = tabs(tabIndex).recordMax
     End Sub
+
+    Sub readAnimations(ByRef record As Record, ByVal data As Byte())
+        record.animList = New List(Of String)
+
+        Dim animCount As Long = bytesToLong(data, 32)
+        printLog("ANIM" & animCount)
+        Dim vertCount As Long = bytesToLong(data, 40)
+        printLog("VERT" & vertCount)
+        Dim triCount As Long = bytesToLong(data, 44)
+        printLog("TRI" & triCount)
+        Dim texSize As Long = bytesToLong(data, 48)
+        printLog("TEX" & texSize)
+
+        Dim yLoc = 52 + 64 * triCount + 16 * vertCount + texSize
+
+        For a As Integer = 0 To animCount - 1
+            Dim name(31) As Byte
+            For i As Integer = 0 To 31
+                name(i) = data(yLoc + i)
+            Next
+            record.animList.Add(System.Text.Encoding.ASCII.GetString(name).Replace(Chr(0), ""))
+
+            Dim frameCount As Long = bytesToLong(data, yLoc + 36)
+            yLoc += 40 + 6 * frameCount * vertCount
+        Next
+    End Sub
+
+    Function bytesToLong(ByVal bytes() As Byte, ByVal start As Integer) As Long
+        Return bytes(start) _
+               + bytes(start + 1) * (256&) _
+               + bytes(start + 2) * (256 * 256&) _
+               + bytes(start + 3) * (256 * 256& * 256&)
+    End Function
 
     Private Sub readPrices(ByVal line As String)
         Dim w, h, a, e As Integer
@@ -1188,8 +1440,9 @@
 
         Public Sub addAttribute(ByVal name As String, ByVal res As String, ByVal type As AttributeType, ByVal defaultValue As Object,
                                 ByVal min As Integer, ByVal max As Integer, ByVal hide As Boolean, ByVal gameFolder As String,
-                                ByVal ext As String, ByVal edit As Boolean, ByVal valida As Boolean, ByVal help As String)
-            attributeClasses.Add(New AttributeClass(name, res, type, defaultValue, min, max, hide, gameFolder, ext, edit, valida, help))
+                                ByVal ext As String, ByVal edit As Boolean, ByVal valida As Boolean, ByVal aiD As Boolean,
+                                ByVal help As String)
+            attributeClasses.Add(New AttributeClass(name, res, type, defaultValue, min, max, hide, gameFolder, ext, edit, valida, aiD, help))
             'clear temp folder
             'If type = AttributeType.attrFile Then
             'Dim path As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).Remove(0, 6) & "\" & tempFolder & "\"
@@ -1197,6 +1450,10 @@
             'My.Computer.FileSystem.DeleteFile(path & fi.Name)
             'Next
             'End If
+        End Sub
+
+        Public Sub addAttribute(ByRef attrClass)
+            attributeClasses.Add(attrClass)
         End Sub
 
         Public Sub addRecord()
@@ -1245,8 +1502,8 @@
     End Class
 
     Public Class Record
-        'Dim name As String 'name of individual dino
         Public attributes As List(Of Attribute)
+        Public animList As List(Of String)
     End Class
 
     Public Class AttributeClass
@@ -1266,9 +1523,11 @@
         Public data As List(Of Byte())
         Public dInd As List(Of String)
 
+        Public AIdependant As Boolean 'If true, checks AI to see whether the value should be disabled
+
         Public Sub New(ByVal _name As String, ByVal _res As String, ByVal _type As AttributeType, ByVal defVal As Object,
                        ByVal min As Integer, ByVal max As Integer, ByVal _hidden As Boolean, ByVal _gameFolder As String,
-                       ByVal _ext As String, ByVal _edit As Boolean, ByVal _validation As Boolean, ByVal help As String)
+                       ByVal _ext As String, ByVal _edit As Boolean, ByVal _validation As Boolean, ByVal aiD As Boolean, ByVal help As String)
             displayName = _name
             resName = _res
             type = _type
@@ -1281,8 +1540,9 @@
             editable = _edit
             validation = _validation
             helpInfo = help
+            AIdependant = aiD
 
-            If type = AttributeType.attrFile Then
+            If type = AttributeType.attrFile Or type = AttributeType.attrCar Then
                 data = New List(Of Byte())
                 dInd = New List(Of String)
             End If
@@ -1299,8 +1559,11 @@
         attrBoolean ' true/false
         attrIntBool ' true/false - written with numbers in the res
         attrFile
+
         attrSlot ' AI
         attrAI ' Clone
+        attrCar ' Creatures only
+        attrAnim
     End Enum
 
     Public Class Attribute
@@ -1312,6 +1575,16 @@
         End Sub
         Public Sub setvalue(ByVal _value As Object)
             value = _value
+        End Sub
+    End Class
+
+    Public Class AI
+        Public name As String
+        Public id As Integer
+        Public active As List(Of String)
+        Public Sub New(ByVal nam As String, ByVal i As Integer)
+            name = nam
+            id = i
         End Sub
     End Class
 

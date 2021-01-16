@@ -103,59 +103,196 @@ Rate of Fire=1.0
 Scope Zoom=True
 Bullet Fall=False
 ---------------------------------------------------------------------
+ANIM6
+VERT326
+TRI648
+TEX131072
 READ Ambient Creature : 0
 Name=Moshops
+Slot=1
+AI=1
+CAR File=mosh.car
+Run Animation=0
+Walk Animation=1
+Slide Animation=0
+Fly Animation=0
+Glide Animation=0
 ---------------------------------------------------------------------
+ANIM7
+VERT348
+TRI694
+TEX131072
 READ Ambient Creature : 1
 Name=Galimimus
+Slot=2
+AI=2
+CAR File=gall.car
+Run Animation=0
+Walk Animation=1
+Slide Animation=2
+Fly Animation=0
+Glide Animation=0
 ---------------------------------------------------------------------
+ANIM4
+VERT307
+TRI610
+TEX131072
 READ Ambient Creature : 2
 Name=Dimorphodon
+Slot=3
+AI=3
+CAR File=dimor2.car
+Run Animation=0
+Walk Animation=0
+Slide Animation=0
+Fly Animation=0
+Glide Animation=1
 ---------------------------------------------------------------------
+ANIM4
+VERT349
+TRI682
+TEX131072
 READ Ambient Creature : 3
 Name=Pteranodon
+Slot=4
+AI=4
+CAR File=ptera.car
+Run Animation=0
+Walk Animation=0
+Slide Animation=0
+Fly Animation=0
+Glide Animation=1
 ---------------------------------------------------------------------
+ANIM6
+VERT390
+TRI780
+TEX131072
 READ Ambient Creature : 4
 Name=Dimetrodon
+Slot=5
+AI=5
+CAR File=dimet.car
+Run Animation=1
+Walk Animation=0
+Slide Animation=0
+Fly Animation=0
+Glide Animation=0
 ---------------------------------------------------------------------
+ANIM6
+VERT332
+TRI660
+TEX131072
 READ Huntable Creature : 0
 Name=Parasaurolophus
+Description (Metric)=
+Description (US)=
+Menu Image=
 Price=0
+CAR File=par2.car
 ---------------------------------------------------------------------
+ANIM6
+VERT451
+TRI902
+TEX131072
 READ Huntable Creature : 1
 Name=Ankylosaurus
+Description (Metric)=
+Description (US)=
+Menu Image=
 Price=0
+CAR File=ankylo1.car
 ---------------------------------------------------------------------
+ANIM6
+VERT461
+TRI918
+TEX131072
 READ Huntable Creature : 2
 Name=Stegosaurus
+Description (Metric)=
+Description (US)=
+Menu Image=
 Price=0
+CAR File=stego.car
 ---------------------------------------------------------------------
+ANIM10
+VERT330
+TRI661
+TEX131072
 READ Huntable Creature : 3
 Name=Allosaurus
+Description (Metric)=
+Description (US)=
+Menu Image=
 Price=0
+CAR File=allo_ii.car
 ---------------------------------------------------------------------
+ANIM7
+VERT453
+TRI902
+TEX131072
 READ Huntable Creature : 4
 Name=Chasmosaurus
+Description (Metric)=
+Description (US)=
+Menu Image=
 Price=0
+CAR File=chasmosa.car
 ---------------------------------------------------------------------
+ANIM12
+VERT374
+TRI748
+TEX131072
 READ Huntable Creature : 5
 Name=Velociraptor
+Description (Metric)=
+Description (US)=
+Menu Image=
 Price=0
+CAR File=velo_iidc.car
 ---------------------------------------------------------------------
+ANIM10
+VERT441
+TRI878
+TEX131072
 READ Huntable Creature : 6
 Name=Spinosaurus
+Description (Metric)=
+Description (US)=
+Menu Image=
 Price=0
+CAR File=spino_s.car
 ---------------------------------------------------------------------
+ANIM9
+VERT445
+TRI886
+TEX131072
 READ Huntable Creature : 7
 Name=Ceratosaurus
+Description (Metric)=
+Description (US)=
+Menu Image=
 Price=0
+CAR File=cerato1_s.car
 ---------------------------------------------------------------------
+ANIM10
+VERT409
+TRI814
+TEX130560
 READ Huntable Creature : 8
 Name=T-Rex
+Description (Metric)=
+Description (US)=
+Menu Image=
 Price=0
+CAR File=tirex.car
 ---------------------------------------------------------------------
+ANIM8
+VERT495
+TRI988
+TEX131072
 READ Map Ambient Creature : 0
 Name=Brachiosaurus
+CAR File=dangerbrachikiller2.car
 ---------------------------------------------------------------------
 READ PRICES:
 START MONEY = 10000
