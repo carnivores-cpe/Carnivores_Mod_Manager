@@ -39,8 +39,8 @@
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        init()
         'todo load dialog?
+        init()
         setupTabData()
         loadData()
         drawTabs()
@@ -93,26 +93,26 @@
     Private Sub setupTabData()
 
         aiList = New List(Of AI)
-        aiList.Add(New AI("Moshops", 1))                    '0
-        aiList.Add(New AI("Galimimus", 2))                  '1
-        aiList.Add(New AI("Dimorphodon", 3))                '2
-        aiList.Add(New AI("Pteranodon", 4))                 '3
-        aiList.Add(New AI("Dimetrodon", 5))                 '4
-        aiList.Add(New AI("Parasaurolophus", 10))           '5
-        aiList.Add(New AI("Pachycephalosaurus", 19))        '6
-        aiList.Add(New AI("Ankylosaurus", 11))              '7
-        aiList.Add(New AI("Stegosaurus", 12))               '8
-        aiList.Add(New AI("Allosaurus", 13))                '9
-        aiList.Add(New AI("Chasmosaurus", 14))              '10
-        aiList.Add(New AI("Velociraptor", 15))              '11
-        aiList.Add(New AI("Spinosaurus", 16))               '12
-        aiList.Add(New AI("Ceratosaurus", 17))              '13
-        aiList.Add(New AI("T-Rex", 18))                     '14
-        aiList.Add(New AI("Brachiosaurus", -1))             '15
-        aiList.Add(New AI("Dangerous Brachiosaurus", -5))   '16
-        aiList.Add(New AI("Land Brachiosaurus", -6))        '17
-        aiList.Add(New AI("Ichthyornis", -2))               '18
-        aiList.Add(New AI("Fish", -3))                      '19
+        aiList.Add(New AI("Moshops", 1, 4))                    '0
+        aiList.Add(New AI("Galimimus", 2, 5))                  '1
+        aiList.Add(New AI("Dimorphodon", 3, 4))                '2
+        aiList.Add(New AI("Pteranodon", 4, 4))                 '3
+        aiList.Add(New AI("Dimetrodon", 5, 4))                 '4
+        aiList.Add(New AI("Parasaurolophus", 10, 0))           '5
+        aiList.Add(New AI("Pachycephalosaurus", 19, 0))        '6
+        aiList.Add(New AI("Ankylosaurus", 11, 0))              '7
+        aiList.Add(New AI("Stegosaurus", 12, 0))               '8
+        aiList.Add(New AI("Allosaurus", 13, 0))                '9
+        aiList.Add(New AI("Chasmosaurus", 14, 0))              '10
+        aiList.Add(New AI("Velociraptor", 15, 0))              '11
+        aiList.Add(New AI("Spinosaurus", 16, 0))               '12
+        aiList.Add(New AI("Ceratosaurus", 17, 0))              '13
+        aiList.Add(New AI("T-Rex", 18, 0))                     '14
+        aiList.Add(New AI("Brachiosaurus", -1, 0))             '15
+        aiList.Add(New AI("Dangerous Brachiosaurus", -5, 0))   '16
+        aiList.Add(New AI("Land Brachiosaurus", -6, 0))        '17
+        aiList.Add(New AI("Ichthyornis", -2, 0))               '18
+        aiList.Add(New AI("Fish", -3, 0))                      '19
 
         For index = 0 To 19
             aiList(index).active = New List(Of String)
@@ -128,6 +128,7 @@
             aiList(index).active.Add("flyAnim")
             aiList(index).active.Add("glideAnim")
         Next
+
 
         'TODO THIS WILL ALL BE VERSION-SPECIFIC IN FUTURE
 
@@ -171,11 +172,11 @@
         tabs(AmbientTab).addAttribute("AI", "clone", AttributeType.attrAI, 1, 0, 4, False, "", "", True, False, False, "The AI used by the creature")
         'remember to change ai minmax 'default is AI number, min/max is listAi index
         tabs(AmbientTab).addAttribute(carFileClass)
-        tabs(AmbientTab).addAttribute("Run Animation", "runAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, False, True, "The running animation for the creature - animations can be viewed by opening the car file in C3Dit.")
-        tabs(AmbientTab).addAttribute("Walk Animation", "walkAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, False, True, "The walking animation for the creature - animations can be viewed by opening the car file in C3Dit.")
-        tabs(AmbientTab).addAttribute("Slide Animation", "slideAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, False, True, "The sliding animation for the creature - animations can be viewed by opening the car file in C3Dit.")
-        tabs(AmbientTab).addAttribute("Fly Animation", "flyAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, False, True, "The flying animation for the creature - animations can be viewed by opening the car file in C3Dit.")
-        tabs(AmbientTab).addAttribute("Glide Animation", "glideAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, False, True, "The gliding animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Run Animation", "runAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, True, True, "The running animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Walk Animation", "walkAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, True, True, "The walking animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Slide Animation", "slideAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, True, True, "The sliding animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Fly Animation", "flyAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, True, True, "The flying animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Glide Animation", "glideAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, True, True, "The gliding animation for the creature - animations can be viewed by opening the car file in C3Dit.")
 
 
         tabs(AmbientCorpseTab) = New Tab()
@@ -726,18 +727,14 @@
 
                     Case AttributeType.attrCar
 
-                        Dim textBox
+                        Dim textBox As UnscrollableCarComboBox
 
-                        If attrclasses(attrIndex).resName.Contains("&") Then
-                            textBox = New TextBox
-                            textBox.Enabled = False
-                        Else
-                            textBox = New UnscrollableComboBox
-                            textBox.DropDownStyle = ComboBoxStyle.DropDownList
-                            For index = 0 To attrclasses(attrIndex).dInd.Count - 1
-                                textBox.Items.Add(attrclasses(attrIndex).dInd(index))
-                            Next
-                        End If
+
+                        textBox = New UnscrollableCarComboBox
+                        textBox.DropDownStyle = ComboBoxStyle.DropDownList
+                        For index = 0 To attrclasses(attrIndex).dInd.Count - 1
+                            textBox.Items.Add(attrclasses(attrIndex).dInd(index))
+                        Next
 
                         textBox.Text = record.attributes(attrIndex).value
                         textBox.Size = New Drawing.Size(108, 15)
@@ -753,6 +750,8 @@
                         button.record = record
                         button.attrIndex = attrIndex
                         button.handle2 = textBox
+                        textBox.record = record
+                        textBox.attrIndex = attrIndex
                         button.Size = New Drawing.Size(23, 22)
                         button.Location = New Drawing.Point(224, yPos - 1)
                         button.Image = imgOpenFile
@@ -764,6 +763,9 @@
                             button.Enabled = False
                             textBox.enabled = False 'disable in case it's a combo box
                         End If
+
+                        textBox.lastIndex = textBox.SelectedIndex
+                        AddHandler textBox.SelectedIndexChanged, AddressOf checkCarValid
 
                 End Select
 
@@ -852,51 +854,51 @@
         sender.prevValue = handle(sender.senderAttr).selectedIndex
     End Sub
 
-    Function validateField(ByRef handle As Object)
-        If handle.text.trim = "" Then Return False
+    Function validateField(ByRef handle3 As Object)
+        If handle3.text.trim = "" Then Return False
         Return True
     End Function
 
-    Function getHandleValue(ByRef attrClass As AttributeClass, ByRef handle As Object, ByVal record As Record)
+    Function getHandleValue(ByRef attrClass As AttributeClass, ByRef handle3 As Object, ByVal record As Record)
         Select Case attrClass.type
             Case AttributeType.attrString
-                Return handle.text
+                Return handle3.text
             Case AttributeType.attrAI
-                Return aiList(getAI(handle.text)).id
+                Return aiList(getAI(handle3.text)).id
             Case AttributeType.attrTextFile
-                Return handle.text
+                Return handle3.text
             Case AttributeType.attrFile
-                Return handle.text
+                Return handle3.text
             Case AttributeType.attrCar
-                Return handle.text
+                Return handle3.text
             Case AttributeType.attrAnim
-                Return handle.SelectedIndex
+                Return handle3.SelectedIndex
             Case AttributeType.attrInteger
-                If handle.Text = "" Then
+                If handle3.Text = "" Then
                     Return 0
                 Else
-                    Return handle.value
+                    Return handle3.value
                 End If
             Case AttributeType.attrTogglableInteger
-                If handle.Text = "" Then
+                If handle3.Text = "" Then
                     Return 0
                 Else
-                    Return handle.value
+                    Return handle3.value
                 End If
             Case AttributeType.attrDouble
-                If handle.Text = "" Then
+                If handle3.Text = "" Then
                     Return 0
                 Else
-                    Return handle.value
+                    Return handle3.value
                 End If
             Case AttributeType.attrIntBool
-                If handle.selectedIndex = 0 Then
+                If handle3.selectedIndex = 0 Then
                     Return True
                 Else
                     Return False
                 End If
             Case AttributeType.attrBoolean
-                If handle.selectedIndex = 0 Then
+                If handle3.selectedIndex = 0 Then
                     Return True
                 Else
                     Return False
@@ -995,6 +997,41 @@
         helpForm.ShowDialog()
     End Sub
 
+    Private Sub changeAI(sender As Object, e As EventArgs)
+
+    End Sub
+
+    Private Sub checkCarValid(sender As Object, e As EventArgs)
+        If sender.progChange = True Then
+            sender.progChange = False
+        Else
+
+            Dim animList As List(Of String)
+            Dim attrClass = tabs(TabControl1.SelectedIndex).attributeClasses(sender.attrIndex)
+            Dim ai As AI = aiList(handle(tabs(TabControl1.SelectedIndex).getAttrIndex("clone")).selectedIndex)
+            animList = readAnimations(attrClass.data(sender.selectedIndex))
+            If animList.Count < ai.minAnim Then
+                mess(ai.name & " AI requires a CAR file with at least " & ai.minAnim & " Animations.")
+                sender.progChange = True
+                sender.selectedIndex = sender.lastIndex
+            Else
+                sender.record.animList = animList
+                For attrIndex As Integer = 0 To handle.Count - 1
+                    Dim aCl = tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex)
+                    If aCl.type = AttributeType.attrAnim And ai.active.Contains(aCl.resName) Then
+                        handle(attrIndex).items.clear
+                        For animIndex = 0 To sender.record.animList.count - 1
+                            handle(attrIndex).items.add(sender.record.animList(animIndex))
+                        Next
+                    End If
+                Next
+                sender.lastIndex = sender.selectedIndex
+            End If
+
+        End If
+
+    End Sub
+
     Private Sub OpenFileDialog(sender As Object, e As EventArgs)
         Dim dialog As New OpenFileDialog()
         Dim ext As String = tabs(TabControl1.SelectedIndex).attributeClasses(sender.attrindex).ext
@@ -1029,7 +1066,6 @@
                 sender.handle2.items.add(filename.ToLower)
                 sender.handle2.selectedindex = sender.handle2.items.count - 1
             End If
-
 
             tempdir = System.IO.Path.GetFullPath(dialog.FileName)
 
@@ -1089,6 +1125,20 @@
         End Sub
     End Class
 
+    Friend Class UnscrollableCarComboBox
+        Inherits UnscrollableComboBox
+
+        Public lastIndex As Integer
+        Public record As Record
+        Public attrIndex As Integer
+        Public progChange As Boolean
+
+        Public Sub New()
+            progChange = False
+        End Sub
+
+    End Class
+
     Friend Class UnscrollableAnimComboBox
         Inherits UnscrollableComboBox
 
@@ -1116,7 +1166,19 @@
     Private Sub editFormOk(sender As Object, e As EventArgs)
         sender.result = True
         For index = 0 To sender.handle2.count - 1
-            If tabs(TabControl1.SelectedIndex).attributeClasses(index).validation = True Then
+            Dim active As Boolean = True
+
+            If tabs(TabControl1.SelectedIndex).attributeClasses(index).validation = False Then active = False
+            If tabs(TabControl1.SelectedIndex).attributeClasses(index).hidden = True Then active = False
+            If tabs(TabControl1.SelectedIndex).attributeClasses(index).AIdependant = True Then
+
+                If Not aiList(handle(tabs(TabControl1.SelectedIndex).getAttrIndex("clone")).selectedIndex).active.Contains(tabs(TabControl1.SelectedIndex).attributeClasses(index).resName) Then
+                    active = False
+                End If
+
+            End If
+
+            If active = True Then
                 If Not validateField(sender.handle2(index)) Then
                     sender.result = False
                     mess(tabs(TabControl1.SelectedIndex).attributeClasses(index).displayName & " invalid")
@@ -1297,7 +1359,7 @@
                                     tabs(tabIndex).attributeClasses(attrIndex).data.Add(My.Computer.FileSystem.ReadAllBytes(dir & tabs(tabIndex).getAttrClass(resName).gameFolder & value))
                                     If tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrCar Then
 
-                                        readAnimations(tabs(tabIndex).records(recordIndex), tabs(tabIndex).attributeClasses(attrIndex).data(tabs(tabIndex).attributeClasses(attrIndex).data.Count - 1))
+                                        tabs(tabIndex).records(recordIndex).animList = readAnimations(tabs(tabIndex).attributeClasses(attrIndex).data(tabs(tabIndex).attributeClasses(attrIndex).data.Count - 1))
 
                                     End If
                                 End If
@@ -1334,8 +1396,8 @@
         Loop Until line.Contains("}") Or tabs(tabIndex).records.Count = tabs(tabIndex).recordMax
     End Sub
 
-    Sub readAnimations(ByRef record As Record, ByVal data As Byte())
-        record.animList = New List(Of String)
+    Function readAnimations(ByVal data As Byte())
+        Dim list As List(Of String) = New List(Of String)
 
         Dim animCount As Long = bytesToLong(data, 32)
         printLog("ANIM" & animCount)
@@ -1353,12 +1415,13 @@
             For i As Integer = 0 To 31
                 name(i) = data(yLoc + i)
             Next
-            record.animList.Add(System.Text.Encoding.ASCII.GetString(name).Replace(Chr(0), ""))
+            list.Add(System.Text.Encoding.ASCII.GetString(name).Replace(Chr(0), ""))
 
             Dim frameCount As Long = bytesToLong(data, yLoc + 36)
             yLoc += 40 + 6 * frameCount * vertCount
         Next
-    End Sub
+        Return list
+    End Function
 
     Function bytesToLong(ByVal bytes() As Byte, ByVal start As Integer) As Long
         Return bytes(start) _
@@ -1582,9 +1645,11 @@
         Public name As String
         Public id As Integer
         Public active As List(Of String)
-        Public Sub New(ByVal nam As String, ByVal i As Integer)
+        Public minAnim As Integer
+        Public Sub New(ByVal nam As String, ByVal i As Integer, ByVal ma As Integer)
             name = nam
             id = i
+            minAnim = ma
         End Sub
     End Class
 
