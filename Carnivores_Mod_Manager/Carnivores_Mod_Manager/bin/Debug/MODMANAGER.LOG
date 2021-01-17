@@ -114,9 +114,9 @@ AI=1
 CAR File=mosh.car
 Run Animation=0
 Walk Animation=1
-Slide Animation=0
-Fly Animation=0
-Glide Animation=0
+Slide Animation=-1
+Fly Animation=-1
+Glide Animation=-1
 ---------------------------------------------------------------------
 ANIM7
 VERT348
@@ -130,8 +130,8 @@ CAR File=gall.car
 Run Animation=0
 Walk Animation=1
 Slide Animation=2
-Fly Animation=0
-Glide Animation=0
+Fly Animation=-1
+Glide Animation=-1
 ---------------------------------------------------------------------
 ANIM4
 VERT307
@@ -142,9 +142,9 @@ Name=Dimorphodon
 Slot=3
 AI=3
 CAR File=dimor2.car
-Run Animation=0
-Walk Animation=0
-Slide Animation=0
+Run Animation=-1
+Walk Animation=-1
+Slide Animation=-1
 Fly Animation=0
 Glide Animation=1
 ---------------------------------------------------------------------
@@ -157,9 +157,9 @@ Name=Pteranodon
 Slot=4
 AI=4
 CAR File=ptera.car
-Run Animation=0
-Walk Animation=0
-Slide Animation=0
+Run Animation=-1
+Walk Animation=-1
+Slide Animation=-1
 Fly Animation=0
 Glide Animation=1
 ---------------------------------------------------------------------
@@ -174,9 +174,9 @@ AI=5
 CAR File=dimet.car
 Run Animation=1
 Walk Animation=0
-Slide Animation=0
-Fly Animation=0
-Glide Animation=0
+Slide Animation=-1
+Fly Animation=-1
+Glide Animation=-1
 ---------------------------------------------------------------------
 ANIM6
 VERT332
@@ -312,3 +312,7 @@ EQUIPMENT1=0
 EQUIPMENT2=0
 EQUIPMENT3=0
 ---------------------------------------------------------------------
+ANIM6
+VERT326
+TRI648
+TEX131072

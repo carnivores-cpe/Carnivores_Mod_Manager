@@ -174,11 +174,11 @@
         tabs(AmbientTab).addAttribute("AI", "clone", AttributeType.attrAI, 1, 0, 4, False, "", "", True, False, False, "The AI used by the creature")
         'remember to change ai minmax 'default is AI number, min/max is listAi index
         tabs(AmbientTab).addAttribute(carFileClass)
-        tabs(AmbientTab).addAttribute("Run Animation", "runAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, True, True, "The running animation for the creature - animations can be viewed by opening the car file in C3Dit.")
-        tabs(AmbientTab).addAttribute("Walk Animation", "walkAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, True, True, "The walking animation for the creature - animations can be viewed by opening the car file in C3Dit.")
-        tabs(AmbientTab).addAttribute("Slide Animation", "slideAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, True, True, "The sliding animation for the creature - animations can be viewed by opening the car file in C3Dit.")
-        tabs(AmbientTab).addAttribute("Fly Animation", "flyAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, True, True, "The flying animation for the creature - animations can be viewed by opening the car file in C3Dit.")
-        tabs(AmbientTab).addAttribute("Glide Animation", "glideAnim", AttributeType.attrAnim, 0, 0, 32, False, "", "", True, True, True, "The gliding animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Run Animation", "runAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, "The running animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Walk Animation", "walkAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, "The walking animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Slide Animation", "slideAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, "The sliding animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Fly Animation", "flyAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, "The flying animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Glide Animation", "glideAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, "The gliding animation for the creature - animations can be viewed by opening the car file in C3Dit.")
 
 
         tabs(AmbientCorpseTab) = New Tab()
@@ -497,307 +497,317 @@
             'If active = True Then
 
             Dim yIncrement As Integer = 0
-                Dim helpIncrement As Integer = 0
+            Dim helpIncrement As Integer = 0
 
-                panel.Add(New Panel)
-                panel(panel.Count - 1).Location = New Drawing.Point(8, yPos)
+            panel.Add(New Panel)
+            panel(panel.Count - 1).Location = New Drawing.Point(8, yPos)
 
-                Select Case attrclasses(attrIndex).type
+            Select Case attrclasses(attrIndex).type
 
-                    Case AttributeType.attrString
-                        Dim textBox As TextBox = New TextBox
-                        textBox.Size = New Drawing.Size(130, 15)
-                        textBox.Location = New Drawing.Point(116, 0)
-                        textBox.Text = record.attributes(attrIndex).value
-                        panel(panel.Count - 1).Controls.Add(textBox)
-                        handle.Add(textBox)
+                Case AttributeType.attrSlot
+                    handle.Add(Nothing)
 
-                        If attrclasses(attrIndex).editable = False Then textBox.Enabled = False
+                Case AttributeType.attrString
+                    Dim textBox As TextBox = New TextBox
+                    textBox.Size = New Drawing.Size(130, 15)
+                    textBox.Location = New Drawing.Point(116, 0)
+                    textBox.Text = record.attributes(attrIndex).value
+                    panel(panel.Count - 1).Controls.Add(textBox)
+                    handle.Add(textBox)
 
-                    'todo string max length
-
-                    Case AttributeType.attrAI
-                        Dim comboBox As UnscrollableComboBox = New UnscrollableComboBox 'custom class overrides scroll wheeling through options
-                        comboBox.Size = New Drawing.Size(130, 15)
-                        comboBox.Location = New Drawing.Point(116, 0)
-                        For index = attrclasses(attrIndex).minValue To attrclasses(attrIndex).maxValue
-                            comboBox.Items.Add(aiList(index).name)
-                        Next
-                        comboBox.DropDownStyle = ComboBoxStyle.DropDownList
-                        comboBox.SelectedIndex = getAIIndex(record.attributes(attrIndex).value)
-                        panel(panel.Count - 1).Controls.Add(comboBox)
-                        handle.Add(comboBox)
-
-                        If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
-
-
-                    Case AttributeType.attrTextFile
-                        Dim textBox As TextBox = New TextBox
-                        textBox.Size = New Drawing.Size(130, 80)
-                        textBox.Multiline = True
-                        textBox.WordWrap = False
-                        textBox.ScrollBars = ScrollBars.Both
-                        textBox.Location = New Drawing.Point(116, 0)
-                        textBox.Text = record.attributes(attrIndex).value
-                        panel(panel.Count - 1).Controls.Add(textBox)
-                        handle.Add(textBox)
-
-                        Dim tooltip = New ToolTip
-                        tooltip.ShowAlways = True
-                        Dim expandButton As LoadDataButton = New LoadDataButton
-                        expandButton.record = record
-                        expandButton.attrIndex = attrIndex
-                        expandButton.handle2 = textBox
-                        expandButton.Size = New Drawing.Size(23, 22)
-                        expandButton.Location = New Drawing.Point(90, -1)
-                        expandButton.Image = imgExpand
-                        AddHandler expandButton.Click, AddressOf showTextEditor
-                        tooltip.SetToolTip(expandButton, "Expand")
-                        panel(panel.Count - 1).Controls.Add(expandButton)
-
-                        'increase size button enabled
-                        If attrclasses(attrIndex).editable = False Then
-                            textBox.Enabled = False
-                            expandButton.Enabled = False
-                        End If
-
-                        yIncrement = 65
-                        helpIncrement = 32
+                    If attrclasses(attrIndex).editable = False Then textBox.Enabled = False
 
                     'todo string max length
 
-                    Case AttributeType.attrInteger
-                        Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
-                        numBox.Size = New Drawing.Size(130, 15)
-                        numBox.Location = New Drawing.Point(116, 0)
-                        numBox.Maximum = attrclasses(attrIndex).maxValue
-                        numBox.Minimum = attrclasses(attrIndex).minValue
-                        numBox.Value = record.attributes(attrIndex).value
-                        panel(panel.Count - 1).Controls.Add(numBox)
-                        handle.Add(numBox)
+                Case AttributeType.attrAI
+                    Dim comboBox As UnscrollableComboBox = New UnscrollableComboBox 'custom class overrides scroll wheeling through options
+                    comboBox.Size = New Drawing.Size(130, 15)
+                    comboBox.Location = New Drawing.Point(116, 0)
+                    For index = attrclasses(attrIndex).minValue To attrclasses(attrIndex).maxValue
+                        comboBox.Items.Add(aiList(index).name)
+                    Next
+                    comboBox.DropDownStyle = ComboBoxStyle.DropDownList
+                    comboBox.SelectedIndex = getAIIndex(record.attributes(attrIndex).value)
+                    panel(panel.Count - 1).Controls.Add(comboBox)
 
-                        If attrclasses(attrIndex).editable = False Then numBox.Enabled = False
+                    AddHandler comboBox.SelectedIndexChanged, AddressOf changeAI
 
-                    Case AttributeType.attrAnim
 
-                        Dim comboBox As UnscrollableAnimComboBox = New UnscrollableAnimComboBox 'custom class overrides scroll wheeling through options
-                        comboBox.Size = New Drawing.Size(130, 15)
-                        comboBox.Location = New Drawing.Point(116, 0)
+                    handle.Add(comboBox)
+
+                    If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
+
+
+                Case AttributeType.attrTextFile
+                    Dim textBox As TextBox = New TextBox
+                    textBox.Size = New Drawing.Size(130, 80)
+                    textBox.Multiline = True
+                    textBox.WordWrap = False
+                    textBox.ScrollBars = ScrollBars.Both
+                    textBox.Location = New Drawing.Point(116, 0)
+                    textBox.Text = record.attributes(attrIndex).value
+                    panel(panel.Count - 1).Controls.Add(textBox)
+                    handle.Add(textBox)
+
+                    Dim tooltip = New ToolTip
+                    tooltip.ShowAlways = True
+                    Dim expandButton As LoadDataButton = New LoadDataButton
+                    expandButton.record = record
+                    expandButton.attrIndex = attrIndex
+                    expandButton.handle2 = textBox
+                    expandButton.Size = New Drawing.Size(23, 22)
+                    expandButton.Location = New Drawing.Point(90, -1)
+                    expandButton.Image = imgExpand
+                    AddHandler expandButton.Click, AddressOf showTextEditor
+                    tooltip.SetToolTip(expandButton, "Expand")
+                    panel(panel.Count - 1).Controls.Add(expandButton)
+
+                    'increase size button enabled
+                    If attrclasses(attrIndex).editable = False Then
+                        textBox.Enabled = False
+                        expandButton.Enabled = False
+                    End If
+
+                    yIncrement = 65
+                    helpIncrement = 32
+
+                    'todo string max length
+
+                Case AttributeType.attrInteger
+                    Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
+                    numBox.Size = New Drawing.Size(130, 15)
+                    numBox.Location = New Drawing.Point(116, 0)
+                    numBox.Maximum = attrclasses(attrIndex).maxValue
+                    numBox.Minimum = attrclasses(attrIndex).minValue
+                    numBox.Value = record.attributes(attrIndex).value
+                    panel(panel.Count - 1).Controls.Add(numBox)
+                    handle.Add(numBox)
+
+                    If attrclasses(attrIndex).editable = False Then numBox.Enabled = False
+
+                Case AttributeType.attrAnim
+
+                    Dim comboBox As UnscrollableAnimComboBox = New UnscrollableAnimComboBox 'custom class overrides scroll wheeling through options
+                    comboBox.Size = New Drawing.Size(130, 15)
+                    comboBox.Location = New Drawing.Point(116, 0)
+                    If handle(tabs(TabControl1.SelectedIndex).getAttrIndex("clone")).selectedIndex >= 0 Then 'new records will not be specified with a car yet!
                         For Each animName In record.animList
                             comboBox.Items.Add(animName)
                         Next
-                        comboBox.DropDownStyle = ComboBoxStyle.DropDownList
-                        comboBox.SelectedIndex = record.attributes(attrIndex).value
-                        panel(panel.Count - 1).Controls.Add(comboBox)
-                        comboBox.prevValue = comboBox.SelectedIndex
-                        comboBox.senderAttr = attrIndex
-                        comboBox.recordIndex = recordIndex
-                        AddHandler comboBox.SelectedIndexChanged, AddressOf animReorder
-                        handle.Add(comboBox)
-                        If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
+                    End If
+
+                    comboBox.DropDownStyle = ComboBoxStyle.DropDownList
+                    comboBox.SelectedIndex = record.attributes(attrIndex).value
+                    panel(panel.Count - 1).Controls.Add(comboBox)
+                    comboBox.prevValue = comboBox.SelectedIndex
+                    comboBox.senderAttr = attrIndex
+                    comboBox.recordIndex = recordIndex
+                    AddHandler comboBox.SelectedIndexChanged, AddressOf animReorder
+                    handle.Add(comboBox)
+                    If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
 
 
-                    Case AttributeType.attrTogglableInteger
+                Case AttributeType.attrTogglableInteger
 
-                        Dim label1 As Label = New Label
-                        label1.Text = "Default"
-                        label1.Size = New Drawing.Size(45, 15)
-                        label1.Location = New Drawing.Point(116, 1)
-                        panel(panel.Count - 1).Controls.Add(label1)
+                    Dim label1 As Label = New Label
+                    label1.Text = "Default"
+                    label1.Size = New Drawing.Size(45, 15)
+                    label1.Location = New Drawing.Point(116, 1)
+                    panel(panel.Count - 1).Controls.Add(label1)
 
-                        Dim checkBox1 As MyCheckBox = New MyCheckBox()
-                        checkBox1.Size = New Drawing.Size(15, 15)
-                        checkBox1.Location = New Drawing.Point(161, 2)
-                        panel(panel.Count - 1).Controls.Add(checkBox1)
+                    Dim checkBox1 As MyCheckBox = New MyCheckBox()
+                    checkBox1.Size = New Drawing.Size(15, 15)
+                    checkBox1.Location = New Drawing.Point(161, 2)
+                    panel(panel.Count - 1).Controls.Add(checkBox1)
 
-                        Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
-                        numBox.Size = New Drawing.Size(130, 15)
-                        numBox.Location = New Drawing.Point(116, 17)
-                        numBox.Maximum = attrclasses(attrIndex).maxValue
-                        numBox.Minimum = attrclasses(attrIndex).minValue
+                    Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
+                    numBox.Size = New Drawing.Size(130, 15)
+                    numBox.Location = New Drawing.Point(116, 17)
+                    numBox.Maximum = attrclasses(attrIndex).maxValue
+                    numBox.Minimum = attrclasses(attrIndex).minValue
 
-                        'set value to empty when box ticked - this way dont have to update when shots textbox changes
+                    'set value to empty when box ticked - this way dont have to update when shots textbox changes
 
-                        If record.attributes(attrIndex).value = 0 Then
-                            checkBox1.Checked = True
-                            numBox.Value = 0
-                            numBox.Enabled = False
-                        Else
-                            checkBox1.Checked = False
-                            numBox.Value = record.attributes(attrIndex).value
-                            numBox.Enabled = True
-                        End If
+                    If record.attributes(attrIndex).value = 0 Then
+                        checkBox1.Checked = True
+                        numBox.Value = 0
+                        numBox.Enabled = False
+                    Else
+                        checkBox1.Checked = False
+                        numBox.Value = record.attributes(attrIndex).value
+                        numBox.Enabled = True
+                    End If
 
-                        checkBox1.attrIndex = attrIndex
-                        checkBox1.numBox = numBox
-                        AddHandler checkBox1.CheckedChanged, AddressOf updateToggleableInteger
+                    checkBox1.attrIndex = attrIndex
+                    checkBox1.numBox = numBox
+                    AddHandler checkBox1.CheckedChanged, AddressOf updateToggleableInteger
 
-                        panel(panel.Count - 1).Controls.Add(numBox)
-                        handle.Add(numBox)
+                    panel(panel.Count - 1).Controls.Add(numBox)
+                    handle.Add(numBox)
 
-                        If attrclasses(attrIndex).editable = False Then
-                            numBox.Enabled = False
-                            checkBox1.Enabled = False
-                        End If
+                    If attrclasses(attrIndex).editable = False Then
+                        numBox.Enabled = False
+                        checkBox1.Enabled = False
+                    End If
 
-                        yIncrement = 20
-                        helpIncrement = 7
+                    yIncrement = 20
+                    helpIncrement = 7
 
-                    Case AttributeType.attrDouble
-                        Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
-                        numBox.Size = New Drawing.Size(130, 15)
-                        numBox.Location = New Drawing.Point(116, 0)
-                        numBox.Maximum = attrclasses(attrIndex).maxValue
-                        numBox.Minimum = attrclasses(attrIndex).minValue
-                        numBox.Increment = 0.01D
-                        numBox.DecimalPlaces = 2
-                        numBox.Text = record.attributes(attrIndex).value
-                        panel(panel.Count - 1).Controls.Add(numBox)
-                        handle.Add(numBox)
+                Case AttributeType.attrDouble
+                    Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
+                    numBox.Size = New Drawing.Size(130, 15)
+                    numBox.Location = New Drawing.Point(116, 0)
+                    numBox.Maximum = attrclasses(attrIndex).maxValue
+                    numBox.Minimum = attrclasses(attrIndex).minValue
+                    numBox.Increment = 0.01D
+                    numBox.DecimalPlaces = 2
+                    numBox.Text = record.attributes(attrIndex).value
+                    panel(panel.Count - 1).Controls.Add(numBox)
+                    handle.Add(numBox)
 
-                        If attrclasses(attrIndex).editable = False Then numBox.Enabled = False
+                    If attrclasses(attrIndex).editable = False Then numBox.Enabled = False
 
-                    Case AttributeType.attrIntBool
-                        Dim comboBox As UnscrollableComboBox = New UnscrollableComboBox 'custom class overrides scroll wheeling through options
-                        comboBox.Size = New Drawing.Size(130, 15)
-                        comboBox.Location = New Drawing.Point(116, 0)
-                        comboBox.Text = record.attributes(attrIndex).value
-                        comboBox.Items.Add("True")
-                        comboBox.Items.Add("False")
-                        comboBox.DropDownStyle = ComboBoxStyle.DropDownList
-                        If record.attributes(attrIndex).value = True Then
-                            comboBox.SelectedIndex = 0
-                        Else
-                            comboBox.SelectedIndex = 1
-                        End If
-                        panel(panel.Count - 1).Controls.Add(comboBox)
-                        handle.Add(comboBox)
+                Case AttributeType.attrIntBool
+                    Dim comboBox As UnscrollableComboBox = New UnscrollableComboBox 'custom class overrides scroll wheeling through options
+                    comboBox.Size = New Drawing.Size(130, 15)
+                    comboBox.Location = New Drawing.Point(116, 0)
+                    comboBox.Text = record.attributes(attrIndex).value
+                    comboBox.Items.Add("True")
+                    comboBox.Items.Add("False")
+                    comboBox.DropDownStyle = ComboBoxStyle.DropDownList
+                    If record.attributes(attrIndex).value = True Then
+                        comboBox.SelectedIndex = 0
+                    Else
+                        comboBox.SelectedIndex = 1
+                    End If
+                    panel(panel.Count - 1).Controls.Add(comboBox)
+                    handle.Add(comboBox)
 
-                        If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
+                    If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
 
-                    Case AttributeType.attrBoolean
-                        Dim comboBox As UnscrollableComboBox = New UnscrollableComboBox 'custom class overrides scroll wheeling through options
-                        comboBox.Size = New Drawing.Size(130, 15)
-                        comboBox.Location = New Drawing.Point(116, 0)
-                        comboBox.Text = record.attributes(attrIndex).value
-                        comboBox.Items.Add("True")
-                        comboBox.Items.Add("False")
-                        comboBox.DropDownStyle = ComboBoxStyle.DropDownList
-                        If record.attributes(attrIndex).value = True Then
-                            comboBox.SelectedIndex = 0
-                        Else
-                            comboBox.SelectedIndex = 1
-                        End If
-                        panel(panel.Count - 1).Controls.Add(comboBox)
-                        handle.Add(comboBox)
+                Case AttributeType.attrBoolean
+                    Dim comboBox As UnscrollableComboBox = New UnscrollableComboBox 'custom class overrides scroll wheeling through options
+                    comboBox.Size = New Drawing.Size(130, 15)
+                    comboBox.Location = New Drawing.Point(116, 0)
+                    comboBox.Text = record.attributes(attrIndex).value
+                    comboBox.Items.Add("True")
+                    comboBox.Items.Add("False")
+                    comboBox.DropDownStyle = ComboBoxStyle.DropDownList
+                    If record.attributes(attrIndex).value = True Then
+                        comboBox.SelectedIndex = 0
+                    Else
+                        comboBox.SelectedIndex = 1
+                    End If
+                    panel(panel.Count - 1).Controls.Add(comboBox)
+                    handle.Add(comboBox)
 
-                        If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
+                    If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
 
-                    Case AttributeType.attrFile
+                Case AttributeType.attrFile
 
-                        Dim textBox
+                    Dim textBox
 
-                        If attrclasses(attrIndex).resName.Contains("&") Then
-                            textBox = New TextBox
-                            textBox.Enabled = False
-                        Else
-                            textBox = New UnscrollableComboBox
-                            textBox.DropDownStyle = ComboBoxStyle.DropDownList
-                            For index = 0 To attrclasses(attrIndex).dInd.Count - 1
-                                textBox.Items.Add(attrclasses(attrIndex).dInd(index))
-                            Next
-                        End If
-
-                        textBox.Text = record.attributes(attrIndex).value
-                        textBox.Size = New Drawing.Size(108, 15)
-                        textBox.Location = New Drawing.Point(116, 0)
-                        panel(panel.Count - 1).Controls.Add(textBox)
-                        handle.Add(textBox)
-
-
-
-                        Dim tooltip = New ToolTip
-                        tooltip.ShowAlways = True
-                        Dim button As LoadDataButton = New LoadDataButton
-                        button.record = record
-                        button.attrIndex = attrIndex
-                        button.handle2 = textBox
-                        button.Size = New Drawing.Size(23, 22)
-                        button.Location = New Drawing.Point(224, -1)
-                        button.Image = imgOpenFile
-                        AddHandler button.Click, AddressOf OpenFileDialog
-                        tooltip.SetToolTip(button, "Open " & attrclasses(attrIndex).ext.ToUpper & " File")
-                        panel(panel.Count - 1).Controls.Add(button)
-
-                        If attrclasses(attrIndex).editable = False Then
-                            button.Enabled = False
-                            textBox.enabled = False 'disable in case it's a combo box
-                        End If
-
-                    Case AttributeType.attrCar
-
-                        Dim textBox As UnscrollableCarComboBox
-
-
-                        textBox = New UnscrollableCarComboBox
+                    If attrclasses(attrIndex).resName.Contains("&") Then
+                        textBox = New TextBox
+                        textBox.Enabled = False
+                    Else
+                        textBox = New UnscrollableComboBox
                         textBox.DropDownStyle = ComboBoxStyle.DropDownList
                         For index = 0 To attrclasses(attrIndex).dInd.Count - 1
                             textBox.Items.Add(attrclasses(attrIndex).dInd(index))
                         Next
+                    End If
 
-                        textBox.Text = record.attributes(attrIndex).value
-                        textBox.Size = New Drawing.Size(108, 15)
-                        textBox.Location = New Drawing.Point(116, 0)
-                        panel(panel.Count - 1).Controls.Add(textBox)
-                        handle.Add(textBox)
+                    textBox.Text = record.attributes(attrIndex).value
+                    textBox.Size = New Drawing.Size(108, 15)
+                    textBox.Location = New Drawing.Point(116, 0)
+                    panel(panel.Count - 1).Controls.Add(textBox)
+                    handle.Add(textBox)
 
 
 
-                        Dim tooltip = New ToolTip
-                        tooltip.ShowAlways = True
-                        Dim button As LoadDataButton = New LoadDataButton
-                        button.record = record
-                        button.attrIndex = attrIndex
-                        button.handle2 = textBox
-                        textBox.record = record
-                        textBox.attrIndex = attrIndex
-                        button.Size = New Drawing.Size(23, 22)
-                        button.Location = New Drawing.Point(224, -1)
-                        button.Image = imgOpenFile
-                        AddHandler button.Click, AddressOf OpenFileDialog
-                        tooltip.SetToolTip(button, "Open " & attrclasses(attrIndex).ext.ToUpper & " File")
-                        panel(panel.Count - 1).Controls.Add(button)
+                    Dim tooltip = New ToolTip
+                    tooltip.ShowAlways = True
+                    Dim button As LoadDataButton = New LoadDataButton
+                    button.record = record
+                    button.attrIndex = attrIndex
+                    button.handle2 = textBox
+                    button.Size = New Drawing.Size(23, 22)
+                    button.Location = New Drawing.Point(224, -1)
+                    button.Image = imgOpenFile
+                    AddHandler button.Click, AddressOf OpenFileDialog
+                    tooltip.SetToolTip(button, "Open " & attrclasses(attrIndex).ext.ToUpper & " File")
+                    panel(panel.Count - 1).Controls.Add(button)
 
-                        If attrclasses(attrIndex).editable = False Then
-                            button.Enabled = False
-                            textBox.enabled = False 'disable in case it's a combo box
-                        End If
+                    If attrclasses(attrIndex).editable = False Then
+                        button.Enabled = False
+                        textBox.enabled = False 'disable in case it's a combo box
+                    End If
 
-                        textBox.lastIndex = textBox.SelectedIndex
-                        AddHandler textBox.SelectedIndexChanged, AddressOf checkCarValid
+                Case AttributeType.attrCar
 
-                End Select
+                    Dim textBox As UnscrollableCarComboBox
 
-                panel(panel.Count - 1).Size = New Drawing.Size(300, 25 + yIncrement)
 
-                Dim label As New Label
-                label.Size = New Drawing.Size(100, 15)
-                label.Location = New Drawing.Point(8, helpIncrement)
-                label.Text = attrclasses(attrIndex).displayName
-                panel(panel.Count - 1).Controls.Add(label)
+                    textBox = New UnscrollableCarComboBox
+                    textBox.DropDownStyle = ComboBoxStyle.DropDownList
+                    For index = 0 To attrclasses(attrIndex).dInd.Count - 1
+                        textBox.Items.Add(attrclasses(attrIndex).dInd(index))
+                    Next
 
-                Dim helptooltip = New ToolTip
-                helptooltip.ShowAlways = True
-                Dim helpButton As HelpButton = New HelpButton
-                helpButton.Size = New Drawing.Size(22, 22)
-                helpButton.Location = New Drawing.Point(258, 2 + helpIncrement)
-                helpButton.Image = imgHelp
-                helptooltip.SetToolTip(helpButton, "Help")
-                helpButton.attrIndex = attrIndex
-                AddHandler helpButton.Click, AddressOf showHelp
-                panel(panel.Count - 1).Controls.Add(helpButton)
+                    textBox.Text = record.attributes(attrIndex).value
+                    textBox.Size = New Drawing.Size(108, 15)
+                    textBox.Location = New Drawing.Point(116, 0)
+                    panel(panel.Count - 1).Controls.Add(textBox)
+                    handle.Add(textBox)
 
-                panel1.Controls.Add(panel(panel.Count - 1))
+
+
+                    Dim tooltip = New ToolTip
+                    tooltip.ShowAlways = True
+                    Dim button As LoadDataButton = New LoadDataButton
+                    button.record = record
+                    button.attrIndex = attrIndex
+                    button.handle2 = textBox
+                    textBox.record = record
+                    textBox.attrIndex = attrIndex
+                    button.Size = New Drawing.Size(23, 22)
+                    button.Location = New Drawing.Point(224, -1)
+                    button.Image = imgOpenFile
+                    AddHandler button.Click, AddressOf OpenFileDialog
+                    tooltip.SetToolTip(button, "Open " & attrclasses(attrIndex).ext.ToUpper & " File")
+                    panel(panel.Count - 1).Controls.Add(button)
+
+                    If attrclasses(attrIndex).editable = False Then
+                        button.Enabled = False
+                        textBox.enabled = False 'disable in case it's a combo box
+                    End If
+
+                    textBox.lastIndex = textBox.SelectedIndex
+                    AddHandler textBox.SelectedIndexChanged, AddressOf checkCarValid
+
+            End Select
+
+            panel(panel.Count - 1).Size = New Drawing.Size(300, 25 + yIncrement)
+
+            Dim label As New Label
+            label.Size = New Drawing.Size(100, 15)
+            label.Location = New Drawing.Point(8, helpIncrement)
+            label.Text = attrclasses(attrIndex).displayName
+            panel(panel.Count - 1).Controls.Add(label)
+
+            Dim helptooltip = New ToolTip
+            helptooltip.ShowAlways = True
+            Dim helpButton As HelpButton = New HelpButton
+            helpButton.Size = New Drawing.Size(22, 22)
+            helpButton.Location = New Drawing.Point(258, 2 + helpIncrement)
+            helpButton.Image = imgHelp
+            helptooltip.SetToolTip(helpButton, "Help")
+            helpButton.attrIndex = attrIndex
+            AddHandler helpButton.Click, AddressOf showHelp
+            panel(panel.Count - 1).Controls.Add(helpButton)
+
+            panel1.Controls.Add(panel(panel.Count - 1))
 
             If active = True Then
                 yPos += yIncrement + 25
@@ -805,10 +815,6 @@
             Else
                 panel(panel.Count - 1).Visible = False
             End If
-
-            'Else
-            'handle.Add(Nothing)
-            'End If
         Next
 
         editForm.Controls.Add(panel1)
@@ -836,32 +842,36 @@
         If buttonOk.result = True Then
             For attrIndex As Integer = 0 To record.attributes.Count - 1
                 Dim active = True
-                If attrclasses(attrIndex).hidden = True Then
-                    active = False
-                ElseIf attrclasses(attrIndex).AIdependant = True Then
-                    If Not aiList(getAIIndex(tabs(TabControl1.SelectedIndex).getAttr(recordIndex, "clone"))).active.Contains(attrclasses(attrIndex).resName) Then
+                If attrclasses(attrIndex).AIdependant = True Then
+                    If Not aiList(getAI(handle(tabs(TabControl1.SelectedIndex).getAttrIndex("clone")).text)).active.Contains(attrclasses(attrIndex).resName) Then
                         active = False
                     End If
                 End If
 
                 If active = True Then
-                    record.attributes(attrIndex).value = getHandleValue(attrclasses(attrIndex), handle(attrIndex), record)
+                    If attrclasses(attrIndex).hidden = False Then
+                        record.attributes(attrIndex).value = getHandleValue(attrclasses(attrIndex), handle(attrIndex), record)
+                    End If
+                Else
+                    record.attributes(attrIndex).value = attrclasses(attrIndex).defaultValue
                 End If
             Next
         End If
 
     End Sub
 
-    Sub drawEditFormAttributes()
+    Sub drawEditFormAttributes(sender As Object)
         Dim attrclasses As List(Of AttributeClass) = tabs(TabControl1.SelectedIndex).attributeClasses
         Dim yPos As Integer = 8
         For attrIndex = 0 To panel.Count - 1
+
+            panel(attrIndex).Location = New Drawing.Point(8, yPos)
 
             Dim active = True
             If attrclasses(attrIndex).hidden = True Then
                 active = False
             ElseIf attrclasses(attrIndex).AIdependant = True Then
-                If Not aiList(getAIIndex(tabs(TabControl1.SelectedIndex).getAttr(tabs(TabControl1.SelectedIndex).listBox.SelectedIndex, "clone"))).active.Contains(attrclasses(attrIndex).resName) Then
+                If Not aiList(getAI(sender.text)).active.Contains(attrclasses(attrIndex).resName) Then
                     active = False
                 End If
             End If
@@ -869,36 +879,43 @@
             Dim yIncrement As Integer = 0
             If attrclasses(attrIndex).type = AttributeType.attrTextFile Then yIncrement = 65
             If attrclasses(attrIndex).type = AttributeType.attrTogglableInteger Then yIncrement = 20
-            panel(panel.Count - 1).Size = New Drawing.Size(300, 25 + yIncrement)
 
             If active = True Then
                 yPos += yIncrement + 25
-                panel(panel.Count - 1).Visible = True
+                panel(attrIndex).Visible = True
             Else
-                panel(panel.Count - 1).Visible = False
+                panel(attrIndex).Visible = False
+                'handle(attrIndex).value = attrclasses(attrIndex).defaultValue
             End If
 
+
         Next
+        editForm.Refresh()
     End Sub
 
     Sub animReorder(sender As Object, e As EventArgs)
-        For attrIndex = 0 To tabs(TabControl1.SelectedIndex).attributeClasses.Count - 1
-            If tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).type = AttributeType.attrAnim And attrIndex <> sender.senderAttr Then
-                Dim active As Boolean = True
-                If tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).AIdependant = True Then
-                    If Not aiList(getAIIndex(tabs(TabControl1.SelectedIndex).getAttr(sender.recordIndex, "clone"))).active.Contains(tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).resName) Then
-                        active = False
+        If sender.progChange = True Then
+            sender.progChange = False
+        Else
+
+            For attrIndex = 0 To tabs(TabControl1.SelectedIndex).attributeClasses.Count - 1
+                If tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).type = AttributeType.attrAnim And attrIndex <> sender.senderAttr Then
+                    Dim active As Boolean = True
+                    If tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).AIdependant = True Then
+                        If Not aiList(getAI(handle(tabs(TabControl1.SelectedIndex).getAttrIndex("clone")).text)).active.Contains(tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).resName) Then
+                            active = False
+                        End If
                     End If
-                End If
-                If active = True Then
+                    'If active = True Then
                     If handle(attrIndex).selectedIndex = handle(sender.senderAttr).selectedIndex Then
-                        handle(attrIndex).selectedIndex = sender.prevValue
-                        sender.prevValue = handle(sender.senderAttr).selectedIndex
-                        Return
+                        handle(attrIndex).progChange = True
+                        handle(attrIndex).selectedIndex = -1
+                        handle(sender.senderAttr).progChange = True
                     End If
+                    'End If
                 End If
-            End If
-        Next
+            Next
+        End If
         sender.prevValue = handle(sender.senderAttr).selectedIndex
     End Sub
 
@@ -1046,6 +1063,21 @@
     End Sub
 
     Private Sub changeAI(sender As Object, e As EventArgs)
+        Dim r As Record = tabs(TabControl1.SelectedIndex).records(tabs(TabControl1.SelectedIndex).listBox.SelectedIndex)
+        If r.animList.Count < aiList(getAI(sender.text)).minAnim Then
+            Dim h As Object = handle(tabs(TabControl1.SelectedIndex).getAttrIndex("file"))
+            mess(h.text & " has too few animations to be used on " & aiList(getAI(sender.text)).name & " AI (at least " & aiList(getAI(sender.text)).minAnim & " animations needed)")
+            h.progChange = True
+            For attrIndex As Integer = 0 To handle.Count - 1
+                Dim aCl = tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex)
+                If aCl.type = AttributeType.attrAnim Then
+                    handle(attrIndex).items.clear
+                End If
+            Next
+            r.animList = New List(Of String)
+            h.selectedindex = -1
+        End If
+        drawEditFormAttributes(sender)
 
     End Sub
 
@@ -1056,7 +1088,7 @@
 
             Dim animList As List(Of String)
             Dim attrClass = tabs(TabControl1.SelectedIndex).attributeClasses(sender.attrIndex)
-            Dim ai As AI = aiList(handle(tabs(TabControl1.SelectedIndex).getAttrIndex("clone")).selectedIndex)
+            Dim ai As AI = aiList(getAI(handle(tabs(TabControl1.SelectedIndex).getAttrIndex("clone")).text))
             animList = readAnimations(attrClass.data(sender.selectedIndex))
             If animList.Count < ai.minAnim Then
                 mess(ai.name & " AI requires a CAR file with at least " & ai.minAnim & " Animations.")
@@ -1066,7 +1098,7 @@
                 sender.record.animList = animList
                 For attrIndex As Integer = 0 To handle.Count - 1
                     Dim aCl = tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex)
-                    If aCl.type = AttributeType.attrAnim And ai.active.Contains(aCl.resName) Then
+                    If aCl.type = AttributeType.attrAnim Then
                         handle(attrIndex).items.clear
                         For animIndex = 0 To sender.record.animList.count - 1
                             handle(attrIndex).items.add(sender.record.animList(animIndex))
@@ -1193,6 +1225,11 @@
         Public prevValue As Integer
         Public senderAttr As Integer
         Public recordIndex As Integer
+        Public progChange As Boolean
+
+        Public Sub New()
+            progChange = False
+        End Sub
 
     End Class
 
