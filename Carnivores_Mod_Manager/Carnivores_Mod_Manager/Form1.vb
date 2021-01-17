@@ -35,7 +35,9 @@
 
 
     Dim editForm As Form
+    Dim panel1 As Panel
     Dim handle As List(Of Object)
+    Dim panel As List(Of Panel)
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -467,7 +469,7 @@
         Dim record As Record = tabs(TabControl1.SelectedIndex).records(recordIndex)
         editForm = New Form
         editForm.Text = task
-        Dim panel1 As Panel = New Panel
+        panel1 = New Panel
         editForm.Size = New Drawing.Size(330, 325)
         panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
         panel1.Location = New Drawing.Point(0, 0)
@@ -476,7 +478,10 @@
         editForm.FormBorderStyle = FormBorderStyle.FixedDialog
         editForm.MaximizeBox = False
         editForm.MinimizeBox = False
-        Handle = New List(Of Object)
+
+        handle = New List(Of Object)
+        panel = New List(Of Panel)
+
         Dim yPos As Integer = 8
         For attrIndex As Integer = 0 To record.attributes.Count - 1
 
@@ -489,19 +494,22 @@
                 End If
             End If
 
-            If active = True Then
+            'If active = True Then
 
-                Dim yIncrement As Integer = 0
+            Dim yIncrement As Integer = 0
                 Dim helpIncrement As Integer = 0
+
+                panel.Add(New Panel)
+                panel(panel.Count - 1).Location = New Drawing.Point(8, yPos)
 
                 Select Case attrclasses(attrIndex).type
 
                     Case AttributeType.attrString
                         Dim textBox As TextBox = New TextBox
                         textBox.Size = New Drawing.Size(130, 15)
-                        textBox.Location = New Drawing.Point(116, yPos)
+                        textBox.Location = New Drawing.Point(116, 0)
                         textBox.Text = record.attributes(attrIndex).value
-                        panel1.Controls.Add(textBox)
+                        panel(panel.Count - 1).Controls.Add(textBox)
                         handle.Add(textBox)
 
                         If attrclasses(attrIndex).editable = False Then textBox.Enabled = False
@@ -511,16 +519,17 @@
                     Case AttributeType.attrAI
                         Dim comboBox As UnscrollableComboBox = New UnscrollableComboBox 'custom class overrides scroll wheeling through options
                         comboBox.Size = New Drawing.Size(130, 15)
-                        comboBox.Location = New Drawing.Point(116, yPos)
+                        comboBox.Location = New Drawing.Point(116, 0)
                         For index = attrclasses(attrIndex).minValue To attrclasses(attrIndex).maxValue
                             comboBox.Items.Add(aiList(index).name)
                         Next
                         comboBox.DropDownStyle = ComboBoxStyle.DropDownList
                         comboBox.SelectedIndex = getAIIndex(record.attributes(attrIndex).value)
-                        panel1.Controls.Add(comboBox)
+                        panel(panel.Count - 1).Controls.Add(comboBox)
                         handle.Add(comboBox)
 
                         If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
+
 
                     Case AttributeType.attrTextFile
                         Dim textBox As TextBox = New TextBox
@@ -528,9 +537,9 @@
                         textBox.Multiline = True
                         textBox.WordWrap = False
                         textBox.ScrollBars = ScrollBars.Both
-                        textBox.Location = New Drawing.Point(116, yPos)
+                        textBox.Location = New Drawing.Point(116, 0)
                         textBox.Text = record.attributes(attrIndex).value
-                        panel1.Controls.Add(textBox)
+                        panel(panel.Count - 1).Controls.Add(textBox)
                         handle.Add(textBox)
 
                         Dim tooltip = New ToolTip
@@ -540,11 +549,11 @@
                         expandButton.attrIndex = attrIndex
                         expandButton.handle2 = textBox
                         expandButton.Size = New Drawing.Size(23, 22)
-                        expandButton.Location = New Drawing.Point(90, yPos - 1)
+                        expandButton.Location = New Drawing.Point(90, -1)
                         expandButton.Image = imgExpand
                         AddHandler expandButton.Click, AddressOf showTextEditor
                         tooltip.SetToolTip(expandButton, "Expand")
-                        panel1.Controls.Add(expandButton)
+                        panel(panel.Count - 1).Controls.Add(expandButton)
 
                         'increase size button enabled
                         If attrclasses(attrIndex).editable = False Then
@@ -560,11 +569,11 @@
                     Case AttributeType.attrInteger
                         Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
                         numBox.Size = New Drawing.Size(130, 15)
-                        numBox.Location = New Drawing.Point(116, yPos)
+                        numBox.Location = New Drawing.Point(116, 0)
                         numBox.Maximum = attrclasses(attrIndex).maxValue
                         numBox.Minimum = attrclasses(attrIndex).minValue
                         numBox.Value = record.attributes(attrIndex).value
-                        panel1.Controls.Add(numBox)
+                        panel(panel.Count - 1).Controls.Add(numBox)
                         handle.Add(numBox)
 
                         If attrclasses(attrIndex).editable = False Then numBox.Enabled = False
@@ -573,13 +582,13 @@
 
                         Dim comboBox As UnscrollableAnimComboBox = New UnscrollableAnimComboBox 'custom class overrides scroll wheeling through options
                         comboBox.Size = New Drawing.Size(130, 15)
-                        comboBox.Location = New Drawing.Point(116, yPos)
+                        comboBox.Location = New Drawing.Point(116, 0)
                         For Each animName In record.animList
                             comboBox.Items.Add(animName)
                         Next
                         comboBox.DropDownStyle = ComboBoxStyle.DropDownList
                         comboBox.SelectedIndex = record.attributes(attrIndex).value
-                        panel1.Controls.Add(comboBox)
+                        panel(panel.Count - 1).Controls.Add(comboBox)
                         comboBox.prevValue = comboBox.SelectedIndex
                         comboBox.senderAttr = attrIndex
                         comboBox.recordIndex = recordIndex
@@ -593,17 +602,17 @@
                         Dim label1 As Label = New Label
                         label1.Text = "Default"
                         label1.Size = New Drawing.Size(45, 15)
-                        label1.Location = New Drawing.Point(116, yPos + 1)
-                        panel1.Controls.Add(label1)
+                        label1.Location = New Drawing.Point(116, 1)
+                        panel(panel.Count - 1).Controls.Add(label1)
 
                         Dim checkBox1 As MyCheckBox = New MyCheckBox()
                         checkBox1.Size = New Drawing.Size(15, 15)
-                        checkBox1.Location = New Drawing.Point(161, yPos + 2)
-                        panel1.Controls.Add(checkBox1)
+                        checkBox1.Location = New Drawing.Point(161, 2)
+                        panel(panel.Count - 1).Controls.Add(checkBox1)
 
                         Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
                         numBox.Size = New Drawing.Size(130, 15)
-                        numBox.Location = New Drawing.Point(116, yPos + 17)
+                        numBox.Location = New Drawing.Point(116, 17)
                         numBox.Maximum = attrclasses(attrIndex).maxValue
                         numBox.Minimum = attrclasses(attrIndex).minValue
 
@@ -623,7 +632,7 @@
                         checkBox1.numBox = numBox
                         AddHandler checkBox1.CheckedChanged, AddressOf updateToggleableInteger
 
-                        panel1.Controls.Add(numBox)
+                        panel(panel.Count - 1).Controls.Add(numBox)
                         handle.Add(numBox)
 
                         If attrclasses(attrIndex).editable = False Then
@@ -637,13 +646,13 @@
                     Case AttributeType.attrDouble
                         Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
                         numBox.Size = New Drawing.Size(130, 15)
-                        numBox.Location = New Drawing.Point(116, yPos)
+                        numBox.Location = New Drawing.Point(116, 0)
                         numBox.Maximum = attrclasses(attrIndex).maxValue
                         numBox.Minimum = attrclasses(attrIndex).minValue
                         numBox.Increment = 0.01D
                         numBox.DecimalPlaces = 2
                         numBox.Text = record.attributes(attrIndex).value
-                        panel1.Controls.Add(numBox)
+                        panel(panel.Count - 1).Controls.Add(numBox)
                         handle.Add(numBox)
 
                         If attrclasses(attrIndex).editable = False Then numBox.Enabled = False
@@ -651,7 +660,7 @@
                     Case AttributeType.attrIntBool
                         Dim comboBox As UnscrollableComboBox = New UnscrollableComboBox 'custom class overrides scroll wheeling through options
                         comboBox.Size = New Drawing.Size(130, 15)
-                        comboBox.Location = New Drawing.Point(116, yPos)
+                        comboBox.Location = New Drawing.Point(116, 0)
                         comboBox.Text = record.attributes(attrIndex).value
                         comboBox.Items.Add("True")
                         comboBox.Items.Add("False")
@@ -661,7 +670,7 @@
                         Else
                             comboBox.SelectedIndex = 1
                         End If
-                        panel1.Controls.Add(comboBox)
+                        panel(panel.Count - 1).Controls.Add(comboBox)
                         handle.Add(comboBox)
 
                         If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
@@ -669,7 +678,7 @@
                     Case AttributeType.attrBoolean
                         Dim comboBox As UnscrollableComboBox = New UnscrollableComboBox 'custom class overrides scroll wheeling through options
                         comboBox.Size = New Drawing.Size(130, 15)
-                        comboBox.Location = New Drawing.Point(116, yPos)
+                        comboBox.Location = New Drawing.Point(116, 0)
                         comboBox.Text = record.attributes(attrIndex).value
                         comboBox.Items.Add("True")
                         comboBox.Items.Add("False")
@@ -679,7 +688,7 @@
                         Else
                             comboBox.SelectedIndex = 1
                         End If
-                        panel1.Controls.Add(comboBox)
+                        panel(panel.Count - 1).Controls.Add(comboBox)
                         handle.Add(comboBox)
 
                         If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
@@ -701,8 +710,8 @@
 
                         textBox.Text = record.attributes(attrIndex).value
                         textBox.Size = New Drawing.Size(108, 15)
-                        textBox.Location = New Drawing.Point(116, yPos)
-                        panel1.Controls.Add(textBox)
+                        textBox.Location = New Drawing.Point(116, 0)
+                        panel(panel.Count - 1).Controls.Add(textBox)
                         handle.Add(textBox)
 
 
@@ -714,11 +723,11 @@
                         button.attrIndex = attrIndex
                         button.handle2 = textBox
                         button.Size = New Drawing.Size(23, 22)
-                        button.Location = New Drawing.Point(224, yPos - 1)
+                        button.Location = New Drawing.Point(224, -1)
                         button.Image = imgOpenFile
                         AddHandler button.Click, AddressOf OpenFileDialog
                         tooltip.SetToolTip(button, "Open " & attrclasses(attrIndex).ext.ToUpper & " File")
-                        panel1.Controls.Add(button)
+                        panel(panel.Count - 1).Controls.Add(button)
 
                         If attrclasses(attrIndex).editable = False Then
                             button.Enabled = False
@@ -738,8 +747,8 @@
 
                         textBox.Text = record.attributes(attrIndex).value
                         textBox.Size = New Drawing.Size(108, 15)
-                        textBox.Location = New Drawing.Point(116, yPos)
-                        panel1.Controls.Add(textBox)
+                        textBox.Location = New Drawing.Point(116, 0)
+                        panel(panel.Count - 1).Controls.Add(textBox)
                         handle.Add(textBox)
 
 
@@ -753,11 +762,11 @@
                         textBox.record = record
                         textBox.attrIndex = attrIndex
                         button.Size = New Drawing.Size(23, 22)
-                        button.Location = New Drawing.Point(224, yPos - 1)
+                        button.Location = New Drawing.Point(224, -1)
                         button.Image = imgOpenFile
                         AddHandler button.Click, AddressOf OpenFileDialog
                         tooltip.SetToolTip(button, "Open " & attrclasses(attrIndex).ext.ToUpper & " File")
-                        panel1.Controls.Add(button)
+                        panel(panel.Count - 1).Controls.Add(button)
 
                         If attrclasses(attrIndex).editable = False Then
                             button.Enabled = False
@@ -769,27 +778,37 @@
 
                 End Select
 
+                panel(panel.Count - 1).Size = New Drawing.Size(300, 25 + yIncrement)
+
                 Dim label As New Label
                 label.Size = New Drawing.Size(100, 15)
-                label.Location = New Drawing.Point(8, yPos + helpIncrement)
+                label.Location = New Drawing.Point(8, helpIncrement)
                 label.Text = attrclasses(attrIndex).displayName
-                panel1.Controls.Add(label)
+                panel(panel.Count - 1).Controls.Add(label)
 
                 Dim helptooltip = New ToolTip
                 helptooltip.ShowAlways = True
                 Dim helpButton As HelpButton = New HelpButton
                 helpButton.Size = New Drawing.Size(22, 22)
-                helpButton.Location = New Drawing.Point(258, yPos + 2 + helpIncrement)
+                helpButton.Location = New Drawing.Point(258, 2 + helpIncrement)
                 helpButton.Image = imgHelp
                 helptooltip.SetToolTip(helpButton, "Help")
                 helpButton.attrIndex = attrIndex
                 AddHandler helpButton.Click, AddressOf showHelp
-                panel1.Controls.Add(helpButton)
+                panel(panel.Count - 1).Controls.Add(helpButton)
 
+                panel1.Controls.Add(panel(panel.Count - 1))
+
+            If active = True Then
                 yPos += yIncrement + 25
+                panel(panel.Count - 1).Visible = True
             Else
-                handle.Add(Nothing)
+                panel(panel.Count - 1).Visible = False
             End If
+
+            'Else
+            'handle.Add(Nothing)
+            'End If
         Next
 
         editForm.Controls.Add(panel1)
@@ -831,6 +850,35 @@
             Next
         End If
 
+    End Sub
+
+    Sub drawEditFormAttributes()
+        Dim attrclasses As List(Of AttributeClass) = tabs(TabControl1.SelectedIndex).attributeClasses
+        Dim yPos As Integer = 8
+        For attrIndex = 0 To panel.Count - 1
+
+            Dim active = True
+            If attrclasses(attrIndex).hidden = True Then
+                active = False
+            ElseIf attrclasses(attrIndex).AIdependant = True Then
+                If Not aiList(getAIIndex(tabs(TabControl1.SelectedIndex).getAttr(tabs(TabControl1.SelectedIndex).listBox.SelectedIndex, "clone"))).active.Contains(attrclasses(attrIndex).resName) Then
+                    active = False
+                End If
+            End If
+
+            Dim yIncrement As Integer = 0
+            If attrclasses(attrIndex).type = AttributeType.attrTextFile Then yIncrement = 65
+            If attrclasses(attrIndex).type = AttributeType.attrTogglableInteger Then yIncrement = 20
+            panel(panel.Count - 1).Size = New Drawing.Size(300, 25 + yIncrement)
+
+            If active = True Then
+                yPos += yIncrement + 25
+                panel(panel.Count - 1).Visible = True
+            Else
+                panel(panel.Count - 1).Visible = False
+            End If
+
+        Next
     End Sub
 
     Sub animReorder(sender As Object, e As EventArgs)
