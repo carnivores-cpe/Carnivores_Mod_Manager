@@ -294,6 +294,30 @@ READ Map Ambient Creature : 0
 Name=Brachiosaurus
 CAR File=dangerbrachikiller2.car
 ---------------------------------------------------------------------
+ANIM7
+VERT337
+TRI670
+TEX131072
+READ Map Ambient Creature : 1
+Name=Pachycephalosaurus
+CAR File=pach.car
+---------------------------------------------------------------------
+ANIM7
+VERT400
+TRI796
+TEX130560
+READ Map Ambient Creature : 2
+Name=Triceratops
+CAR File=tricer.car
+---------------------------------------------------------------------
+ANIM2
+VERT121
+TRI210
+TEX131072
+READ Map Ambient Creature : 3
+Name=Climatius
+CAR File=climatius3.car
+---------------------------------------------------------------------
 READ PRICES:
 START MONEY = 10000
 AREA0=20
@@ -312,7 +336,3 @@ EQUIPMENT1=0
 EQUIPMENT2=0
 EQUIPMENT3=0
 ---------------------------------------------------------------------
-ANIM6
-VERT326
-TRI648
-TEX131072

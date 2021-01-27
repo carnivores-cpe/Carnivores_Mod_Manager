@@ -33,7 +33,6 @@
     Dim aiList As List(Of AI)
 
 
-
     Dim editForm As Form
     Dim panel1 As Panel
     Dim handle As List(Of Object)
@@ -132,6 +131,7 @@
         Next
 
 
+
         'TODO THIS WILL ALL BE VERSION-SPECIFIC IN FUTURE
 
         tabs(AreaTab) = New Tab()
@@ -189,6 +189,9 @@
         tabs(AmbientCorpseTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, "The display name for the creature in the binoculars.")
         tabs(AmbientCorpseTab).addAttribute(carFileClass)
         'NOTE ALL AMBIENT CORPSES MUST HAVE AI 6,7,OR 8 and matching CLONE
+
+
+        'Leave waterD out for now?? Water die Is Not part of deathType ???
 
         tabs(MapAmbientTab) = New Tab()
         tabs(MapAmbientTab).name = "Map Ambient Creatures"
@@ -628,7 +631,7 @@
 
                     'set value to empty when box ticked - this way dont have to update when shots textbox changes
 
-                    If record.attributes(attrIndex).value = 0 Then
+                    If record.attributes(attrIndex).value = attrclasses(attrIndex).defaultValue Then
                         checkBox1.Checked = True
                         numBox.Value = 0
                         numBox.Enabled = False
@@ -975,14 +978,10 @@
     Private Sub updateToggleableInteger(sender As Object, e As EventArgs)
         Dim tabIndex As Integer = TabControl1.SelectedIndex
         Dim recordIndex As Integer = tabs(tabIndex).listBox.SelectedIndex
+        sender.numBox.text = tabs(tabIndex).attributeClasses(sender.attrIndex).defaultValue
         If sender.checked = True Then
-            tabs(tabIndex).records(recordIndex).attributes(sender.attrIndex).value = 0
-            sender.numBox.value = tabs(tabIndex).attributeClasses(sender.attrIndex).defaultValue
             sender.numbox.enabled = False
         Else
-            Dim val As Integer = tabs(tabIndex).attributeClasses(sender.attrIndex).defaultValue
-            tabs(tabIndex).records(recordIndex).attributes(sender.attrIndex).value = val
-            sender.numBox.text = val
             sender.numbox.enabled = True
         End If
 
