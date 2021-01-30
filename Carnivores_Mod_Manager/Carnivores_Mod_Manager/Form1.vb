@@ -95,10 +95,10 @@
     Private Sub setupTabData()
 
         nameSpeed = New List(Of String)
-        nameSpeed.Add("runSpd")     '0
-        nameSpeed.Add("wlkSpd")     '1
-        nameSpeed.Add("flySpd")     '2
-        nameSpeed.Add("gldSpd")     '3
+        nameSpeed.Add("runspd")     '0
+        nameSpeed.Add("wlkspd")     '1
+        nameSpeed.Add("flyspd")     '2
+        nameSpeed.Add("gldspd")     '3
 
         aiList = New List(Of AI)
         aiList.Add(New AI("Moshops", 1, 4, nameSpeed.Count))                    '0
@@ -505,12 +505,14 @@
         For index = 0 To aiList.Count - 1
             If aiList(index).id = ai Then Return aiList(index)
         Next
+        Return -1
     End Function
 
     Function getSpdPos(ByVal resname As String)
         For index = 0 To nameSpeed.Count - 1
             If nameSpeed(index) = resname Then Return index
         Next
+        Return -1
     End Function
 
     Function getAIIndex(ByVal ai As Integer)
@@ -1154,11 +1156,12 @@
             Next
             h.selectedindex = -1
         Else
+            Dim resetSpd As Boolean = conf("Reset speeds to defaults for " & aiList(getAI(sender.text)).name & " AI?")
             For attrIndex As Integer = 0 To handle.Count - 1
                 Dim aCl = tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex)
                 If aCl.type = AttributeType.attrAnim Then
                     handle(attrIndex).items.clear
-                ElseIf aCl.type = AttributeType.attrSpd Then
+                ElseIf aCl.type = AttributeType.attrSpd And resetspd Then
                     handle(attrIndex).value = aiList(getAI(sender.text)).defaultSpeed(getSpdPos(aCl.resName))
                 End If
             Next
