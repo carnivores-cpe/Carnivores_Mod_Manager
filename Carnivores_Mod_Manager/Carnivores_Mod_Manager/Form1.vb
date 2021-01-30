@@ -99,6 +99,7 @@
         nameSpeed.Add("wlkspd")     '1
         nameSpeed.Add("flyspd")     '2
         nameSpeed.Add("gldspd")     '3
+        nameSpeed.Add("swmspd")     '4
 
         aiList = New List(Of AI)
         aiList.Add(New AI("Moshops", 1, 4, nameSpeed.Count))                    '0
@@ -131,6 +132,7 @@
         For Each index In {0, 1, 4}
             aiList(index).active.Add("runAnim")
             aiList(index).active.Add("walkAnim")
+            aiList(index).active.Add("swimAnim")
         Next
         aiList(1).active.Add("slideAnim")
         For Each index In {2, 3}
@@ -143,6 +145,8 @@
         For Each index In {0, 1, 4}
             aiList(index).active.Add("runspd")
             aiList(index).active.Add("wlkspd")
+            aiList(index).active.Add("canswim")
+            aiList(index).active.Add("swmspd")
         Next
         For Each index In {2, 3}
             aiList(index).active.Add("flyspd")
@@ -152,10 +156,12 @@
         'MOSH
         aiList(0).defaultSpeed(0) = 0.6 'run
         aiList(0).defaultSpeed(1) = 0.3 'wlk
+        aiList(0).defaultSpeed(4) = 0.3 'swm
 
         'GALL
         aiList(1).defaultSpeed(0) = 0.9 'run
         aiList(1).defaultSpeed(1) = 0.32 'wlk
+        aiList(1).defaultSpeed(4) = 0.32 'swm
 
         'DIMOR
         aiList(2).defaultSpeed(2) = 1.5 'fly
@@ -165,9 +171,10 @@
         aiList(3).defaultSpeed(2) = 1.5 'fly
         aiList(3).defaultSpeed(3) = 1.3 'gld
 
-        'DIMOR
+        'DIMET
         aiList(4).defaultSpeed(0) = 0.6 'run
         aiList(4).defaultSpeed(1) = 0.3 'wlk
+        aiList(4).defaultSpeed(4) = 0.3 'swm
 
 
 
@@ -181,12 +188,12 @@
         tabs(AreaTab).recordMax = 10
         tabs(AreaTab).recordMin = 0
         tabs(AreaTab).recordLock = False
-        tabs(AreaTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, "The display name for the area in the hunt menu.")
-        tabs(AreaTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\AREA", "txt", True, False, False, "The description for the area in the hunt menu.")
-        tabs(AreaTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\AREA", "tga", True, True, False, "The image for the area in the hunt menu. Must be saved as a 16 bit uncompressed TGA.")
-        tabs(AreaTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, False, "The cost of hunting in the area.")
-        tabs(AreaTab).addAttribute("Map File", "map&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\AREAS\AREA", "map", True, True, False, "The file that stores the terrain information, texture positions, object positions, sound positions, water and fog information.")
-        tabs(AreaTab).addAttribute("Resource File", "rsc&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\AREAS\AREA", "rsc", True, True, False, "The file that stores textures, objects, animations, hitbox information and sounds for the map.")
+        tabs(AreaTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, False, "The display name for the area in the hunt menu.")
+        tabs(AreaTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\AREA", "txt", True, False, False, False, "The description for the area in the hunt menu.")
+        tabs(AreaTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\AREA", "tga", True, True, False, False, "The image for the area in the hunt menu. Must be saved as a 16 bit uncompressed TGA.")
+        tabs(AreaTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, False, False, "The cost of hunting in the area.")
+        tabs(AreaTab).addAttribute("Map File", "map&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\AREAS\AREA", "map", True, True, False, False, "The file that stores the terrain information, texture positions, object positions, sound positions, water and fog information.")
+        tabs(AreaTab).addAttribute("Resource File", "rsc&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\AREAS\AREA", "rsc", True, True, False, False, "The file that stores textures, objects, animations, hitbox information and sounds for the map.")
 
         tabs(HuntableTab) = New Tab()
         tabs(HuntableTab).name = "Huntable Creatures"
@@ -194,12 +201,12 @@
         tabs(HuntableTab).recordMax = 10
         tabs(HuntableTab).recordMin = 0
         tabs(HuntableTab).recordLock = False
-        tabs(HuntableTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, "The display name for the creature in the hunt menu.")
-        tabs(HuntableTab).addAttribute("Description (Metric)", "desm&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\DINO", "txm", True, False, False, "The description for the creature in the hunt menu when the user has set measurements to 'metric' in options.")
-        tabs(HuntableTab).addAttribute("Description (US)", "desu&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\DINO", "txu", True, False, False, "The description for the creature in the hunt menu the user has set measurements to 'US' in options.")
-        tabs(HuntableTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\DINO", "tga", True, True, False, "The image for the creature in the hunt menu. Must be saved as a 16 bit uncompressed TGA.")
-        tabs(HuntableTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, False, "The cost of hunting the creature.")
-        Dim carFileClass As AttributeClass = New AttributeClass("CAR File", "file", AttributeType.attrCar, "", 0, 509, False, "\HUNTDAT\", "car", True, True, False, "The file that stores the creature model, texture, animations and sound effects.")
+        tabs(HuntableTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, False, "The display name for the creature in the hunt menu.")
+        tabs(HuntableTab).addAttribute("Description (Metric)", "desm&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\DINO", "txm", True, False, False, False, "The description for the creature in the hunt menu when the user has set measurements to 'metric' in options.")
+        tabs(HuntableTab).addAttribute("Description (US)", "desu&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\DINO", "txu", True, False, False, False, "The description for the creature in the hunt menu the user has set measurements to 'US' in options.")
+        tabs(HuntableTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\DINO", "tga", True, True, False, False, "The image for the creature in the hunt menu. Must be saved as a 16 bit uncompressed TGA.")
+        tabs(HuntableTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, False, False, "The cost of hunting the creature.")
+        Dim carFileClass As AttributeClass = New AttributeClass("CAR File", "file", AttributeType.attrCar, "", 0, 509, False, "\HUNTDAT\", "car", True, True, False, False, "The file that stores the creature model, texture, animations and sound effects.")
         tabs(HuntableTab).addAttribute(carFileClass)
         'tabs(HuntableTab).addAttribute("Call Icon", "callimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\CALL", "tga", True, True, "The image displayed in the top right when a call is selected during a hunt. Must be saved as a 16 bit uncompressed TGA.")
         'TODO - CALL FILE NAME FORMATS NEED TO ADJUSTED in C:ME!!!!
@@ -209,27 +216,30 @@
         tabs(AmbientTab).nameS = "Ambient Creature"
         tabs(AmbientTab).recordMax = 5
         tabs(AmbientTab).recordLock = False
-        tabs(AmbientTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, "The display name for the creature in the binoculars.")
-        tabs(AmbientTab).addAttribute("Slot", "ai", AttributeType.attrSlot, 1, 1, 5, True, "", "", True, False, False, "")
+        tabs(AmbientTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, False, "The display name for the creature in the binoculars.")
+        tabs(AmbientTab).addAttribute("Slot", "ai", AttributeType.attrSlot, 1, 1, 5, True, "", "", True, False, False, False, "")
         'remember to change slot minmax
-        tabs(AmbientTab).addAttribute("AI", "clone", AttributeType.attrAI, 1, 0, 4, False, "", "", True, False, False, "The AI used by the creature")
+        tabs(AmbientTab).addAttribute("AI", "clone", AttributeType.attrAI, 1, 0, 4, False, "", "", True, False, False, False, "The AI used by the creature")
         'remember to change ai minmax 'default is AI number, min/max is listAi index
         tabs(AmbientTab).addAttribute(carFileClass)
-        tabs(AmbientTab).addAttribute("Run Animation", "runAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, "The running animation for the creature - animations can be viewed by opening the car file in C3Dit.")
-        tabs(AmbientTab).addAttribute("Walk Animation", "walkAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, "The walking animation for the creature - animations can be viewed by opening the car file in C3Dit.")
-        tabs(AmbientTab).addAttribute("Slide Animation", "slideAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, "The sliding animation for the creature - animations can be viewed by opening the car file in C3Dit.")
-        tabs(AmbientTab).addAttribute("Fly Animation", "flyAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, "The flying animation for the creature - animations can be viewed by opening the car file in C3Dit.")
-        tabs(AmbientTab).addAttribute("Glide Animation", "glideAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, "The gliding animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+
+        tabs(AmbientTab).addAttribute("Can Swim", "canswim", AttributeType.attrSwimmer, False, 0, 0, False, "", "", True, False, True, False, "When set to true, the creature will be able to swim.")
+
+        tabs(AmbientTab).addAttribute("Run Animation", "runAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, False, "The running animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Walk Animation", "walkAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, False, "The walking animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Slide Animation", "slideAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, False, "The sliding animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Swim Animation", "swimAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, True, "The swimming animation for the creature - animations can be viewed by opening the car file in C3Dit. Only applicable if Can Swim is set to true.")
+        tabs(AmbientTab).addAttribute("Fly Animation", "flyAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, False, "The flying animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Glide Animation", "glideAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, False, "The gliding animation for the creature - animations can be viewed by opening the car file in C3Dit.")
 
 
+        tabs(AmbientTab).addAttribute("Run Speed", "runspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, False, "")
+        tabs(AmbientTab).addAttribute("Walk Speed", "wlkspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, False, "")
+        tabs(AmbientTab).addAttribute("Swim Speed", "swmspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, True, " Only applicable if Can Swim is set to true.")
+        tabs(AmbientTab).addAttribute("Fly Speed", "flyspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, False, "")
+        tabs(AmbientTab).addAttribute("Glide Speed", "gldspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, False, "")
 
-        tabs(AmbientTab).addAttribute("Run Speed", "runspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, "")
-        tabs(AmbientTab).addAttribute("Walk Speed", "wlkspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, "")
-        tabs(AmbientTab).addAttribute("Fly Speed", "flyspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, "")
-        tabs(AmbientTab).addAttribute("Glide Speed", "gldspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, "")
 
-        'SWIM - RE-ADD
-        'tabs(AmbientTab).addAttribute("Can Swim", "canswim", AttributeType.attrBoolean, False, 0, 0, False, "", "", True, False, False, "When set to true, the creature will be able to swim.")
 
 
         tabs(AmbientCorpseTab) = New Tab()
@@ -237,7 +247,7 @@
         tabs(AmbientCorpseTab).nameS = "Ambient Corpse"
         tabs(AmbientCorpseTab).recordMax = 4
         tabs(AmbientCorpseTab).recordLock = False
-        tabs(AmbientCorpseTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, "The display name for the creature in the binoculars.")
+        tabs(AmbientCorpseTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, False, "The display name for the creature in the binoculars.")
         tabs(AmbientCorpseTab).addAttribute(carFileClass)
         'NOTE ALL AMBIENT CORPSES MUST HAVE AI 6,7,OR 8 and matching CLONE - hidden?
 
@@ -249,7 +259,7 @@
         tabs(MapAmbientTab).nameS = "Map Ambient Creature"
         tabs(MapAmbientTab).recordMax = 1024
         tabs(MapAmbientTab).recordLock = False
-        tabs(MapAmbientTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, "The display name for the creature in the binoculars.")
+        tabs(MapAmbientTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, False, "The display name for the creature in the binoculars.")
         tabs(MapAmbientTab).addAttribute(carFileClass)
 
         tabs(WeaponTab) = New Tab()
@@ -258,22 +268,22 @@
         tabs(WeaponTab).recordMax = 10
         tabs(WeaponTab).recordMin = 0
         tabs(WeaponTab).recordLock = False
-        tabs(WeaponTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, "The display name for the weapon in the menu.")
-        tabs(WeaponTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\WEAPON", "txt", True, False, False, "The description for the weapon in the hunt menu.")
-        tabs(WeaponTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\WEAPON", "tga", True, True, False, "The image for the weapon in the hunt menu. Must be saved as a 16 bit uncompressed TGA.")
-        tabs(WeaponTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, False, "The cost of using the weapon on a hunt.")
-        tabs(WeaponTab).addAttribute("CAR File", "file", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "car", True, True, False, "The file that stores the weapon model, texture, animations and sound effects.")
-        tabs(WeaponTab).addAttribute("Bullet Image", "pic", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "tga", True, True, False, "The bullet image used to display remaining ammo. Must be saved as a 16 bit uncompressed TGA.")
-        'tabs(WeaponTab).addAttribute("Gunshot Sound", "gunshot", AttributeType.attrFile, "", 0, 509, True, "\MULTIPLAYER\GUNSHOTS\", "wav", True, False, "The gunshot sound effect which other players can hear from a distance in multiplayer. Must be saved as a 22050 Hz rate mono WAV.")
-        tabs(WeaponTab).addAttribute("Ammo Count", "shots", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True, False, False, "The amount of ammo the hunter takes for this weapon on a hunt (Will be doubled if the hunter selects double ammo in equipment).")
-        tabs(WeaponTab).addAttribute("Magazine Capacity", "reload", AttributeType.attrTogglableInteger, 0, 0, 2147483647, False, "", "", True, False, False, "The maximum number of rounds that can be fired before reloading. If set to default, the magazine capacity will equal the ammo count.") 'togglableint - if off, value is 0
-        tabs(WeaponTab).addAttribute("Projectile Count", "trace", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True, False, False, "The number of projectiles fired with each shot.")
-        tabs(WeaponTab).addAttribute("Fire Power", "power", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, False, "The damage inflicted by the weapon. Note: the vanilla menu can only display values between 0 and 8.")
-        tabs(WeaponTab).addAttribute("Accuracy", "prec", AttributeType.attrDouble, 0D, -10D, 2D, False, "", "", True, False, False, "Average bullet precision - 2.00 gives 100% accuracy. Note: the vanilla menu can only display values between 0.00 and 2.00.")
-        tabs(WeaponTab).addAttribute("Volume", "loud", AttributeType.attrDouble, 0D, -10D, 10D, False, "", "", True, False, False, "The maximum distance creatures can hear gunshots (depending on wind direction). Note: the vanilla menu can only display values between 0.00 and 2.00.")
-        tabs(WeaponTab).addAttribute("Rate of Fire", "rate", AttributeType.attrDouble, 0D, -10D, 10D, False, "", "", True, False, False, "The rate of fire for the weapon - this value only effects the menu stats and doesn't effect gameplay. Note: the vanilla menu can only display values between 0.00 and 2.00.")
-        tabs(WeaponTab).addAttribute("Scope Zoom", "optic", AttributeType.attrIntBool, False, 0, 0, False, "", "", True, False, False, "When set to true, the hunter's screen will zoom in when the weapon is equipped.")
-        tabs(WeaponTab).addAttribute("Bullet Fall", "fall", AttributeType.attrIntBool, False, 0, 0, False, "", "", True, False, False, "When set to true, projectile trajectory will drop over time.")
+        tabs(WeaponTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, False, "The display name for the weapon in the menu.")
+        tabs(WeaponTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\WEAPON", "txt", True, False, False, False, "The description for the weapon in the hunt menu.")
+        tabs(WeaponTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\WEAPON", "tga", True, True, False, False, "The image for the weapon in the hunt menu. Must be saved as a 16 bit uncompressed TGA.")
+        tabs(WeaponTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, False, False, "The cost of using the weapon on a hunt.")
+        tabs(WeaponTab).addAttribute("CAR File", "file", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "car", True, True, False, False, "The file that stores the weapon model, texture, animations and sound effects.")
+        tabs(WeaponTab).addAttribute("Bullet Image", "pic", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\WEAPONS\", "tga", True, True, False, False, "The bullet image used to display remaining ammo. Must be saved as a 16 bit uncompressed TGA.")
+        'tabs(WeaponTab).addAttribute("Gunshot Sound", "gunshot", AttributeType.attrFile, "", 0, 509, True, "\MULTIPLAYER\GUNSHOTS\", "wav", True, False, False, False, "The gunshot sound effect which other players can hear from a distance in multiplayer. Must be saved as a 22050 Hz rate mono WAV.")
+        tabs(WeaponTab).addAttribute("Ammo Count", "shots", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True, False, False, False, "The amount of ammo the hunter takes for this weapon on a hunt (Will be doubled if the hunter selects double ammo in equipment).")
+        tabs(WeaponTab).addAttribute("Magazine Capacity", "reload", AttributeType.attrTogglableInteger, 0, 0, 2147483647, False, "", "", True, False, False, False, "The maximum number of rounds that can be fired before reloading. If set to default, the magazine capacity will equal the ammo count.") 'togglableint - if off, value is 0
+        tabs(WeaponTab).addAttribute("Projectile Count", "trace", AttributeType.attrInteger, 1, 1, 2147483647, False, "", "", True, False, False, False, "The number of projectiles fired with each shot.")
+        tabs(WeaponTab).addAttribute("Fire Power", "power", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, False, False, "The damage inflicted by the weapon. Note: the vanilla menu can only display values between 0 and 8.")
+        tabs(WeaponTab).addAttribute("Accuracy", "prec", AttributeType.attrDouble, 0D, -10D, 2D, False, "", "", True, False, False, False, "Average bullet precision - 2.00 gives 100% accuracy. Note: the vanilla menu can only display values between 0.00 and 2.00.")
+        tabs(WeaponTab).addAttribute("Volume", "loud", AttributeType.attrDouble, 0D, -10D, 10D, False, "", "", True, False, False, False, "The maximum distance creatures can hear gunshots (depending on wind direction). Note: the vanilla menu can only display values between 0.00 and 2.00.")
+        tabs(WeaponTab).addAttribute("Rate of Fire", "rate", AttributeType.attrDouble, 0D, -10D, 10D, False, "", "", True, False, False, False, "The rate of fire for the weapon - this value only effects the menu stats and doesn't effect gameplay. Note: the vanilla menu can only display values between 0.00 and 2.00.")
+        tabs(WeaponTab).addAttribute("Scope Zoom", "optic", AttributeType.attrIntBool, False, 0, 0, False, "", "", True, False, False, False, "When set to true, the hunter's screen will zoom in when the weapon is equipped.")
+        tabs(WeaponTab).addAttribute("Bullet Fall", "fall", AttributeType.attrIntBool, False, 0, 0, False, "", "", True, False, False, False, "When set to true, projectile trajectory will drop over time.")
 
         tabs(EquipmentTab) = New Tab()
         tabs(EquipmentTab).name = "Equipment"
@@ -281,10 +291,10 @@
         tabs(EquipmentTab).recordMax = 4
         tabs(EquipmentTab).recordMin = 0
         tabs(EquipmentTab).recordLock = True
-        tabs(EquipmentTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", False, True, False, "The display name for the equipment item in the menu.")
-        tabs(EquipmentTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\EQUIP", "nfo", True, False, False, "The description for the equipment item in the hunt menu.")
-        tabs(EquipmentTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\EQUIP", "tga", True, True, False, "The image for the equipment item in the hunt menu. Must be saved as a 16 bit uncompressed TGA.")
-        tabs(EquipmentTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, False, "The display name for the equipment item in the menu.")
+        tabs(EquipmentTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", False, True, False, False, "The display name for the equipment item in the menu.")
+        tabs(EquipmentTab).addAttribute("Description", "desc&", AttributeType.attrTextFile, "", 0, 509, False, "\HUNTDAT\MENU\TXT\EQUIP", "nfo", True, False, False, False, "The description for the equipment item in the hunt menu.")
+        tabs(EquipmentTab).addAttribute("Menu Image", "menuimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\EQUIP", "tga", True, True, False, False, "The image for the equipment item in the hunt menu. Must be saved as a 16 bit uncompressed TGA.")
+        tabs(EquipmentTab).addAttribute("Price", "price", AttributeType.attrInteger, 0, -2147483648, 2147483647, False, "", "", True, False, False, False, "The display name for the equipment item in the menu.")
 
         tabs(OtherTab) = New Tab()
         tabs(OtherTab).name = "Other"
@@ -779,6 +789,25 @@
 
                     If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
 
+                Case AttributeType.attrSwimmer
+                    Dim comboBox As UnscrollableComboBox = New UnscrollableComboBox 'custom class overrides scroll wheeling through options
+                    comboBox.Size = New Drawing.Size(130, 15)
+                    comboBox.Location = New Drawing.Point(116, 0)
+                    comboBox.Text = record.attributes(attrIndex).value
+                    comboBox.Items.Add("True")
+                    comboBox.Items.Add("False")
+                    comboBox.DropDownStyle = ComboBoxStyle.DropDownList
+                    If record.attributes(attrIndex).value = True Then
+                        comboBox.SelectedIndex = 0
+                    Else
+                        comboBox.SelectedIndex = 1
+                    End If
+                    AddHandler comboBox.SelectedIndexChanged, AddressOf swimChange
+                    panel(panel.Count - 1).Controls.Add(comboBox)
+                    handle.Add(comboBox)
+
+                    If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
+
                 Case AttributeType.attrFile
 
                     Dim textBox
@@ -913,6 +942,11 @@
         AddHandler buttonCancel.Click, AddressOf formCancel
         editForm.Controls.Add(buttonCancel)
 
+        Dim swimH As Object = handle(tabs(TabControl1.SelectedIndex).getAttrIndex("canswim"))
+        If swimH.selectedIndex = 1 Then
+            swimChange2(swimH)
+        End If
+
         editForm.ShowDialog()
 
         If buttonOk.result = True Then
@@ -934,6 +968,30 @@
             Next
         End If
 
+    End Sub
+
+    Sub swimChange2(ByVal h As Object)
+        If h.selectedindex = 0 Then
+
+            handle(tabs(TabControl1.SelectedIndex).getAttrIndex("swmspd")).text = aiList(getAI(handle(tabs(TabControl1.SelectedIndex).getAttrIndex("clone")).text)).defaultSpeed(getSpdPos("swmspd"))
+            handle(tabs(TabControl1.SelectedIndex).getAttrIndex("swmspd")).enabled = True
+
+            handle(tabs(TabControl1.SelectedIndex).getAttrIndex("swimAnim")).selectedIndex = -1
+            handle(tabs(TabControl1.SelectedIndex).getAttrIndex("swimAnim")).enabled = True
+
+        Else
+
+            handle(tabs(TabControl1.SelectedIndex).getAttrIndex("swmspd")).text = ""
+            handle(tabs(TabControl1.SelectedIndex).getAttrIndex("swmspd")).enabled = False
+
+            handle(tabs(TabControl1.SelectedIndex).getAttrIndex("swimAnim")).selectedIndex = -1
+            handle(tabs(TabControl1.SelectedIndex).getAttrIndex("swimAnim")).enabled = False
+
+        End If
+    End Sub
+
+    Sub swimChange(sender As Object, e As EventArgs)
+        swimChange2(sender)
     End Sub
 
     Sub drawEditFormAttributes(sender As Object)
@@ -1050,6 +1108,12 @@
                 Else
                     Return False
                 End If
+            Case AttributeType.attrSwimmer
+                If handle3.selectedIndex = 0 Then
+                    Return True
+                Else
+                    Return False
+                End If
         End Select
         Return Nothing
     End Function
@@ -1160,7 +1224,7 @@
             For attrIndex As Integer = 0 To handle.Count - 1
                 Dim aCl = tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex)
                 If aCl.type = AttributeType.attrAnim Then
-                    handle(attrIndex).items.clear
+                    handle(attrIndex).selectedIndex = -1
                 ElseIf aCl.type = AttributeType.attrSpd And resetspd Then
                     handle(attrIndex).value = aiList(getAI(sender.text)).defaultSpeed(getSpdPos(aCl.resName))
                 End If
@@ -1344,6 +1408,11 @@
 
             If tabs(TabControl1.SelectedIndex).attributeClasses(index).validation = False Then active = False
             If tabs(TabControl1.SelectedIndex).attributeClasses(index).hidden = True Then active = False
+            If tabs(TabControl1.SelectedIndex).attributeClasses(index).swimmer = True Then
+                If handle(tabs(TabControl1.SelectedIndex).getAttrIndex("canswim")).selectedIndex = 1 Then
+                    active = False
+                End If
+            End If
             If tabs(TabControl1.SelectedIndex).attributeClasses(index).AIdependant = True Then
 
                 If Not aiList(handle(tabs(TabControl1.SelectedIndex).getAttrIndex("clone")).selectedIndex).active.Contains(tabs(TabControl1.SelectedIndex).attributeClasses(index).resName) Then
@@ -1518,6 +1587,8 @@
                                     value = Trim(line.Substring(line.IndexOf("=") + 1))
                                 Case AttributeType.attrBoolean
                                     If line.Contains("TRUE") Then value = True Else value = False
+                                Case AttributeType.attrSwimmer
+                                    If line.Contains("TRUE") Then value = True Else value = False
                                 Case AttributeType.attrIntBool
                                     If Trim(line.Substring(line.IndexOf("=") + 1)) > 0 Then value = True Else value = False
                             End Select
@@ -1684,8 +1755,8 @@
         Public Sub addAttribute(ByVal name As String, ByVal res As String, ByVal type As AttributeType, ByVal defaultValue As Object,
                                 ByVal min As Integer, ByVal max As Integer, ByVal hide As Boolean, ByVal gameFolder As String,
                                 ByVal ext As String, ByVal edit As Boolean, ByVal valida As Boolean, ByVal aiD As Boolean,
-                                ByVal help As String)
-            attributeClasses.Add(New AttributeClass(name, res, type, defaultValue, min, max, hide, gameFolder, ext, edit, valida, aiD, help))
+                                ByVal _swimmer As Boolean, ByVal help As String)
+            attributeClasses.Add(New AttributeClass(name, res, type, defaultValue, min, max, hide, gameFolder, ext, edit, valida, aiD, _swimmer, help))
             'clear temp folder
             'If type = AttributeType.attrFile Then
             'Dim path As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).Remove(0, 6) & "\" & tempFolder & "\"
@@ -1758,6 +1829,7 @@
         Public hidden As Boolean
         Public editable As Boolean
         Public validation As Boolean
+        Public swimmer As Boolean 'If true, checks can swim combobox
 
         Public gameFolder, ext As String 'file data only
 
@@ -1770,7 +1842,8 @@
 
         Public Sub New(ByVal _name As String, ByVal _res As String, ByVal _type As AttributeType, ByVal defVal As Object,
                        ByVal min As Integer, ByVal max As Integer, ByVal _hidden As Boolean, ByVal _gameFolder As String,
-                       ByVal _ext As String, ByVal _edit As Boolean, ByVal _validation As Boolean, ByVal aiD As Boolean, ByVal help As String)
+                       ByVal _ext As String, ByVal _edit As Boolean, ByVal _validation As Boolean, ByVal aiD As Boolean,
+                       ByVal _swimmer As Boolean, ByVal help As String)
             displayName = _name
             resName = _res
             type = _type
@@ -1784,6 +1857,7 @@
             validation = _validation
             helpInfo = help
             AIdependant = aiD
+            swimmer = _swimmer
 
             If type = AttributeType.attrFile Or type = AttributeType.attrCar Then
                 data = New List(Of Byte())
@@ -1808,6 +1882,7 @@
         attrCar ' Creatures only
         attrAnim
         attrSpd  'speed - can be reset when AI changed - 3 decimal places
+        attrSwimmer ' attrBoolean with swim change event
     End Enum
 
     Public Class Attribute
