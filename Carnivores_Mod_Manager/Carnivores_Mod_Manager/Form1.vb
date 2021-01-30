@@ -127,28 +127,23 @@
             aiList(index).active = New List(Of String)
         Next
 
-        'anim
-
         For Each index In {0, 1, 4}
             aiList(index).active.Add("runAnim")
             aiList(index).active.Add("walkAnim")
+            aiList(index).active.Add("runspd")
+            aiList(index).active.Add("wlkspd")
+
+            aiList(index).active.Add("canswim")
             aiList(index).active.Add("swimAnim")
+            aiList(index).active.Add("swmspd")
+            aiList(index).active.Add("waterLevel")
         Next
+
         aiList(1).active.Add("slideAnim")
+
         For Each index In {2, 3}
             aiList(index).active.Add("flyAnim")
             aiList(index).active.Add("glideAnim")
-        Next
-
-        'spd
-
-        For Each index In {0, 1, 4}
-            aiList(index).active.Add("runspd")
-            aiList(index).active.Add("wlkspd")
-            aiList(index).active.Add("canswim")
-            aiList(index).active.Add("swmspd")
-        Next
-        For Each index In {2, 3}
             aiList(index).active.Add("flyspd")
             aiList(index).active.Add("gldspd")
         Next
@@ -223,22 +218,24 @@
         'remember to change ai minmax 'default is AI number, min/max is listAi index
         tabs(AmbientTab).addAttribute(carFileClass)
 
-        tabs(AmbientTab).addAttribute("Can Swim", "canswim", AttributeType.attrSwimmer, False, 0, 0, False, "", "", True, False, True, False, "When set to true, the creature will be able to swim.")
-
         tabs(AmbientTab).addAttribute("Run Animation", "runAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, False, "The running animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Run Speed", "runspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, False, "The movement speed of the creature when running.")
+
         tabs(AmbientTab).addAttribute("Walk Animation", "walkAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, False, "The walking animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Walk Speed", "wlkspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, False, "The movement speed of the creature when walking.")
+
         tabs(AmbientTab).addAttribute("Slide Animation", "slideAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, False, "The sliding animation for the creature - animations can be viewed by opening the car file in C3Dit.")
-        tabs(AmbientTab).addAttribute("Swim Animation", "swimAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, True, "The swimming animation for the creature - animations can be viewed by opening the car file in C3Dit. Only applicable if Can Swim is set to true.")
+
         tabs(AmbientTab).addAttribute("Fly Animation", "flyAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, False, "The flying animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Fly Speed", "flyspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, False, "The movement speed of the creature when flying.")
+
         tabs(AmbientTab).addAttribute("Glide Animation", "glideAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, False, "The gliding animation for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Glide Speed", "gldspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, False, "The movement speed of the creature when gliding.")
 
-
-        tabs(AmbientTab).addAttribute("Run Speed", "runspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, False, "")
-        tabs(AmbientTab).addAttribute("Walk Speed", "wlkspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, False, "")
-        tabs(AmbientTab).addAttribute("Swim Speed", "swmspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, True, " Only applicable if Can Swim is set to true.")
-        tabs(AmbientTab).addAttribute("Fly Speed", "flyspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, False, "")
-        tabs(AmbientTab).addAttribute("Glide Speed", "gldspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, False, "")
-
+        tabs(AmbientTab).addAttribute("Can Swim", "canswim", AttributeType.attrSwimmer, False, 0, 0, False, "", "", True, False, True, False, "When set to true, the creature will be able to swim.")
+        tabs(AmbientTab).addAttribute("Swim Animation", "swimAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, True, "The swimming animation for the creature - animations can be viewed by opening the car file in C3Dit. Only applicable if Can Swim is set to true.")
+        tabs(AmbientTab).addAttribute("Swim Speed", "swmspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, True, "The movement speed of the creature when swimming. Only applicable if Can Swim is set to true.")
+        tabs(AmbientTab).addAttribute("Water Level", "waterLevel", AttributeType.attrInteger, 0, 0, 2147483647, False, "", "", True, False, True, True, "Controls how far a creature can wade into the water before having to swim. Only applicable if Can Swim is set to true.")
 
 
 
@@ -971,23 +968,16 @@
     End Sub
 
     Sub swimChange2(ByVal h As Object)
-        If h.selectedindex = 0 Then
+        For attrIndex = 0 To handle.Count - 1
+            If tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).swimmer = True Then
+                If h.selectedindex = 0 Then
+                    handle(attrIndex).enabled = True
+                Else
+                    handle(attrIndex).enabled = False
 
-            handle(tabs(TabControl1.SelectedIndex).getAttrIndex("swmspd")).text = aiList(getAI(handle(tabs(TabControl1.SelectedIndex).getAttrIndex("clone")).text)).defaultSpeed(getSpdPos("swmspd"))
-            handle(tabs(TabControl1.SelectedIndex).getAttrIndex("swmspd")).enabled = True
-
-            handle(tabs(TabControl1.SelectedIndex).getAttrIndex("swimAnim")).selectedIndex = -1
-            handle(tabs(TabControl1.SelectedIndex).getAttrIndex("swimAnim")).enabled = True
-
-        Else
-
-            handle(tabs(TabControl1.SelectedIndex).getAttrIndex("swmspd")).text = ""
-            handle(tabs(TabControl1.SelectedIndex).getAttrIndex("swmspd")).enabled = False
-
-            handle(tabs(TabControl1.SelectedIndex).getAttrIndex("swimAnim")).selectedIndex = -1
-            handle(tabs(TabControl1.SelectedIndex).getAttrIndex("swimAnim")).enabled = False
-
-        End If
+                End If
+            End If
+        Next
     End Sub
 
     Sub swimChange(sender As Object, e As EventArgs)
@@ -1044,7 +1034,7 @@
                     If handle(attrIndex).selectedIndex = handle(sender.senderAttr).selectedIndex Then
                         handle(attrIndex).progChange = True
                         handle(attrIndex).selectedIndex = -1
-                        handle(sender.senderAttr).progChange = True
+                        'handle(sender.senderAttr).progChange = True
                     End If
                     'End If
                 End If

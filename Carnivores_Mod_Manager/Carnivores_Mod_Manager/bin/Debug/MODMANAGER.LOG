@@ -112,18 +112,19 @@ Name=Moshops
 Slot=1
 AI=1
 CAR File=mosh.car
-Can Swim=False
 Run Animation=0
-Walk Animation=1
-Slide Animation=-1
-Swim Animation=-1
-Fly Animation=-1
-Glide Animation=-1
 Run Speed=0.6
+Walk Animation=1
 Walk Speed=0.3
-Swim Speed=0
+Slide Animation=-1
+Fly Animation=-1
 Fly Speed=0
+Glide Animation=-1
 Glide Speed=0
+Can Swim=False
+Swim Animation=-1
+Swim Speed=0
+Water Level=50
 ---------------------------------------------------------------------
 ANIM7
 VERT348
@@ -134,18 +135,19 @@ Name=Galimimus
 Slot=2
 AI=2
 CAR File=gall.car
-Can Swim=False
 Run Animation=0
-Walk Animation=1
-Slide Animation=2
-Swim Animation=-1
-Fly Animation=-1
-Glide Animation=-1
 Run Speed=0.9
+Walk Animation=1
 Walk Speed=0.32
-Swim Speed=0
+Slide Animation=2
+Fly Animation=-1
 Fly Speed=0
+Glide Animation=-1
 Glide Speed=0
+Can Swim=False
+Swim Animation=-1
+Swim Speed=0
+Water Level=100
 ---------------------------------------------------------------------
 ANIM4
 VERT307
@@ -156,18 +158,19 @@ Name=Dimorphodon
 Slot=3
 AI=3
 CAR File=dimor2.car
-Can Swim=False
 Run Animation=-1
-Walk Animation=-1
-Slide Animation=-1
-Swim Animation=-1
-Fly Animation=0
-Glide Animation=1
 Run Speed=0
+Walk Animation=-1
 Walk Speed=0
-Swim Speed=0
+Slide Animation=-1
+Fly Animation=0
 Fly Speed=1.5
+Glide Animation=1
 Glide Speed=1.3
+Can Swim=False
+Swim Animation=-1
+Swim Speed=0
+Water Level=40
 ---------------------------------------------------------------------
 ANIM4
 VERT349
@@ -178,18 +181,19 @@ Name=Pteranodon
 Slot=4
 AI=4
 CAR File=ptera.car
-Can Swim=False
 Run Animation=-1
-Walk Animation=-1
-Slide Animation=-1
-Swim Animation=-1
-Fly Animation=0
-Glide Animation=1
 Run Speed=0
+Walk Animation=-1
 Walk Speed=0
-Swim Speed=0
+Slide Animation=-1
+Fly Animation=0
 Fly Speed=1.5
+Glide Animation=1
 Glide Speed=1.3
+Can Swim=False
+Swim Animation=-1
+Swim Speed=0
+Water Level=40
 ---------------------------------------------------------------------
 ANIM6
 VERT390
@@ -200,18 +204,19 @@ Name=Dimetrodon
 Slot=5
 AI=5
 CAR File=dimet.car
-Can Swim=False
 Run Animation=1
-Walk Animation=0
-Slide Animation=-1
-Swim Animation=-1
-Fly Animation=-1
-Glide Animation=-1
 Run Speed=0.6
+Walk Animation=0
 Walk Speed=0.3
-Swim Speed=0
+Slide Animation=-1
+Fly Animation=-1
 Fly Speed=0
+Glide Animation=-1
 Glide Speed=0
+Can Swim=False
+Swim Animation=-1
+Swim Speed=0
+Water Level=50
 ---------------------------------------------------------------------
 ANIM6
 VERT332
