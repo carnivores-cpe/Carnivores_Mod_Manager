@@ -1546,15 +1546,19 @@
                     ElseIf line.Contains("{") Then
                         Dim resName As String = Trim(line.Substring(0, line.IndexOf("{")))
                         Dim attrIndex = tabs(tabIndex).getAttrIndex(resName)
+                        '^ make this a contains, not equals for override/addition subsections
 
                         If attrIndex >= 0 Then
 
                             'code here!!!!!
 
                         Else
+                            Dim layer As Integer = 1
                             Do
                                 line = LineInput(1)
-                            Loop Until line.Contains("}")
+                                If line.Contains("{") Then layer += 1
+                                If line.Contains("}") Then layer -= 1
+                            Loop Until layer <= 0
                         End If
 
                     End If

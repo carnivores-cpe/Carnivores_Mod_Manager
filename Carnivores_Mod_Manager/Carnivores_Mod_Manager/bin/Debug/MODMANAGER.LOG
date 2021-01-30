@@ -338,6 +338,30 @@ READ Map Ambient Creature : 3
 Name=Climatius
 CAR File=climatius3.car
 ---------------------------------------------------------------------
+ANIM2
+VERT127
+TRI219
+TEX131072
+READ Map Ambient Creature : 4
+Name=Parexus
+CAR File=parexusn4.car
+---------------------------------------------------------------------
+ANIM2
+VERT127
+TRI219
+TEX131072
+READ Map Ambient Creature : 5
+Name=Pink Parexus
+CAR File=parexusn4_pink.car
+---------------------------------------------------------------------
+ANIM11
+VERT517
+TRI1018
+TEX131072
+READ Map Ambient Creature : 6
+Name=Ichthyornis
+CAR File=icthy1.car
+---------------------------------------------------------------------
 READ PRICES:
 START MONEY = 10000
 AREA0=20
