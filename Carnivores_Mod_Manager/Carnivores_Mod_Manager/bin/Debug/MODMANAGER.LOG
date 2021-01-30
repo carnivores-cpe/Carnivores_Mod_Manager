@@ -117,6 +117,10 @@ Walk Animation=1
 Slide Animation=-1
 Fly Animation=-1
 Glide Animation=-1
+Run Speed=0.6
+Walk Speed=0.3
+Fly Speed=0
+Glide Speed=0
 ---------------------------------------------------------------------
 ANIM7
 VERT348
@@ -132,6 +136,10 @@ Walk Animation=1
 Slide Animation=2
 Fly Animation=-1
 Glide Animation=-1
+Run Speed=0.9
+Walk Speed=0.32
+Fly Speed=0
+Glide Speed=0
 ---------------------------------------------------------------------
 ANIM4
 VERT307
@@ -147,6 +155,10 @@ Walk Animation=-1
 Slide Animation=-1
 Fly Animation=0
 Glide Animation=1
+Run Speed=0
+Walk Speed=0
+Fly Speed=1.5
+Glide Speed=1.3
 ---------------------------------------------------------------------
 ANIM4
 VERT349
@@ -162,6 +174,10 @@ Walk Animation=-1
 Slide Animation=-1
 Fly Animation=0
 Glide Animation=1
+Run Speed=0
+Walk Speed=0
+Fly Speed=1.5
+Glide Speed=1.3
 ---------------------------------------------------------------------
 ANIM6
 VERT390
@@ -177,6 +193,10 @@ Walk Animation=0
 Slide Animation=-1
 Fly Animation=-1
 Glide Animation=-1
+Run Speed=0.6
+Walk Speed=0.3
+Fly Speed=0
+Glide Speed=0
 ---------------------------------------------------------------------
 ANIM6
 VERT332

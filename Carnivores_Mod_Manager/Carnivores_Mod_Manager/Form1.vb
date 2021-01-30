@@ -32,6 +32,7 @@
 
     Dim aiList As List(Of AI)
 
+    Dim nameSpeed As List(Of String)
 
     Dim editForm As Form
     Dim panel1 As Panel
@@ -93,42 +94,82 @@
 
     Private Sub setupTabData()
 
+        nameSpeed = New List(Of String)
+        nameSpeed.Add("runSpd")     '0
+        nameSpeed.Add("wlkSpd")     '1
+        nameSpeed.Add("flySpd")     '2
+        nameSpeed.Add("gldSpd")     '3
+
         aiList = New List(Of AI)
-        aiList.Add(New AI("Moshops", 1, 4))                    '0
-        aiList.Add(New AI("Galimimus", 2, 5))                  '1
-        aiList.Add(New AI("Dimorphodon", 3, 4))                '2
-        aiList.Add(New AI("Pteranodon", 4, 4))                 '3
-        aiList.Add(New AI("Dimetrodon", 5, 4))                 '4
-        aiList.Add(New AI("Parasaurolophus", 10, 0))           '5
-        aiList.Add(New AI("Pachycephalosaurus", 19, 0))        '6
-        aiList.Add(New AI("Ankylosaurus", 11, 0))              '7
-        aiList.Add(New AI("Stegosaurus", 12, 0))               '8
-        aiList.Add(New AI("Allosaurus", 13, 0))                '9
-        aiList.Add(New AI("Chasmosaurus", 14, 0))              '10
-        aiList.Add(New AI("Velociraptor", 15, 0))              '11
-        aiList.Add(New AI("Spinosaurus", 16, 0))               '12
-        aiList.Add(New AI("Ceratosaurus", 17, 0))              '13
-        aiList.Add(New AI("T-Rex", 18, 0))                     '14
-        aiList.Add(New AI("Brachiosaurus", -1, 0))             '15
-        aiList.Add(New AI("Dangerous Brachiosaurus", -5, 0))   '16
-        aiList.Add(New AI("Land Brachiosaurus", -6, 0))        '17
-        aiList.Add(New AI("Ichthyornis", -2, 0))               '18
-        aiList.Add(New AI("Fish", -3, 0))                      '19
+        aiList.Add(New AI("Moshops", 1, 4, nameSpeed.Count))                    '0
+        aiList.Add(New AI("Galimimus", 2, 5, nameSpeed.Count))                  '1
+        aiList.Add(New AI("Dimorphodon", 3, 4, nameSpeed.Count))                '2
+        aiList.Add(New AI("Pteranodon", 4, 4, nameSpeed.Count))                 '3
+        aiList.Add(New AI("Dimetrodon", 5, 4, nameSpeed.Count))                 '4
+        aiList.Add(New AI("Parasaurolophus", 10, 0, nameSpeed.Count))           '5
+        aiList.Add(New AI("Pachycephalosaurus", 19, 0, nameSpeed.Count))        '6
+        aiList.Add(New AI("Ankylosaurus", 11, 0, nameSpeed.Count))              '7
+        aiList.Add(New AI("Stegosaurus", 12, 0, nameSpeed.Count))               '8
+        aiList.Add(New AI("Allosaurus", 13, 0, nameSpeed.Count))                '9
+        aiList.Add(New AI("Chasmosaurus", 14, 0, nameSpeed.Count))              '10
+        aiList.Add(New AI("Velociraptor", 15, 0, nameSpeed.Count))              '11
+        aiList.Add(New AI("Spinosaurus", 16, 0, nameSpeed.Count))               '12
+        aiList.Add(New AI("Ceratosaurus", 17, 0, nameSpeed.Count))              '13
+        aiList.Add(New AI("T-Rex", 18, 0, nameSpeed.Count))                     '14
+        aiList.Add(New AI("Brachiosaurus", -1, 0, nameSpeed.Count))             '15
+        aiList.Add(New AI("Dangerous Brachiosaurus", -5, 0, nameSpeed.Count))   '16
+        aiList.Add(New AI("Land Brachiosaurus", -6, 0, nameSpeed.Count))        '17
+        aiList.Add(New AI("Ichthyornis", -2, 0, nameSpeed.Count))               '18
+        aiList.Add(New AI("Fish", -3, 0, nameSpeed.Count))                      '19
 
         For index = 0 To 19
             aiList(index).active = New List(Of String)
         Next
 
+        'anim
+
         For Each index In {0, 1, 4}
             aiList(index).active.Add("runAnim")
             aiList(index).active.Add("walkAnim")
-            aiList(index).active.Add("idleAnim")
         Next
         aiList(1).active.Add("slideAnim")
         For Each index In {2, 3}
             aiList(index).active.Add("flyAnim")
             aiList(index).active.Add("glideAnim")
         Next
+
+        'spd
+
+        For Each index In {0, 1, 4}
+            aiList(index).active.Add("runspd")
+            aiList(index).active.Add("wlkspd")
+        Next
+        For Each index In {2, 3}
+            aiList(index).active.Add("flyspd")
+            aiList(index).active.Add("gldspd")
+        Next
+
+        'MOSH
+        aiList(0).defaultSpeed(0) = 0.6 'run
+        aiList(0).defaultSpeed(1) = 0.3 'wlk
+
+        'GALL
+        aiList(1).defaultSpeed(0) = 0.9 'run
+        aiList(1).defaultSpeed(1) = 0.32 'wlk
+
+        'DIMOR
+        aiList(2).defaultSpeed(2) = 1.5 'fly
+        aiList(2).defaultSpeed(3) = 1.3 'gld
+
+        'PTERA
+        aiList(3).defaultSpeed(2) = 1.5 'fly
+        aiList(3).defaultSpeed(3) = 1.3 'gld
+
+        'DIMOR
+        aiList(4).defaultSpeed(0) = 0.6 'run
+        aiList(4).defaultSpeed(1) = 0.3 'wlk
+
+
 
 
 
@@ -181,6 +222,16 @@
         tabs(AmbientTab).addAttribute("Glide Animation", "glideAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, "The gliding animation for the creature - animations can be viewed by opening the car file in C3Dit.")
 
 
+
+        tabs(AmbientTab).addAttribute("Run Speed", "runspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, "")
+        tabs(AmbientTab).addAttribute("Walk Speed", "wlkspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, "")
+        tabs(AmbientTab).addAttribute("Fly Speed", "flyspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, "")
+        tabs(AmbientTab).addAttribute("Glide Speed", "gldspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, "")
+
+        'SWIM - RE-ADD
+        'tabs(AmbientTab).addAttribute("Can Swim", "canswim", AttributeType.attrBoolean, False, 0, 0, False, "", "", True, False, False, "When set to true, the creature will be able to swim.")
+
+
         tabs(AmbientCorpseTab) = New Tab()
         tabs(AmbientCorpseTab).name = "Ambient Corpses"
         tabs(AmbientCorpseTab).nameS = "Ambient Corpse"
@@ -188,7 +239,7 @@
         tabs(AmbientCorpseTab).recordLock = False
         tabs(AmbientCorpseTab).addAttribute("Name", "name", AttributeType.attrString, "", 0, 509, False, "", "", True, True, False, "The display name for the creature in the binoculars.")
         tabs(AmbientCorpseTab).addAttribute(carFileClass)
-        'NOTE ALL AMBIENT CORPSES MUST HAVE AI 6,7,OR 8 and matching CLONE
+        'NOTE ALL AMBIENT CORPSES MUST HAVE AI 6,7,OR 8 and matching CLONE - hidden?
 
 
         'Leave waterD out for now?? Water die Is Not part of deathType ???
@@ -456,6 +507,12 @@
         Next
     End Function
 
+    Function getSpdPos(ByVal resname As String)
+        For index = 0 To nameSpeed.Count - 1
+            If nameSpeed(index) = resname Then Return index
+        Next
+    End Function
+
     Function getAIIndex(ByVal ai As Integer)
         For index = 0 To aiList.Count - 1
             If aiList(index).id = ai Then Return index
@@ -664,6 +721,20 @@
                     numBox.Minimum = attrclasses(attrIndex).minValue
                     numBox.Increment = 0.01D
                     numBox.DecimalPlaces = 2
+                    numBox.Text = record.attributes(attrIndex).value
+                    panel(panel.Count - 1).Controls.Add(numBox)
+                    handle.Add(numBox)
+
+                    If attrclasses(attrIndex).editable = False Then numBox.Enabled = False
+
+                Case AttributeType.attrSpd
+                    Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
+                    numBox.Size = New Drawing.Size(130, 15)
+                    numBox.Location = New Drawing.Point(116, 0)
+                    numBox.Maximum = attrclasses(attrIndex).maxValue
+                    numBox.Minimum = attrclasses(attrIndex).minValue
+                    numBox.Increment = 0.001D
+                    numBox.DecimalPlaces = 3
                     numBox.Text = record.attributes(attrIndex).value
                     panel(panel.Count - 1).Controls.Add(numBox)
                     handle.Add(numBox)
@@ -903,12 +974,12 @@
 
             For attrIndex = 0 To tabs(TabControl1.SelectedIndex).attributeClasses.Count - 1
                 If tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).type = AttributeType.attrAnim And attrIndex <> sender.senderAttr Then
-                    Dim active As Boolean = True
-                    If tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).AIdependant = True Then
-                        If Not aiList(getAI(handle(tabs(TabControl1.SelectedIndex).getAttrIndex("clone")).text)).active.Contains(tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).resName) Then
-                            active = False
-                        End If
-                    End If
+                    'Dim active As Boolean = True
+                    'If tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).AIdependant = True Then
+                    'If Not aiList(getAI(handle(tabs(TabControl1.SelectedIndex).getAttrIndex("clone")).text)).active.Contains(tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).resName) Then
+                    'active = False
+                    'End If
+                    'End If
                     'If active = True Then
                     If handle(attrIndex).selectedIndex = handle(sender.senderAttr).selectedIndex Then
                         handle(attrIndex).progChange = True
@@ -954,6 +1025,12 @@
                     Return handle3.value
                 End If
             Case AttributeType.attrDouble
+                If handle3.Text = "" Then
+                    Return 0
+                Else
+                    Return handle3.value
+                End If
+            Case AttributeType.attrSpd
                 If handle3.Text = "" Then
                     Return 0
                 Else
@@ -1063,18 +1140,28 @@
 
     Private Sub changeAI(sender As Object, e As EventArgs)
         Dim r As Record = tabs(TabControl1.SelectedIndex).records(tabs(TabControl1.SelectedIndex).listBox.SelectedIndex)
-        If r.animList.Count < aiList(getAI(sender.text)).minAnim Then
-            Dim h As Object = handle(tabs(TabControl1.SelectedIndex).getAttrIndex("file"))
+        'conf("Are you sure you want to change AI?.")Dim h As Object = handle(tabs(TabControl1.SelectedIndex).getAttrIndex("file"))
+        Dim h As Object = handle(tabs(TabControl1.SelectedIndex).getAttrIndex("file"))
+        If r.animList.Count < aiList(getAI(sender.text)).minAnim And h.text <> "" Then
             mess(h.text & " has too few animations to be used on " & aiList(getAI(sender.text)).name & " AI (at least " & aiList(getAI(sender.text)).minAnim & " animations needed)")
             h.progChange = True
+            'r.animList = New List(Of String)
             For attrIndex As Integer = 0 To handle.Count - 1
                 Dim aCl = tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex)
                 If aCl.type = AttributeType.attrAnim Then
                     handle(attrIndex).items.clear
                 End If
             Next
-            r.animList = New List(Of String)
             h.selectedindex = -1
+        Else
+            For attrIndex As Integer = 0 To handle.Count - 1
+                Dim aCl = tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex)
+                If aCl.type = AttributeType.attrAnim Then
+                    handle(attrIndex).items.clear
+                ElseIf aCl.type = AttributeType.attrSpd Then
+                    handle(attrIndex).value = aiList(getAI(sender.text)).defaultSpeed(getSpdPos(aCl.resName))
+                End If
+            Next
         End If
         drawEditFormAttributes(sender)
 
@@ -1424,6 +1511,8 @@
                                     value = Trim(line.Substring(line.IndexOf("=") + 1))
                                 Case AttributeType.attrDouble
                                     value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                Case AttributeType.attrSpd
+                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
                                 Case AttributeType.attrBoolean
                                     If line.Contains("TRUE") Then value = True Else value = False
                                 Case AttributeType.attrIntBool
@@ -1711,6 +1800,7 @@
         attrAI ' Clone
         attrCar ' Creatures only
         attrAnim
+        attrSpd  'speed - can be reset when AI changed - 3 decimal places
     End Enum
 
     Public Class Attribute
@@ -1730,10 +1820,13 @@
         Public id As Integer
         Public active As List(Of String)
         Public minAnim As Integer
-        Public Sub New(ByVal nam As String, ByVal i As Integer, ByVal ma As Integer)
+        Public defaultSpeed() As Double
+
+        Public Sub New(ByVal nam As String, ByVal i As Integer, ByVal ma As Integer, ByVal spdNo As Integer)
             name = nam
             id = i
             minAnim = ma
+            ReDim defaultSpeed(spdNo)
         End Sub
     End Class
 
