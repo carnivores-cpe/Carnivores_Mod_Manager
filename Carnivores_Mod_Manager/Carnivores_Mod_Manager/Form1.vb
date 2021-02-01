@@ -22,8 +22,11 @@
     Dim managerVersion As String = "1.0.0"
 
     Dim imgAdd As Bitmap = New Bitmap(My.Resources.add, New Size(32, 32))
+    Dim imgAddSub As Bitmap = New Bitmap(My.Resources.add, New Size(20, 20))
     Dim imgEdit As Bitmap = New Bitmap(My.Resources.edit, New Size(32, 32))
+    Dim imgEditSub As Bitmap = New Bitmap(My.Resources.edit, New Size(20, 20))
     Dim imgDelete As Bitmap = New Bitmap(My.Resources.delete, New Size(32, 32))
+    Dim imgMinusSub As Bitmap = New Bitmap(My.Resources.minus, New Size(20, 20))
     Dim imgUp As Bitmap = New Bitmap(My.Resources.up, New Size(32, 32))
     Dim imgDown As Bitmap = New Bitmap(My.Resources.down, New Size(32, 32))
     Dim imgExpand As Bitmap = New Bitmap(My.Resources.expand, New Size(20, 20))
@@ -137,6 +140,8 @@
             aiList(index).active.Add("swimAnim")
             aiList(index).active.Add("swmspd")
             aiList(index).active.Add("waterLevel")
+
+            aiList(index).active.Add("fearCall")
         Next
 
         aiList(1).active.Add("slideAnim")
@@ -237,7 +242,7 @@
         tabs(AmbientTab).addAttribute("Swim Speed", "swmspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, True, "The movement speed of the creature when swimming. Only applicable if Can Swim is set to true.")
         tabs(AmbientTab).addAttribute("Water Level", "waterLevel", AttributeType.attrInteger, 0, 0, 2147483647, False, "", "", True, False, True, True, "Controls how far a creature can wade into the water before having to swim. Only applicable if Can Swim is set to true.")
 
-
+        tabs(AmbientTab).addAttribute("Afraid of Call", "fearCall", AttributeType.attrFearCall, 0, 0, 64, False, "", "", True, True, True, False, "These calls can be used to scare the creature away.")
 
         tabs(AmbientCorpseTab) = New Tab()
         tabs(AmbientCorpseTab).name = "Ambient Corpses"
@@ -606,6 +611,56 @@
 
                     If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
 
+                Case AttributeType.attrFearCall
+
+                    Dim dgv As DataGridView = New DataGridView
+                    dgv.Size = New Drawing.Size(130, 80)
+                    dgv.Location = New Drawing.Point(116, 0)
+                    dgv.ColumnCount = 1
+                    dgv.Columns(0).Name = "fc"
+                    dgv.ColumnHeadersVisible = False
+                    dgv.RowHeadersVisible = False
+                    dgv.AllowUserToAddRows = False
+
+                    handle.Add(dgv)
+
+                    For i As Integer = 0 To record.attributes(attrIndex).value.count - 1
+                        addDGVComboBox(attrIndex)
+                        dgv.Item(0, dgv.Rows.Count - 1).Value = aiList(getAIIndex(record.attributes(attrIndex).value(i))).name
+                    Next
+
+                    panel(panel.Count - 1).Controls.Add(dgv)
+
+                    Dim addT = New ToolTip
+                    addT.ShowAlways = True
+                    Dim addB As DGVButton = New DGVButton
+                    addB.attrIndex = attrIndex
+                    addB.Size = New Drawing.Size(23, 23)
+                    addB.Location = New Drawing.Point(93, -1)
+                    addB.Image = imgAddSub
+                    AddHandler addB.Click, AddressOf addFearCall
+                    addT.SetToolTip(addB, "Add Call")
+                    panel(panel.Count - 1).Controls.Add(addB)
+
+                    Dim removeT = New ToolTip
+                    removeT.ShowAlways = True
+                    Dim removeB As DGVButton = New DGVButton
+                    removeB.attrIndex = attrIndex
+                    removeB.Size = New Drawing.Size(23, 23)
+                    removeB.Location = New Drawing.Point(93, 21)
+                    removeB.Image = imgMinusSub
+                    AddHandler removeB.Click, AddressOf deleteFearCall
+                    removeT.SetToolTip(removeB, "Remove Call")
+                    panel(panel.Count - 1).Controls.Add(removeB)
+
+                    If attrclasses(attrIndex).editable = False Then
+                        removeB.Enabled = False
+                        dgv.Enabled = False
+                    End If
+
+                    yIncrement = 65
+                    helpIncrement = 32
+
 
                 Case AttributeType.attrTextFile
                     Dim textBox As TextBox = New TextBox
@@ -624,7 +679,7 @@
                     expandButton.record = record
                     expandButton.attrIndex = attrIndex
                     expandButton.handle2 = textBox
-                    expandButton.Size = New Drawing.Size(23, 22)
+                    expandButton.Size = New Drawing.Size(23, 23)
                     expandButton.Location = New Drawing.Point(90, -1)
                     expandButton.Image = imgExpand
                     AddHandler expandButton.Click, AddressOf showTextEditor
@@ -659,11 +714,9 @@
                     Dim comboBox As UnscrollableAnimComboBox = New UnscrollableAnimComboBox 'custom class overrides scroll wheeling through options
                     comboBox.Size = New Drawing.Size(130, 15)
                     comboBox.Location = New Drawing.Point(116, 0)
-                    If handle(tabs(TabControl1.SelectedIndex).getAttrIndex("clone")).selectedIndex >= 0 Then 'new records will not be specified with a car yet!
-                        For Each animName In record.animList
-                            comboBox.Items.Add(animName)
-                        Next
-                    End If
+                    For Each animName In record.animList
+                        comboBox.Items.Add(animName)
+                    Next
 
                     comboBox.DropDownStyle = ComboBoxStyle.DropDownList
                     comboBox.SelectedIndex = record.attributes(attrIndex).value
@@ -834,7 +887,7 @@
                     button.record = record
                     button.attrIndex = attrIndex
                     button.handle2 = textBox
-                    button.Size = New Drawing.Size(23, 22)
+                    button.Size = New Drawing.Size(23, 23)
                     button.Location = New Drawing.Point(224, -1)
                     button.Image = imgOpenFile
                     AddHandler button.Click, AddressOf OpenFileDialog
@@ -873,7 +926,7 @@
                     button.handle2 = textBox
                     textBox.record = record
                     textBox.attrIndex = attrIndex
-                    button.Size = New Drawing.Size(23, 22)
+                    button.Size = New Drawing.Size(23, 23)
                     button.Location = New Drawing.Point(224, -1)
                     button.Image = imgOpenFile
                     AddHandler button.Click, AddressOf OpenFileDialog
@@ -939,10 +992,13 @@
         AddHandler buttonCancel.Click, AddressOf formCancel
         editForm.Controls.Add(buttonCancel)
 
-        Dim swimH As Object = handle(tabs(TabControl1.SelectedIndex).getAttrIndex("canswim"))
-        If swimH.selectedIndex = 1 Then
-            swimChange2(swimH)
-        End If
+        For i2 As Integer = 0 To tabs(TabControl1.SelectedIndex).attributeClasses.Count - 1
+            If tabs(TabControl1.SelectedIndex).attributeClasses(i2).type = AttributeType.attrSwimmer Then
+                If handle(i2).selectedIndex = 1 Then
+                    swimChange2(handle(i2))
+                End If
+            End If
+        Next
 
         editForm.ShowDialog()
 
@@ -965,6 +1021,23 @@
             Next
         End If
 
+    End Sub
+
+    Sub addFearCall(sender As Object, e As EventArgs)
+        addDGVComboBox(sender.attrindex)
+    End Sub
+
+    Sub deleteFearCall(sender As Object, e As EventArgs)
+        handle(sender.attrIndex).Rows.RemoveAt(handle(sender.attrIndex).rows.count - 1)
+    End Sub
+
+    Sub addDGVComboBox(ByVal attrIndex As Integer)
+        handle(attrIndex).Rows.Add("")
+        Dim dgvcc As New DataGridViewComboBoxCell
+        For index = 0 To tabs(HuntableTab).records.Count - 1
+            dgvcc.Items.Add(tabs(HuntableTab).getAttr(index, "name"))
+        Next
+        handle(attrIndex).Item(0, handle(attrIndex).Rows.Count - 1) = dgvcc
     End Sub
 
     Sub swimChange2(ByVal h As Object)
@@ -1002,6 +1075,7 @@
 
             Dim yIncrement As Integer = 0
             If attrclasses(attrIndex).type = AttributeType.attrTextFile Then yIncrement = 65
+            If attrclasses(attrIndex).type = AttributeType.attrFearCall Then yIncrement = 65
             If attrclasses(attrIndex).type = AttributeType.attrTogglableInteger Then yIncrement = 20
 
             If active = True Then
@@ -1043,8 +1117,14 @@
         sender.prevValue = handle(sender.senderAttr).selectedIndex
     End Sub
 
-    Function validateField(ByRef handle3 As Object)
-        If handle3.text.trim = "" Then Return False
+    Function validateField(ByRef handle3 As Object, ByVal attrType As AttributeType)
+        If attrType = AttributeType.attrFearCall Then
+            For rowNo = 0 To handle3.Rows.count - 1
+                If handle3.Item(0, rowNo).value = Nothing Then Return False
+            Next
+        Else
+            If handle3.text.trim = "" Then Return False
+        End If
         Return True
     End Function
 
@@ -1054,6 +1134,12 @@
                 Return handle3.text
             Case AttributeType.attrAI
                 Return aiList(getAI(handle3.text)).id
+            Case AttributeType.attrFearCall
+                Dim l = New List(Of Integer)
+                For rowNo = 0 To handle3.Rows.count - 1
+                    l.Add(aiList(getAI(handle3.Item(0, rowNo).value)).id)
+                Next
+                Return l
             Case AttributeType.attrTextFile
                 Return handle3.text
             Case AttributeType.attrFile
@@ -1330,6 +1416,13 @@
 
     End Class
 
+    Friend Class DGVButton
+        Inherits Button
+
+        Public attrIndex As Integer
+
+    End Class
+
     Friend Class LoadDataButton
         Inherits Button
 
@@ -1412,7 +1505,7 @@
             End If
 
             If active = True Then
-                If Not validateField(sender.handle2(index)) Then
+                If Not validateField(sender.handle2(index), tabs(TabControl1.SelectedIndex).attributeClasses(index).type) Then
                     sender.result = False
                     mess(tabs(TabControl1.SelectedIndex).attributeClasses(index).displayName & " invalid")
                     Return
@@ -1563,6 +1656,8 @@
                                     value = Trim(line.Substring(line.IndexOf("'") + 1)).TrimEnd(CChar("'"))
                                 Case AttributeType.attrInteger
                                     value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                Case AttributeType.attrFearCall
+                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
                                 Case AttributeType.attrAnim
                                     value = Trim(line.Substring(line.IndexOf("=") + 1))
                                 Case AttributeType.attrSlot
@@ -1628,7 +1723,12 @@
                 If debug Then
                     printLog("READ " & tabs(tabIndex).nameS & " : " & tabs(tabIndex).records.Count - 1)
                     For atrIndex As Integer = 0 To tabs(tabIndex).attributeClasses.Count - 1
-                        printLog(tabs(tabIndex).attributeClasses(atrIndex).displayName & "=" & tabs(tabIndex).records(tabs(tabIndex).records.Count - 1).attributes(atrIndex).value)
+                        If tabs(tabIndex).attributeClasses(atrIndex).type = AttributeType.attrFearCall Then
+                            'Dim o As Object = tabs(tabIndex).records(tabs(tabIndex).records.Count - 1).attributes(atrIndex).value
+                            'printLog(tabs(tabIndex).attributeClasses(atrIndex).displayName & "=" & o(o.count - 1))
+                        Else
+                            printLog(tabs(tabIndex).attributeClasses(atrIndex).displayName & "=" & tabs(tabIndex).records(tabs(tabIndex).records.Count - 1).attributes(atrIndex).value)
+                        End If
                     Next
                     printLog("---------------------------------------------------------------------")
                 End If
@@ -1747,13 +1847,6 @@
                                 ByVal ext As String, ByVal edit As Boolean, ByVal valida As Boolean, ByVal aiD As Boolean,
                                 ByVal _swimmer As Boolean, ByVal help As String)
             attributeClasses.Add(New AttributeClass(name, res, type, defaultValue, min, max, hide, gameFolder, ext, edit, valida, aiD, _swimmer, help))
-            'clear temp folder
-            'If type = AttributeType.attrFile Then
-            'Dim path As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).Remove(0, 6) & "\" & tempFolder & "\"
-            'For Each fi In New IO.DirectoryInfo(path).GetFiles("*." & ext)
-            'My.Computer.FileSystem.DeleteFile(path & fi.Name)
-            'Next
-            'End If
         End Sub
 
         Public Sub addAttribute(ByRef attrClass)
@@ -1763,15 +1856,26 @@
         Public Sub addRecord()
             records.Add(New Record)
             records(records.Count - 1).attributes = New List(Of Attribute)
+            records(records.Count - 1).animList = New List(Of String)
             For attrIndex As Integer = 0 To attributeClasses.Count - 1
                 records(records.Count - 1).attributes.Add(New Attribute(attributeClasses(attrIndex).defaultValue))
+
+                If attributeClasses(attrIndex).type = AttributeType.attrFearCall Then
+                    records(records.Count - 1).attributes(attrIndex).value = New List(Of Integer)
+                End If
+
             Next
         End Sub
 
         Public Sub setAttr(ByVal recordIndex As Integer, ByVal resName As String, ByVal _value As Object)
             For attrIndex As Integer = 0 To attributeClasses.Count - 1
                 If attributeClasses(attrIndex).resName = resName Then
-                    records(recordIndex).attributes(attrIndex).value = _value
+                    If attributeClasses(attrIndex).type = AttributeType.attrFearCall Then
+                        records(recordIndex).attributes(attrIndex).value.add(_value)
+                    Else
+                        records(recordIndex).attributes(attrIndex).value = _value
+                    End If
+
                 End If
             Next
         End Sub
@@ -1873,6 +1977,9 @@
         attrAnim
         attrSpd  'speed - can be reset when AI changed - 3 decimal places
         attrSwimmer ' attrBoolean with swim change event
+
+        attrFearCall 'select multi ai
+
     End Enum
 
     Public Class Attribute

@@ -124,6 +124,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Minus.png" />
     <None Include="Resources\expand.png" />
     <None Include="Resources\edit.png" />
     <None Include="Resources\down.png" />

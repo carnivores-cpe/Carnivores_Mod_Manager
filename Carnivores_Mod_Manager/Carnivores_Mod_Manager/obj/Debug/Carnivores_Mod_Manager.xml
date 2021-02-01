@@ -52,6 +52,11 @@ Carnivores_Mod_Manager
   Looks up a localized resource of type System.Drawing.Bitmap.
 </summary>
 </member>
+<member name="P:Carnivores_Mod_Manager.My.Resources.Resources.Minus">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
 <member name="P:Carnivores_Mod_Manager.My.Resources.Resources.openfile">
 <summary>
   Looks up a localized resource of type System.Drawing.Bitmap.
