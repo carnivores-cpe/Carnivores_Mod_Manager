@@ -136,6 +136,8 @@
             aiList(index).active.Add("runspd")
             aiList(index).active.Add("wlkspd")
 
+            aiList(index).active.Add("idleAnim")
+
             aiList(index).active.Add("canswim")
             aiList(index).active.Add("swimAnim")
             aiList(index).active.Add("swmspd")
@@ -236,6 +238,8 @@
 
         tabs(AmbientTab).addAttribute("Glide Animation", "glideAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, False, "The gliding animation for the creature - animations can be viewed by opening the car file in C3Dit.")
         tabs(AmbientTab).addAttribute("Glide Speed", "gldspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, False, "The movement speed of the creature when gliding.")
+
+        tabs(AmbientTab).addAttribute("Idle Animations", "idleAnim", AttributeType.attrAnimMulti, -1, 0, 32, False, "", "", True, True, True, False, "The idle animations for the creature - animations can be viewed by opening the car file in C3Dit.")
 
         tabs(AmbientTab).addAttribute("Can Swim", "canswim", AttributeType.attrSwimmer, False, 0, 0, False, "", "", True, False, True, False, "When set to true, the creature will be able to swim.")
         tabs(AmbientTab).addAttribute("Swim Animation", "swimAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, True, "The swimming animation for the creature - animations can be viewed by opening the car file in C3Dit. Only applicable if Can Swim is set to true.")
@@ -513,6 +517,12 @@
         End If
     End Sub
 
+    Function findIndex(ByVal o As String, ByVal l As List(Of String))
+        For i As Integer = 0 To l.Count - 1
+            If o = l(i) Then Return i
+        Next
+    End Function
+
     Function getAI(ByVal ai As Integer)
         For index = 0 To aiList.Count - 1
             If aiList(index).id = ai Then Return aiList(index)
@@ -611,6 +621,74 @@
 
                     If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
 
+                Case AttributeType.attrAnimMulti
+
+                    Dim dgv As DataGridViewAnimMulti = New DataGridViewAnimMulti
+                    dgv.Size = New Drawing.Size(130, 80)
+                    dgv.Location = New Drawing.Point(116, 0)
+                    dgv.ColumnCount = 1
+                    dgv.Columns(0).Name = "fc"
+                    dgv.ColumnHeadersVisible = False
+                    dgv.RowHeadersVisible = False
+                    dgv.AllowUserToAddRows = False
+
+                    dgv.senderAttr = attrIndex
+                    dgv.recordIndex = recordIndex
+
+                    AddHandler dgv.EditingControlShowing, AddressOf dgvAnimReorder
+
+                    handle.Add(dgv)
+
+                    For i As Integer = 0 To record.attributes(attrIndex).value.count - 1
+                        addMultiAnim2(attrIndex, record)
+                        dgv.Item(0, dgv.Rows.Count - 1).Value = record.animList(record.attributes(attrIndex).value(i))
+                    Next
+
+
+
+
+                    'comboBox.prevValue = comboBox.SelectedIndex
+                    'comboBox.senderAttr = attrIndex
+                    'comboBox.recordIndex = recordIndex
+
+                    'AddHandler comboBox.SelectedIndexChanged, AddressOf animReorder
+
+
+
+
+                    panel(panel.Count - 1).Controls.Add(dgv)
+
+                    Dim addT = New ToolTip
+                    addT.ShowAlways = True
+                    Dim addB As DGVButton = New DGVButton
+                    addB.attrIndex = attrIndex
+                    addB.record = record
+                    addB.Size = New Drawing.Size(23, 23)
+                    addB.Location = New Drawing.Point(93, -1)
+                    addB.Image = imgAddSub
+                    AddHandler addB.Click, AddressOf addMultiAnim
+                    addT.SetToolTip(addB, "Add Idle Animation")
+                    panel(panel.Count - 1).Controls.Add(addB)
+
+                    Dim removeT = New ToolTip
+                    removeT.ShowAlways = True
+                    Dim removeB As DGVButton = New DGVButton
+                    removeB.attrIndex = attrIndex
+                    removeB.Size = New Drawing.Size(23, 23)
+                    removeB.Location = New Drawing.Point(93, 21)
+                    removeB.Image = imgMinusSub
+                    AddHandler removeB.Click, AddressOf removeDGV
+                    removeT.SetToolTip(removeB, "Remove Idle Animation")
+                    panel(panel.Count - 1).Controls.Add(removeB)
+
+                    If attrclasses(attrIndex).editable = False Then
+                        removeB.Enabled = False
+                        dgv.Enabled = False
+                    End If
+
+                    yIncrement = 65
+                    helpIncrement = 32
+
                 Case AttributeType.attrFearCall
 
                     Dim dgv As DataGridView = New DataGridView
@@ -625,7 +703,7 @@
                     handle.Add(dgv)
 
                     For i As Integer = 0 To record.attributes(attrIndex).value.count - 1
-                        addDGVComboBox(attrIndex)
+                        addFearCall2(attrIndex)
                         dgv.Item(0, dgv.Rows.Count - 1).Value = aiList(getAIIndex(record.attributes(attrIndex).value(i))).name
                     Next
 
@@ -649,7 +727,7 @@
                     removeB.Size = New Drawing.Size(23, 23)
                     removeB.Location = New Drawing.Point(93, 21)
                     removeB.Image = imgMinusSub
-                    AddHandler removeB.Click, AddressOf deleteFearCall
+                    AddHandler removeB.Click, AddressOf removeDGV
                     removeT.SetToolTip(removeB, "Remove Call")
                     panel(panel.Count - 1).Controls.Add(removeB)
 
@@ -1024,20 +1102,36 @@
     End Sub
 
     Sub addFearCall(sender As Object, e As EventArgs)
-        addDGVComboBox(sender.attrindex)
+        addFearCall2(sender.attrindex)
     End Sub
 
-    Sub deleteFearCall(sender As Object, e As EventArgs)
+    Sub addMultiAnim(sender As Object, e As EventArgs)
+        addMultiAnim2(sender.attrindex, sender.record)
+    End Sub
+
+    Sub removeDGV(sender As Object, e As EventArgs)
         handle(sender.attrIndex).Rows.RemoveAt(handle(sender.attrIndex).rows.count - 1)
     End Sub
 
-    Sub addDGVComboBox(ByVal attrIndex As Integer)
+    Sub addFearCall2(ByVal attrIndex As Integer)
         handle(attrIndex).Rows.Add("")
         Dim dgvcc As New DataGridViewComboBoxCell
         For index = 0 To tabs(HuntableTab).records.Count - 1
             dgvcc.Items.Add(tabs(HuntableTab).getAttr(index, "name"))
         Next
         handle(attrIndex).Item(0, handle(attrIndex).Rows.Count - 1) = dgvcc
+    End Sub
+
+
+    Sub addMultiAnim2(ByVal attrIndex As Integer, ByRef record As Record)
+        handle(attrIndex).Rows.Add("")
+        Dim dgvcc As New DataGridViewComboBoxCell
+        For Each animName In record.animList
+            dgvcc.Items.Add(animName)
+        Next
+        handle(attrIndex).Item(0, handle(attrIndex).Rows.Count - 1) = dgvcc
+
+
     End Sub
 
     Sub swimChange2(ByVal h As Object)
@@ -1076,6 +1170,7 @@
             Dim yIncrement As Integer = 0
             If attrclasses(attrIndex).type = AttributeType.attrTextFile Then yIncrement = 65
             If attrclasses(attrIndex).type = AttributeType.attrFearCall Then yIncrement = 65
+            If attrclasses(attrIndex).type = AttributeType.attrAnimMulti Then yIncrement = 65
             If attrclasses(attrIndex).type = AttributeType.attrTogglableInteger Then yIncrement = 20
 
             If active = True Then
@@ -1089,6 +1184,24 @@
 
         Next
         editForm.Refresh()
+    End Sub
+
+    Private Sub dgvAnimReorder(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewEditingControlShowingEventArgs)
+        Dim cb2 As DataGridViewComboBoxEditingControl = TryCast(e.Control, ComboBox)
+        Dim cb As DataGridViewComboBoxEditingControlAnim = cb2
+        If cb IsNot Nothing Then
+
+            cb.prevValue = cb.SelectedIndex
+            cb.senderAttr = sender.attrIndex
+            cb.recordIndex = sender.recordIndex
+            cb.progChange = False
+
+            Dim editingComboBox As ComboBox = DirectCast(e.Control, ComboBox)
+            RemoveHandler editingComboBox.SelectedIndexChanged,
+                New EventHandler(AddressOf animReorder)
+            AddHandler editingComboBox.SelectedIndexChanged,
+                New EventHandler(AddressOf animReorder)
+        End If
     End Sub
 
     Sub animReorder(sender As Object, e As EventArgs)
@@ -1118,7 +1231,8 @@
     End Sub
 
     Function validateField(ByRef handle3 As Object, ByVal attrType As AttributeType)
-        If attrType = AttributeType.attrFearCall Then
+        If attrType = AttributeType.attrFearCall Or
+            attrType = AttributeType.attrAnimMulti Then
             For rowNo = 0 To handle3.Rows.count - 1
                 If handle3.Item(0, rowNo).value = Nothing Then Return False
             Next
@@ -1138,6 +1252,12 @@
                 Dim l = New List(Of Integer)
                 For rowNo = 0 To handle3.Rows.count - 1
                     l.Add(aiList(getAI(handle3.Item(0, rowNo).value)).id)
+                Next
+                Return l
+            Case AttributeType.attrAnimMulti
+                Dim l = New List(Of Integer)
+                For rowNo = 0 To handle3.Rows.count - 1
+                    l.Add(findIndex(handle3.Item(0, rowNo).value, record.animList))
                 Next
                 Return l
             Case AttributeType.attrTextFile
@@ -1416,597 +1536,624 @@
 
     End Class
 
-    Friend Class DGVButton
-        Inherits Button
+    Friend Class DataGridViewAnimMulti
+        Inherits DataGridView
 
-        Public attrIndex As Integer
-
-    End Class
-
-    Friend Class LoadDataButton
-        Inherits Button
-
-        Public record As Record
-        Public attrIndex As Integer
-        Public handle2
+        Public senderAttr As Integer
+        Public recordIndex As Integer
 
     End Class
 
-    Friend Class UnscrollableComboBox
-        Inherits ComboBox
-
-        Protected Overrides Sub OnMouseWheel(ByVal e As MouseEventArgs)
-            Dim mwe As HandledMouseEventArgs = DirectCast(e, HandledMouseEventArgs)
-            mwe.Handled = True
-        End Sub
-    End Class
-
-    Friend Class UnscrollableCarComboBox
-        Inherits UnscrollableComboBox
-
-        Public lastIndex As Integer
-        Public record As Record
-        Public attrIndex As Integer
-        Public progChange As Boolean
-
-        Public Sub New()
-            progChange = False
-        End Sub
-
-    End Class
-
-    Friend Class UnscrollableAnimComboBox
-        Inherits UnscrollableComboBox
+    Friend Class DataGridViewComboBoxEditingControlAnim
+        Inherits System.Windows.Forms.DataGridViewComboBoxEditingControl
 
         Public prevValue As Integer
         Public senderAttr As Integer
         Public recordIndex As Integer
         Public progChange As Boolean
 
-        Public Sub New()
-            progChange = False
-        End Sub
-
-    End Class
-
-    Friend Class UnscrollableNumericUpDown
-        Inherits NumericUpDown
-
-        Protected Overrides Sub OnMouseWheel(ByVal e As MouseEventArgs)
-            Dim mwe As HandledMouseEventArgs = DirectCast(e, HandledMouseEventArgs)
-            mwe.Handled = True
-        End Sub
     End Class
 
 
-    Private Sub formOk(sender As Object, e As EventArgs)
-        sender.result = True
-        sender.form.Close()
-    End Sub
 
-    Private Sub editFormOk(sender As Object, e As EventArgs)
-        sender.result = True
-        For index = 0 To sender.handle2.count - 1
-            Dim active As Boolean = True
+    Friend Class DGVButton
+        Inherits Button
 
-            If tabs(TabControl1.SelectedIndex).attributeClasses(index).validation = False Then active = False
-            If tabs(TabControl1.SelectedIndex).attributeClasses(index).hidden = True Then active = False
-            If tabs(TabControl1.SelectedIndex).attributeClasses(index).swimmer = True Then
-                If handle(tabs(TabControl1.SelectedIndex).getAttrIndex("canswim")).selectedIndex = 1 Then
-                    active = False
+        Public attrIndex As Integer
+        Public record As Record
+
+    End Class
+
+    Friend Class LoadDataButton
+            Inherits Button
+
+            Public record As Record
+            Public attrIndex As Integer
+            Public handle2
+
+        End Class
+
+        Friend Class UnscrollableComboBox
+            Inherits ComboBox
+
+            Protected Overrides Sub OnMouseWheel(ByVal e As MouseEventArgs)
+                Dim mwe As HandledMouseEventArgs = DirectCast(e, HandledMouseEventArgs)
+                mwe.Handled = True
+            End Sub
+        End Class
+
+        Friend Class UnscrollableCarComboBox
+            Inherits UnscrollableComboBox
+
+            Public lastIndex As Integer
+            Public record As Record
+            Public attrIndex As Integer
+            Public progChange As Boolean
+
+            Public Sub New()
+                progChange = False
+            End Sub
+
+        End Class
+
+        Friend Class UnscrollableAnimComboBox
+            Inherits UnscrollableComboBox
+
+            Public prevValue As Integer
+            Public senderAttr As Integer
+            Public recordIndex As Integer
+            Public progChange As Boolean
+
+            Public Sub New()
+                progChange = False
+            End Sub
+
+        End Class
+
+        Friend Class UnscrollableNumericUpDown
+            Inherits NumericUpDown
+
+            Protected Overrides Sub OnMouseWheel(ByVal e As MouseEventArgs)
+                Dim mwe As HandledMouseEventArgs = DirectCast(e, HandledMouseEventArgs)
+                mwe.Handled = True
+            End Sub
+        End Class
+
+
+        Private Sub formOk(sender As Object, e As EventArgs)
+            sender.result = True
+            sender.form.Close()
+        End Sub
+
+        Private Sub editFormOk(sender As Object, e As EventArgs)
+            sender.result = True
+            For index = 0 To sender.handle2.count - 1
+                Dim active As Boolean = True
+
+                If tabs(TabControl1.SelectedIndex).attributeClasses(index).validation = False Then active = False
+                If tabs(TabControl1.SelectedIndex).attributeClasses(index).hidden = True Then active = False
+                If tabs(TabControl1.SelectedIndex).attributeClasses(index).swimmer = True Then
+                    If handle(tabs(TabControl1.SelectedIndex).getAttrIndex("canswim")).selectedIndex = 1 Then
+                        active = False
+                    End If
                 End If
-            End If
-            If tabs(TabControl1.SelectedIndex).attributeClasses(index).AIdependant = True Then
+                If tabs(TabControl1.SelectedIndex).attributeClasses(index).AIdependant = True Then
 
-                If Not aiList(handle(tabs(TabControl1.SelectedIndex).getAttrIndex("clone")).selectedIndex).active.Contains(tabs(TabControl1.SelectedIndex).attributeClasses(index).resName) Then
-                    active = False
+                    If Not aiList(handle(tabs(TabControl1.SelectedIndex).getAttrIndex("clone")).selectedIndex).active.Contains(tabs(TabControl1.SelectedIndex).attributeClasses(index).resName) Then
+                        active = False
+                    End If
+
                 End If
 
-            End If
-
-            If active = True Then
-                If Not validateField(sender.handle2(index), tabs(TabControl1.SelectedIndex).attributeClasses(index).type) Then
-                    sender.result = False
-                    mess(tabs(TabControl1.SelectedIndex).attributeClasses(index).displayName & " invalid")
-                    Return
+                If active = True Then
+                    If Not validateField(sender.handle2(index), tabs(TabControl1.SelectedIndex).attributeClasses(index).type) Then
+                        sender.result = False
+                        mess(tabs(TabControl1.SelectedIndex).attributeClasses(index).displayName & " invalid")
+                        Return
+                    End If
                 End If
-            End If
-        Next
-        sender.form.Close()
-    End Sub
+            Next
+            sender.form.Close()
+        End Sub
 
-    Private Sub formCancel(sender As Object, e As EventArgs)
-        sender.form.Close()
-    End Sub
-
-
-    Private Sub shutDown()
-        FileClose(2)
-        End
-    End Sub
-
-    Public Sub loadData()
-
-        tabs(EquipmentTab).addRecord()
-        tabs(EquipmentTab).setAttr(0, "name", "Camouflage")
-        tabs(EquipmentTab).addRecord()
-        tabs(EquipmentTab).setAttr(1, "name", "Radar")
-        tabs(EquipmentTab).addRecord()
-        tabs(EquipmentTab).setAttr(2, "name", "Cover Scent")
-        tabs(EquipmentTab).addRecord()
-        tabs(EquipmentTab).setAttr(3, "name", "Double Ammo")
-
-        'add area records
-        Dim mapInd As Integer = tabs(AreaTab).getAttrIndex("map&")
-        Dim mapTemp As Integer
-        Do
-            mapTemp = tabs(AreaTab).records.Count
-            If My.Computer.FileSystem.FileExists(dir & tabs(AreaTab).attributeClasses(mapInd).gameFolder & tabs(AreaTab).records.Count + 1 & "." & tabs(AreaTab).attributeClasses(mapInd).ext) Then
-                tabs(AreaTab).addRecord()
-            End If
-        Loop Until tabs(AreaTab).records.Count = mapTemp
-
-        readRes()
-
-        'read non-res files
-        For tabIndex As Integer = 0 To 7
-            For recordIndex As Integer = 0 To tabs(tabIndex).records.Count - 1
-                For attrIndex As Integer = 0 To tabs(tabIndex).attributeClasses.Count - 1
-
-                    If tabs(tabIndex).attributeClasses(attrIndex).resName.Contains("&") Then
-
-                        If tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrTextFile Then
-
-                            tabs(tabIndex).records(recordIndex).attributes(attrIndex).value = ""
-                            Dim areaType As Boolean = (tabIndex = AreaTab) 'area names are stored in menu text
-                            FileOpen(128, dir & tabs(tabIndex).attributeClasses(attrIndex).gameFolder & recordIndex + 1 & "." & tabs(tabIndex).attributeClasses(attrIndex).ext, OpenMode.Input)
-                            While Not EOF(128)
-                                If areaType = True Then
-                                    tabs(AreaTab).setAttr(recordIndex, "name", LineInput(128)) 'temp
-                                    LineInput(128)
-                                    areaType = False
-                                End If
-                                tabs(tabIndex).records(recordIndex).attributes(attrIndex).value &= LineInput(128)
-                                tabs(tabIndex).records(recordIndex).attributes(attrIndex).value &= vbCrLf
-                            End While
-                            FileClose(128)
-
-                        Else
+        Private Sub formCancel(sender As Object, e As EventArgs)
+            sender.form.Close()
+        End Sub
 
 
-                            Dim str As String = tabs(tabIndex).attributeClasses(attrIndex).gameFolder
-                            Dim pos As Integer = str.LastIndexOf("\") + 1
-                            tabs(tabIndex).records(recordIndex).attributes(attrIndex).value = str.Substring(pos, str.Length - pos) & recordIndex + 1 & "." & tabs(tabIndex).attributeClasses(attrIndex).ext
-                            tabs(tabIndex).attributeClasses(attrIndex).dInd.Add(tabs(tabIndex).records(recordIndex).attributes(attrIndex).value)
-                            tabs(tabIndex).attributeClasses(attrIndex).data.Add(My.Computer.FileSystem.ReadAllBytes(dir & tabs(tabIndex).attributeClasses(attrIndex).gameFolder & recordIndex + 1 & "." & tabs(tabIndex).attributeClasses(attrIndex).ext))
+        Private Sub shutDown()
+            FileClose(2)
+            End
+        End Sub
+
+        Public Sub loadData()
+
+            tabs(EquipmentTab).addRecord()
+            tabs(EquipmentTab).setAttr(0, "name", "Camouflage")
+            tabs(EquipmentTab).addRecord()
+            tabs(EquipmentTab).setAttr(1, "name", "Radar")
+            tabs(EquipmentTab).addRecord()
+            tabs(EquipmentTab).setAttr(2, "name", "Cover Scent")
+            tabs(EquipmentTab).addRecord()
+            tabs(EquipmentTab).setAttr(3, "name", "Double Ammo")
+
+            'add area records
+            Dim mapInd As Integer = tabs(AreaTab).getAttrIndex("map&")
+            Dim mapTemp As Integer
+            Do
+                mapTemp = tabs(AreaTab).records.Count
+                If My.Computer.FileSystem.FileExists(dir & tabs(AreaTab).attributeClasses(mapInd).gameFolder & tabs(AreaTab).records.Count + 1 & "." & tabs(AreaTab).attributeClasses(mapInd).ext) Then
+                    tabs(AreaTab).addRecord()
+                End If
+            Loop Until tabs(AreaTab).records.Count = mapTemp
+
+            readRes()
+
+            'read non-res files
+            For tabIndex As Integer = 0 To 7
+                For recordIndex As Integer = 0 To tabs(tabIndex).records.Count - 1
+                    For attrIndex As Integer = 0 To tabs(tabIndex).attributeClasses.Count - 1
+
+                        If tabs(tabIndex).attributeClasses(attrIndex).resName.Contains("&") Then
+
+                            If tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrTextFile Then
+
+                                tabs(tabIndex).records(recordIndex).attributes(attrIndex).value = ""
+                                Dim areaType As Boolean = (tabIndex = AreaTab) 'area names are stored in menu text
+                                FileOpen(128, dir & tabs(tabIndex).attributeClasses(attrIndex).gameFolder & recordIndex + 1 & "." & tabs(tabIndex).attributeClasses(attrIndex).ext, OpenMode.Input)
+                                While Not EOF(128)
+                                    If areaType = True Then
+                                        tabs(AreaTab).setAttr(recordIndex, "name", LineInput(128)) 'temp
+                                        LineInput(128)
+                                        areaType = False
+                                    End If
+                                    tabs(tabIndex).records(recordIndex).attributes(attrIndex).value &= LineInput(128)
+                                    tabs(tabIndex).records(recordIndex).attributes(attrIndex).value &= vbCrLf
+                                End While
+                                FileClose(128)
+
+                            Else
+
+
+                                Dim str As String = tabs(tabIndex).attributeClasses(attrIndex).gameFolder
+                                Dim pos As Integer = str.LastIndexOf("\") + 1
+                                tabs(tabIndex).records(recordIndex).attributes(attrIndex).value = str.Substring(pos, str.Length - pos) & recordIndex + 1 & "." & tabs(tabIndex).attributeClasses(attrIndex).ext
+                                tabs(tabIndex).attributeClasses(attrIndex).dInd.Add(tabs(tabIndex).records(recordIndex).attributes(attrIndex).value)
+                                tabs(tabIndex).attributeClasses(attrIndex).data.Add(My.Computer.FileSystem.ReadAllBytes(dir & tabs(tabIndex).attributeClasses(attrIndex).gameFolder & recordIndex + 1 & "." & tabs(tabIndex).attributeClasses(attrIndex).ext))
+
+                            End If
 
                         End If
 
-                    End If
-
+                    Next
                 Next
             Next
-        Next
 
 
 
-    End Sub
+        End Sub
 
-    Private Sub printLog(ByVal txt As String)
-        PrintLine(2, txt)
-        Console.WriteLine(txt)
-    End Sub
+        Private Sub printLog(ByVal txt As String)
+            PrintLine(2, txt)
+            Console.WriteLine(txt)
+        End Sub
 
-    Private Sub mess(ByVal _mess As String)
-        MsgBox(_mess, vbOKOnly, "Error")
-    End Sub
+        Private Sub mess(ByVal _mess As String)
+            MsgBox(_mess, vbOKOnly, "Error")
+        End Sub
 
-    Function conf(ByVal _mess As String)
-        Return MsgBox(_mess, vbYesNo, "Confirmation") = DialogResult.Yes
-    End Function
+        Function conf(ByVal _mess As String)
+            Return MsgBox(_mess, vbYesNo, "Confirmation") = DialogResult.Yes
+        End Function
 
-    Private Sub DoHalt(ByVal _mess As String)
-        mess(_mess)
-        shutDown()
-    End Sub
+        Private Sub DoHalt(ByVal _mess As String)
+            mess(_mess)
+            shutDown()
+        End Sub
 
-    Private Sub readRes()
-        'this should be reshunt unless you fix up rexhunters menu
-        'gotta print to res and reshunt
-        If Not My.Computer.FileSystem.FileExists(dir & "\HUNTDAT\_RES.TXT") Then
-            DoHalt("_RES.TXT not found")
-        End If
-        FileOpen(1, dir & "\HUNTDAT\_RES.TXT", OpenMode.Input)
+        Private Sub readRes()
+            'this should be reshunt unless you fix up rexhunters menu
+            'gotta print to res and reshunt
+            If Not My.Computer.FileSystem.FileExists(dir & "\HUNTDAT\_RES.TXT") Then
+                DoHalt("_RES.TXT not found")
+            End If
+            FileOpen(1, dir & "\HUNTDAT\_RES.TXT", OpenMode.Input)
 
-        Dim line As String = LineInput(1)
-        Do
-            If line.Contains("weapons {") Then readData(WeaponTab, line)
-            'If line.Contains("hunterinfo {") Then readData(, line)
-            If line.Contains("oldambients {") Then readData(AmbientTab, line)
-            If line.Contains("corpseambients {") Then readData(AmbientCorpseTab, line)
-            If line.Contains("characters {") Then readData(HuntableTab, line)
-            If line.Contains("mapambients {") Then readData(MapAmbientTab, line)
-            If line.Contains("prices {") Then readPrices(line)
+            Dim line As String = LineInput(1)
+            Do
+                If line.Contains("weapons {") Then readData(WeaponTab, line)
+                'If line.Contains("hunterinfo {") Then readData(, line)
+                If line.Contains("oldambients {") Then readData(AmbientTab, line)
+                If line.Contains("corpseambients {") Then readData(AmbientCorpseTab, line)
+                If line.Contains("characters {") Then readData(HuntableTab, line)
+                If line.Contains("mapambients {") Then readData(MapAmbientTab, line)
+                If line.Contains("prices {") Then readPrices(line)
+                line = LineInput(1)
+            Loop Until line = "."
+
+            FileClose(1)
+        End Sub
+
+        Private Sub readData(ByVal tabIndex As Integer, ByVal line As String)
             line = LineInput(1)
-        Loop Until line = "."
+            Do
+                If line.Contains("{") Then
+                    tabs(tabIndex).addRecord()
+                    line = LineInput(1) 'skip past this line, else { will be mistaken for a subsection
+                    Do
+                        If line.Contains("=") Then
 
-        FileClose(1)
-    End Sub
+                            Dim resName As String = Replace(Trim(line.Substring(0, line.IndexOf("="))), Chr(0), "")
+                            Dim attrIndex = tabs(tabIndex).getAttrIndex(resName)
+                            If attrIndex >= 0 Then
 
-    Private Sub readData(ByVal tabIndex As Integer, ByVal line As String)
-        line = LineInput(1)
-        Do
-            If line.Contains("{") Then
-                tabs(tabIndex).addRecord()
-                line = LineInput(1) 'skip past this line, else { will be mistaken for a subsection
-                Do
-                    If line.Contains("=") Then
+                                Dim value
+                                Select Case tabs(tabIndex).attributeClasses(attrIndex).type
+                                    Case AttributeType.attrString
+                                        value = Trim(line.Substring(line.IndexOf("'") + 1)).TrimEnd(CChar("'"))
+                                    Case AttributeType.attrFile
+                                        value = Trim(line.Substring(line.IndexOf("'") + 1)).TrimEnd(CChar("'"))
+                                    Case AttributeType.attrCar
+                                        value = Trim(line.Substring(line.IndexOf("'") + 1)).TrimEnd(CChar("'"))
+                                    Case AttributeType.attrInteger
+                                        value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                    Case AttributeType.attrFearCall
+                                        value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                    Case AttributeType.attrAnim
+                                        value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                    Case AttributeType.attrAnimMulti
+                                        value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                    Case AttributeType.attrSlot
+                                        value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                    Case AttributeType.attrAI
+                                        value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                    Case AttributeType.attrTogglableInteger
+                                        value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                    Case AttributeType.attrDouble
+                                        value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                    Case AttributeType.attrSpd
+                                        value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                    Case AttributeType.attrBoolean
+                                        If line.Contains("TRUE") Then value = True Else value = False
+                                    Case AttributeType.attrSwimmer
+                                        If line.Contains("TRUE") Then value = True Else value = False
+                                    Case AttributeType.attrIntBool
+                                        If Trim(line.Substring(line.IndexOf("=") + 1)) > 0 Then value = True Else value = False
+                                End Select
+                                Dim recordIndex = tabs(tabIndex).records.Count - 1
 
-                        Dim resName As String = Replace(Trim(line.Substring(0, line.IndexOf("="))), Chr(0), "")
-                        Dim attrIndex = tabs(tabIndex).getAttrIndex(resName)
-                        If attrIndex >= 0 Then
+                                If tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrFile Or tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrCar Then
+                                    Dim newFile As Boolean = True
+                                    For index = 0 To tabs(tabIndex).attributeClasses(attrIndex).dInd.Count - 1
+                                        If tabs(tabIndex).attributeClasses(attrIndex).dInd(index) = value Then
+                                            newFile = False
+                                        End If
+                                    Next
+                                    If newFile = True And tabs(tabIndex).attributeClasses(attrIndex).hidden = False Then
+                                        tabs(tabIndex).attributeClasses(attrIndex).dInd.Add(value)
+                                        tabs(tabIndex).attributeClasses(attrIndex).data.Add(My.Computer.FileSystem.ReadAllBytes(dir & tabs(tabIndex).getAttrClass(resName).gameFolder & value))
+                                        If tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrCar Then
 
-                            Dim value
-                            Select Case tabs(tabIndex).attributeClasses(attrIndex).type
-                                Case AttributeType.attrString
-                                    value = Trim(line.Substring(line.IndexOf("'") + 1)).TrimEnd(CChar("'"))
-                                Case AttributeType.attrFile
-                                    value = Trim(line.Substring(line.IndexOf("'") + 1)).TrimEnd(CChar("'"))
-                                Case AttributeType.attrCar
-                                    value = Trim(line.Substring(line.IndexOf("'") + 1)).TrimEnd(CChar("'"))
-                                Case AttributeType.attrInteger
-                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
-                                Case AttributeType.attrFearCall
-                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
-                                Case AttributeType.attrAnim
-                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
-                                Case AttributeType.attrSlot
-                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
-                                Case AttributeType.attrAI
-                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
-                                Case AttributeType.attrTogglableInteger
-                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
-                                Case AttributeType.attrDouble
-                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
-                                Case AttributeType.attrSpd
-                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
-                                Case AttributeType.attrBoolean
-                                    If line.Contains("TRUE") Then value = True Else value = False
-                                Case AttributeType.attrSwimmer
-                                    If line.Contains("TRUE") Then value = True Else value = False
-                                Case AttributeType.attrIntBool
-                                    If Trim(line.Substring(line.IndexOf("=") + 1)) > 0 Then value = True Else value = False
-                            End Select
-                            Dim recordIndex = tabs(tabIndex).records.Count - 1
+                                            tabs(tabIndex).records(recordIndex).animList = readAnimations(tabs(tabIndex).attributeClasses(attrIndex).data(tabs(tabIndex).attributeClasses(attrIndex).data.Count - 1))
 
-                            If tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrFile Or tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrCar Then
-                                Dim newFile As Boolean = True
-                                For index = 0 To tabs(tabIndex).attributeClasses(attrIndex).dInd.Count - 1
-                                    If tabs(tabIndex).attributeClasses(attrIndex).dInd(index) = value Then
-                                        newFile = False
-                                    End If
-                                Next
-                                If newFile = True And tabs(tabIndex).attributeClasses(attrIndex).hidden = False Then
-                                    tabs(tabIndex).attributeClasses(attrIndex).dInd.Add(value)
-                                    tabs(tabIndex).attributeClasses(attrIndex).data.Add(My.Computer.FileSystem.ReadAllBytes(dir & tabs(tabIndex).getAttrClass(resName).gameFolder & value))
-                                    If tabs(tabIndex).attributeClasses(attrIndex).type = AttributeType.attrCar Then
-
-                                        tabs(tabIndex).records(recordIndex).animList = readAnimations(tabs(tabIndex).attributeClasses(attrIndex).data(tabs(tabIndex).attributeClasses(attrIndex).data.Count - 1))
-
+                                        End If
                                     End If
                                 End If
+                                tabs(tabIndex).setAttr(recordIndex, resName, value)
+
                             End If
-                            tabs(tabIndex).setAttr(recordIndex, resName, value)
+                        ElseIf line.Contains("{") Then
+                            Dim resName As String = Trim(line.Substring(0, line.IndexOf("{")))
+                            Dim attrIndex = tabs(tabIndex).getAttrIndex(resName)
+                            '^ make this a contains, not equals for override/addition subsections
+
+                            If attrIndex >= 0 Then
+
+                                'code here!!!!!
+
+                            Else
+                                Dim layer As Integer = 1
+                                Do
+                                    line = LineInput(1)
+                                    If line.Contains("{") Then layer += 1
+                                    If line.Contains("}") Then layer -= 1
+                                Loop Until layer <= 0
+                            End If
 
                         End If
-                    ElseIf line.Contains("{") Then
-                        Dim resName As String = Trim(line.Substring(0, line.IndexOf("{")))
-                        Dim attrIndex = tabs(tabIndex).getAttrIndex(resName)
-                        '^ make this a contains, not equals for override/addition subsections
-
-                        If attrIndex >= 0 Then
-
-                            'code here!!!!!
-
-                        Else
-                            Dim layer As Integer = 1
-                            Do
-                                line = LineInput(1)
-                                If line.Contains("{") Then layer += 1
-                                If line.Contains("}") Then layer -= 1
-                            Loop Until layer <= 0
-                        End If
-
+                        line = LineInput(1)
+                    Loop Until line.Contains("}")
+                    If debug Then
+                        printLog("READ " & tabs(tabIndex).nameS & " : " & tabs(tabIndex).records.Count - 1)
+                        For atrIndex As Integer = 0 To tabs(tabIndex).attributeClasses.Count - 1
+                            If tabs(tabIndex).attributeClasses(atrIndex).type = AttributeType.attrFearCall Or
+                        tabs(tabIndex).attributeClasses(atrIndex).type = AttributeType.attrAnimMulti Then
+                                'Dim o As Object = tabs(tabIndex).records(tabs(tabIndex).records.Count - 1).attributes(atrIndex).value
+                                'printLog(tabs(tabIndex).attributeClasses(atrIndex).displayName & "=" & o(o.count - 1))
+                            Else
+                                printLog(tabs(tabIndex).attributeClasses(atrIndex).displayName & "=" & tabs(tabIndex).records(tabs(tabIndex).records.Count - 1).attributes(atrIndex).value)
+                            End If
+                        Next
+                        printLog("---------------------------------------------------------------------")
                     End If
-                    line = LineInput(1)
-                Loop Until line.Contains("}")
-                If debug Then
-                    printLog("READ " & tabs(tabIndex).nameS & " : " & tabs(tabIndex).records.Count - 1)
-                    For atrIndex As Integer = 0 To tabs(tabIndex).attributeClasses.Count - 1
-                        If tabs(tabIndex).attributeClasses(atrIndex).type = AttributeType.attrFearCall Then
-                            'Dim o As Object = tabs(tabIndex).records(tabs(tabIndex).records.Count - 1).attributes(atrIndex).value
-                            'printLog(tabs(tabIndex).attributeClasses(atrIndex).displayName & "=" & o(o.count - 1))
-                        Else
-                            printLog(tabs(tabIndex).attributeClasses(atrIndex).displayName & "=" & tabs(tabIndex).records(tabs(tabIndex).records.Count - 1).attributes(atrIndex).value)
-                        End If
-                    Next
-                    printLog("---------------------------------------------------------------------")
                 End If
-            End If
-            line = LineInput(1)
-        Loop Until line.Contains("}") Or tabs(tabIndex).records.Count = tabs(tabIndex).recordMax
-    End Sub
+                line = LineInput(1)
+            Loop Until line.Contains("}") Or tabs(tabIndex).records.Count = tabs(tabIndex).recordMax
+        End Sub
 
-    Function readAnimations(ByVal data As Byte())
-        Dim list As List(Of String) = New List(Of String)
+        Function readAnimations(ByVal data As Byte())
+            Dim list As List(Of String) = New List(Of String)
 
-        Dim animCount As Long = bytesToLong(data, 32)
-        printLog("ANIM" & animCount)
-        Dim vertCount As Long = bytesToLong(data, 40)
-        printLog("VERT" & vertCount)
-        Dim triCount As Long = bytesToLong(data, 44)
-        printLog("TRI" & triCount)
-        Dim texSize As Long = bytesToLong(data, 48)
-        printLog("TEX" & texSize)
+            Dim animCount As Long = bytesToLong(data, 32)
+            printLog("ANIM" & animCount)
+            Dim vertCount As Long = bytesToLong(data, 40)
+            printLog("VERT" & vertCount)
+            Dim triCount As Long = bytesToLong(data, 44)
+            printLog("TRI" & triCount)
+            Dim texSize As Long = bytesToLong(data, 48)
+            printLog("TEX" & texSize)
 
-        Dim yLoc = 52 + 64 * triCount + 16 * vertCount + texSize
+            Dim yLoc = 52 + 64 * triCount + 16 * vertCount + texSize
 
-        For a As Integer = 0 To animCount - 1
-            Dim name(31) As Byte
-            For i As Integer = 0 To 31
-                name(i) = data(yLoc + i)
+            For a As Integer = 0 To animCount - 1
+                Dim name(31) As Byte
+                For i As Integer = 0 To 31
+                    name(i) = data(yLoc + i)
+                Next
+                list.Add(System.Text.Encoding.ASCII.GetString(name).Replace(Chr(0), ""))
+
+                Dim frameCount As Long = bytesToLong(data, yLoc + 36)
+                yLoc += 40 + 6 * frameCount * vertCount
             Next
-            list.Add(System.Text.Encoding.ASCII.GetString(name).Replace(Chr(0), ""))
+            Return list
+        End Function
 
-            Dim frameCount As Long = bytesToLong(data, yLoc + 36)
-            yLoc += 40 + 6 * frameCount * vertCount
-        Next
-        Return list
-    End Function
-
-    Function bytesToLong(ByVal bytes() As Byte, ByVal start As Integer) As Long
-        Return bytes(start) _
+        Function bytesToLong(ByVal bytes() As Byte, ByVal start As Integer) As Long
+            Return bytes(start) _
                + bytes(start + 1) * (256&) _
                + bytes(start + 2) * (256 * 256&) _
                + bytes(start + 3) * (256 * 256& * 256&)
-    End Function
+        End Function
 
-    Private Sub readPrices(ByVal line As String)
-        Dim w, h, a, e As Integer
-        w = 0
-        h = 0
-        a = 0
-        e = 0
-        Do
-            If line.Contains("start") Then
-                startMoney = Trim(line.Substring(line.IndexOf("=") + 1))
-            ElseIf line.Contains("area") Then
-                tabs(AreaTab).setAttr(a, "price", Trim(line.Substring(line.IndexOf("=") + 1)))
-                a += 1
-            ElseIf line.Contains("dino") Then
-                'tabs(HuntableTab).setAttr(h, "price", Trim(line.Substring(line.IndexOf("=") + 1)))
-                'h += 1
-            ElseIf line.Contains("weapon") Then
-                tabs(WeaponTab).setAttr(w, "price", Trim(line.Substring(line.IndexOf("=") + 1)))
-                w += 1
-            ElseIf line.Contains("acces") Then
-                tabs(EquipmentTab).setAttr(e, "price", Trim(line.Substring(line.IndexOf("=") + 1)))
-                e += 1
+        Private Sub readPrices(ByVal line As String)
+            Dim w, h, a, e As Integer
+            w = 0
+            h = 0
+            a = 0
+            e = 0
+            Do
+                If line.Contains("start") Then
+                    startMoney = Trim(line.Substring(line.IndexOf("=") + 1))
+                ElseIf line.Contains("area") Then
+                    tabs(AreaTab).setAttr(a, "price", Trim(line.Substring(line.IndexOf("=") + 1)))
+                    a += 1
+                ElseIf line.Contains("dino") Then
+                    'tabs(HuntableTab).setAttr(h, "price", Trim(line.Substring(line.IndexOf("=") + 1)))
+                    'h += 1
+                ElseIf line.Contains("weapon") Then
+                    tabs(WeaponTab).setAttr(w, "price", Trim(line.Substring(line.IndexOf("=") + 1)))
+                    w += 1
+                ElseIf line.Contains("acces") Then
+                    tabs(EquipmentTab).setAttr(e, "price", Trim(line.Substring(line.IndexOf("=") + 1)))
+                    e += 1
+                End If
+                line = LineInput(1)
+            Loop Until line.Contains("}")
+
+            If debug Then
+                printLog("READ PRICES:")
+                printLog("START MONEY = " & startMoney)
+                If a Then
+                    For i As Integer = 0 To a - 1
+                        printLog("AREA" & i & "=" & tabs(AreaTab).getAttr(i, "price"))
+                    Next
+                End If
+                If h Then
+                    For i As Integer = 0 To h - 1
+                        printLog("HUNTABLE" & i & "=" & tabs(HuntableTab).getAttr(i, "price"))
+                    Next
+                End If
+                If w Then
+                    For i As Integer = 0 To w - 1
+                        printLog("WEAPON" & i & "=" & tabs(WeaponTab).getAttr(i, "price"))
+                    Next
+                End If
+                If e Then
+                    For i As Integer = 0 To e - 1
+                        printLog("EQUIPMENT" & i & "=" & tabs(EquipmentTab).getAttr(i, "price"))
+                    Next
+                End If
+                printLog("---------------------------------------------------------------------")
             End If
-            line = LineInput(1)
-        Loop Until line.Contains("}")
 
-        If debug Then
-            printLog("READ PRICES:")
-            printLog("START MONEY = " & startMoney)
-            If a Then
-                For i As Integer = 0 To a - 1
-                    printLog("AREA" & i & "=" & tabs(AreaTab).getAttr(i, "price"))
-                Next
-            End If
-            If h Then
-                For i As Integer = 0 To h - 1
-                    printLog("HUNTABLE" & i & "=" & tabs(HuntableTab).getAttr(i, "price"))
-                Next
-            End If
-            If w Then
-                For i As Integer = 0 To w - 1
-                    printLog("WEAPON" & i & "=" & tabs(WeaponTab).getAttr(i, "price"))
-                Next
-            End If
-            If e Then
-                For i As Integer = 0 To e - 1
-                    printLog("EQUIPMENT" & i & "=" & tabs(EquipmentTab).getAttr(i, "price"))
-                Next
-            End If
-            printLog("---------------------------------------------------------------------")
-            End If
-
-    End Sub
-
-
-    Public Class Tab
-        Public name, nameS As String
-        'Public addImage, editImage, removeImage As string
-        Public addButton, removeButton, editButton, upButton, downButton As Button
-        Public addToolTip, removeToolTip, editToolTip, upToolTip, downToolTip As ToolTip
-        Public listBox As ListBox
-        Public recordLock As Boolean ' prevent adding/deleting records
-
-        Public attributeClasses As List(Of AttributeClass)
-        Public recordMax, recordMin As Integer
-        Public records As List(Of Record)
-
-        Public Sub New()
-            records = New List(Of Record)
-            attributeClasses = New List(Of AttributeClass)
         End Sub
 
-        Public Sub addAttribute(ByVal name As String, ByVal res As String, ByVal type As AttributeType, ByVal defaultValue As Object,
+
+        Public Class Tab
+            Public name, nameS As String
+            'Public addImage, editImage, removeImage As string
+            Public addButton, removeButton, editButton, upButton, downButton As Button
+            Public addToolTip, removeToolTip, editToolTip, upToolTip, downToolTip As ToolTip
+            Public listBox As ListBox
+            Public recordLock As Boolean ' prevent adding/deleting records
+
+            Public attributeClasses As List(Of AttributeClass)
+            Public recordMax, recordMin As Integer
+            Public records As List(Of Record)
+
+            Public Sub New()
+                records = New List(Of Record)
+                attributeClasses = New List(Of AttributeClass)
+            End Sub
+
+            Public Sub addAttribute(ByVal name As String, ByVal res As String, ByVal type As AttributeType, ByVal defaultValue As Object,
                                 ByVal min As Integer, ByVal max As Integer, ByVal hide As Boolean, ByVal gameFolder As String,
                                 ByVal ext As String, ByVal edit As Boolean, ByVal valida As Boolean, ByVal aiD As Boolean,
                                 ByVal _swimmer As Boolean, ByVal help As String)
-            attributeClasses.Add(New AttributeClass(name, res, type, defaultValue, min, max, hide, gameFolder, ext, edit, valida, aiD, _swimmer, help))
-        End Sub
+                attributeClasses.Add(New AttributeClass(name, res, type, defaultValue, min, max, hide, gameFolder, ext, edit, valida, aiD, _swimmer, help))
+            End Sub
 
-        Public Sub addAttribute(ByRef attrClass)
-            attributeClasses.Add(attrClass)
-        End Sub
+            Public Sub addAttribute(ByRef attrClass)
+                attributeClasses.Add(attrClass)
+            End Sub
 
-        Public Sub addRecord()
-            records.Add(New Record)
-            records(records.Count - 1).attributes = New List(Of Attribute)
-            records(records.Count - 1).animList = New List(Of String)
-            For attrIndex As Integer = 0 To attributeClasses.Count - 1
-                records(records.Count - 1).attributes.Add(New Attribute(attributeClasses(attrIndex).defaultValue))
+            Public Sub addRecord()
+                records.Add(New Record)
+                records(records.Count - 1).attributes = New List(Of Attribute)
+                records(records.Count - 1).animList = New List(Of String)
+                For attrIndex As Integer = 0 To attributeClasses.Count - 1
+                    records(records.Count - 1).attributes.Add(New Attribute(attributeClasses(attrIndex).defaultValue))
 
-                If attributeClasses(attrIndex).type = AttributeType.attrFearCall Then
-                    records(records.Count - 1).attributes(attrIndex).value = New List(Of Integer)
-                End If
-
-            Next
-        End Sub
-
-        Public Sub setAttr(ByVal recordIndex As Integer, ByVal resName As String, ByVal _value As Object)
-            For attrIndex As Integer = 0 To attributeClasses.Count - 1
-                If attributeClasses(attrIndex).resName = resName Then
-                    If attributeClasses(attrIndex).type = AttributeType.attrFearCall Then
-                        records(recordIndex).attributes(attrIndex).value.add(_value)
-                    Else
-                        records(recordIndex).attributes(attrIndex).value = _value
+                    If attributeClasses(attrIndex).type = AttributeType.attrFearCall Or
+                    attributeClasses(attrIndex).type = AttributeType.attrAnimMulti Then
+                        records(records.Count - 1).attributes(attrIndex).value = New List(Of Integer)
                     End If
 
-                End If
-            Next
-        End Sub
+                Next
+            End Sub
 
-        Public Function getAttr(ByVal recordIndex As Integer, ByVal resName As String)
-            For attrIndex As Integer = 0 To attributeClasses.Count - 1
-                If attributeClasses(attrIndex).resName = resName Then
-                    Return records(recordIndex).attributes(attrIndex).value
-                End If
-            Next
-            Return -1
-        End Function
+            Public Sub setAttr(ByVal recordIndex As Integer, ByVal resName As String, ByVal _value As Object)
+                For attrIndex As Integer = 0 To attributeClasses.Count - 1
+                    If attributeClasses(attrIndex).resName = resName Then
+                        If attributeClasses(attrIndex).type = AttributeType.attrFearCall Or
+                        attributeClasses(attrIndex).type = AttributeType.attrAnimMulti Then
+                            records(recordIndex).attributes(attrIndex).value.add(_value)
+                        Else
+                            records(recordIndex).attributes(attrIndex).value = _value
+                        End If
 
-        Public Function getAttrIndex(ByVal resName As String)
-            For attrIndex As Integer = 0 To attributeClasses.Count - 1
-                If attributeClasses(attrIndex).resName = resName Then
-                    Return attrIndex
-                End If
-            Next
-            Return -1
-        End Function
+                    End If
+                Next
+            End Sub
 
-        Public Function getAttrClass(resName As String)
-            For attrIndex As Integer = 0 To attributeClasses.Count - 1
-                If attributeClasses(attrIndex).resName = resName Then
-                    Return attributeClasses(attrIndex)
-                End If
-            Next
-            Return -1
-        End Function
+            Public Function getAttr(ByVal recordIndex As Integer, ByVal resName As String)
+                For attrIndex As Integer = 0 To attributeClasses.Count - 1
+                    If attributeClasses(attrIndex).resName = resName Then
+                        Return records(recordIndex).attributes(attrIndex).value
+                    End If
+                Next
+                Return -1
+            End Function
 
-    End Class
+            Public Function getAttrIndex(ByVal resName As String)
+                For attrIndex As Integer = 0 To attributeClasses.Count - 1
+                    If attributeClasses(attrIndex).resName = resName Then
+                        Return attrIndex
+                    End If
+                Next
+                Return -1
+            End Function
 
-    Public Class Record
-        Public attributes As List(Of Attribute)
-        Public animList As List(Of String)
-    End Class
+            Public Function getAttrClass(resName As String)
+                For attrIndex As Integer = 0 To attributeClasses.Count - 1
+                    If attributeClasses(attrIndex).resName = resName Then
+                        Return attributeClasses(attrIndex)
+                    End If
+                Next
+                Return -1
+            End Function
 
-    Public Class AttributeClass
-        Public displayName As String
-        Public resName As String
-        Public type As AttributeType
-        Public defaultValue
-        Public maxValue, minValue As Integer
-        Public hidden As Boolean
-        Public editable As Boolean
-        Public validation As Boolean
-        Public swimmer As Boolean 'If true, checks can swim combobox
+        End Class
 
-        Public gameFolder, ext As String 'file data only
+        Public Class Record
+            Public attributes As List(Of Attribute)
+            Public animList As List(Of String)
+        End Class
 
-        Public helpInfo As String
+        Public Class AttributeClass
+            Public displayName As String
+            Public resName As String
+            Public type As AttributeType
+            Public defaultValue
+            Public maxValue, minValue As Integer
+            Public hidden As Boolean
+            Public editable As Boolean
+            Public validation As Boolean
+            Public swimmer As Boolean 'If true, checks can swim combobox
 
-        Public data As List(Of Byte())
-        Public dInd As List(Of String)
+            Public gameFolder, ext As String 'file data only
 
-        Public AIdependant As Boolean 'If true, checks AI to see whether the value should be disabled
+            Public helpInfo As String
 
-        Public Sub New(ByVal _name As String, ByVal _res As String, ByVal _type As AttributeType, ByVal defVal As Object,
+            Public data As List(Of Byte())
+            Public dInd As List(Of String)
+
+            Public AIdependant As Boolean 'If true, checks AI to see whether the value should be disabled
+
+            Public Sub New(ByVal _name As String, ByVal _res As String, ByVal _type As AttributeType, ByVal defVal As Object,
                        ByVal min As Integer, ByVal max As Integer, ByVal _hidden As Boolean, ByVal _gameFolder As String,
                        ByVal _ext As String, ByVal _edit As Boolean, ByVal _validation As Boolean, ByVal aiD As Boolean,
                        ByVal _swimmer As Boolean, ByVal help As String)
-            displayName = _name
-            resName = _res
-            type = _type
-            defaultValue = defVal
-            minValue = min
-            maxValue = max
-            hidden = _hidden
-            gameFolder = _gameFolder
-            ext = _ext
-            editable = _edit
-            validation = _validation
-            helpInfo = help
-            AIdependant = aiD
-            swimmer = _swimmer
+                displayName = _name
+                resName = _res
+                type = _type
+                defaultValue = defVal
+                minValue = min
+                maxValue = max
+                hidden = _hidden
+                gameFolder = _gameFolder
+                ext = _ext
+                editable = _edit
+                validation = _validation
+                helpInfo = help
+                AIdependant = aiD
+                swimmer = _swimmer
 
-            If type = AttributeType.attrFile Or type = AttributeType.attrCar Then
-                data = New List(Of Byte())
-                dInd = New List(Of String)
-            End If
-        End Sub
+                If type = AttributeType.attrFile Or type = AttributeType.attrCar Then
+                    data = New List(Of Byte())
+                    dInd = New List(Of String)
+                End If
+            End Sub
+
+        End Class
+
+        Enum AttributeType
+            attrString  'basic text
+            attrTextFile
+            attrInteger 'whole numbers
+            attrTogglableInteger 'whole numbers
+            attrDouble  'decimal numbers
+            attrBoolean ' true/false
+            attrIntBool ' true/false - written with numbers in the res
+            attrFile
+
+            attrSlot ' AI
+            attrAI ' Clone
+            attrCar ' Creatures only
+            attrAnim
+            attrSpd  'speed - can be reset when AI changed - 3 decimal places
+            attrSwimmer ' attrBoolean with swim change event
+
+            attrFearCall 'select multi ai
+            attrAnimMulti 'select multi ai
+
+        End Enum
+
+        Public Class Attribute
+            Public value As Object
+            'Public data() As Byte
+
+            Public Sub New(ByVal _value As Object)
+                value = _value
+            End Sub
+            Public Sub setvalue(ByVal _value As Object)
+                value = _value
+            End Sub
+        End Class
+
+        Public Class AI
+            Public name As String
+            Public id As Integer
+            Public active As List(Of String)
+            Public minAnim As Integer
+            Public defaultSpeed() As Double
+
+            Public Sub New(ByVal nam As String, ByVal i As Integer, ByVal ma As Integer, ByVal spdNo As Integer)
+                name = nam
+                id = i
+                minAnim = ma
+                ReDim defaultSpeed(spdNo)
+            End Sub
+        End Class
 
     End Class
-
-    Enum AttributeType
-        attrString  'basic text
-        attrTextFile
-        attrInteger 'whole numbers
-        attrTogglableInteger 'whole numbers
-        attrDouble  'decimal numbers
-        attrBoolean ' true/false
-        attrIntBool ' true/false - written with numbers in the res
-        attrFile
-
-        attrSlot ' AI
-        attrAI ' Clone
-        attrCar ' Creatures only
-        attrAnim
-        attrSpd  'speed - can be reset when AI changed - 3 decimal places
-        attrSwimmer ' attrBoolean with swim change event
-
-        attrFearCall 'select multi ai
-
-    End Enum
-
-    Public Class Attribute
-        Public value As Object
-        'Public data() As Byte
-
-        Public Sub New(ByVal _value As Object)
-            value = _value
-        End Sub
-        Public Sub setvalue(ByVal _value As Object)
-            value = _value
-        End Sub
-    End Class
-
-    Public Class AI
-        Public name As String
-        Public id As Integer
-        Public active As List(Of String)
-        Public minAnim As Integer
-        Public defaultSpeed() As Double
-
-        Public Sub New(ByVal nam As String, ByVal i As Integer, ByVal ma As Integer, ByVal spdNo As Integer)
-            name = nam
-            id = i
-            minAnim = ma
-            ReDim defaultSpeed(spdNo)
-        End Sub
-    End Class
-
-End Class
