@@ -1187,21 +1187,35 @@
     End Sub
 
     Private Sub dgvAnimReorder(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewEditingControlShowingEventArgs)
-        Dim cb2 As DataGridViewComboBoxEditingControl = TryCast(e.Control, ComboBox)
-        Dim cb As DataGridViewComboBoxEditingControlAnim = cb2
+        Dim cb As ComboBox = TryCast(e.Control, ComboBox)
         If cb IsNot Nothing Then
-
-            cb.prevValue = cb.SelectedIndex
-            cb.senderAttr = sender.attrIndex
-            cb.recordIndex = sender.recordIndex
-            cb.progChange = False
 
             Dim editingComboBox As ComboBox = DirectCast(e.Control, ComboBox)
             RemoveHandler editingComboBox.SelectedIndexChanged,
-                New EventHandler(AddressOf animReorder)
+                New EventHandler(AddressOf animReorderDGV)
             AddHandler editingComboBox.SelectedIndexChanged,
-                New EventHandler(AddressOf animReorder)
+                New EventHandler(AddressOf animReorderDGV)
         End If
+    End Sub
+
+    Sub animReorderDGV(sender As Object, e As EventArgs)
+        For attrIndex = 0 To tabs(TabControl1.SelectedIndex).attributeClasses.Count - 1
+            If tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).type = AttributeType.attrAnim Then
+                If handle(attrIndex).selectedIndex = handle(sender.senderAttr).selectedIndex Then
+                    handle(attrIndex).progChange = True
+                    handle(attrIndex).selectedIndex = -1
+                End If
+            ElseIf tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).type = AttributeType.attrAnimMulti Then
+
+                Dim remove As Integer = -1
+                For i As Integer = 0 To handle(attrIndex).Rows.count - 1
+                    If handle(attrIndex).Rows(i).Cells(0).value = sender.text Then
+                        remove = i
+                    End If
+                Next
+                'If remove >= 0 Then handle(attrIndex).Rows.removeat(remove)
+            End If
+        Next
     End Sub
 
     Sub animReorder(sender As Object, e As EventArgs)
@@ -1224,6 +1238,15 @@
                         'handle(sender.senderAttr).progChange = True
                     End If
                     'End If
+                ElseIf tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).type = AttributeType.attrAnimmulti Then
+                    For Each row In handle(attrIndex).Rows
+                        Dim cb As DataGridViewComboBoxCell = row.Cells(0)
+                        Dim cb2 As ComboBox = cb.
+                        If cb.Items. = sender.selectedIndex Then
+                            'only if different
+                            remove = i
+                        End If
+                    Next
                 End If
             Next
         End If
@@ -1541,6 +1564,7 @@
 
         Public senderAttr As Integer
         Public recordIndex As Integer
+        Public rowIndex As Integer
 
     End Class
 
