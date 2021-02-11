@@ -246,8 +246,7 @@
         tabs(AmbientTab).addAttribute("Swim Speed", "swmspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, True, "The movement speed of the creature when swimming. Only applicable if Can Swim is set to true.")
         tabs(AmbientTab).addAttribute("Water Level", "waterLevel", AttributeType.attrInteger, 0, 0, 2147483647, False, "", "", True, False, True, True, "Controls how far a creature can wade into the water before having to swim. Only applicable if Can Swim is set to true.")
 
-        'TODO RE-ADD
-        'tabs(AmbientTab).addAttribute("Afraid of Call", "fearCall", AttributeType.attrFearCall, 0, 0, 64, False, "", "", True, True, True, False, "These calls can be used to scare the creature away.")
+        tabs(AmbientTab).addAttribute("Afraid of Call", "fearCall", AttributeType.attrFearCall, 0, 0, 64, False, "", "", True, True, True, False, "These calls can be used to scare the creature away.")
 
 
 
@@ -683,23 +682,21 @@
 
                 Case AttributeType.attrFearCall
 
-                    Dim dgv As DataGridView = New DataGridView
-                    dgv.Size = New Drawing.Size(130, 80)
-                    dgv.Location = New Drawing.Point(116, 0)
-                    dgv.ColumnCount = 1
-                    dgv.Columns(0).Name = "fc"
-                    dgv.ColumnHeadersVisible = False
-                    dgv.RowHeadersVisible = False
-                    dgv.AllowUserToAddRows = False
-
-                    handle.Add(dgv)
+                    Dim pane As Panel = New Panel
+                    handle.Add(pane)
 
                     For i As Integer = 0 To record.attributes(attrIndex).value.count - 1
-                        addFearCall2(attrIndex)
-                        dgv.Item(0, dgv.Rows.Count - 1).Value = aiList(getAIIndex(record.attributes(attrIndex).value(i))).name
+                        addFearCall2(attrIndex, aiList(getAIIndex(record.attributes(attrIndex).value(i))).name)
                     Next
 
-                    panel(panel.Count - 1).Controls.Add(dgv)
+                    pane.Size = New Drawing.Size(130, 80)
+                    pane.Location = New Drawing.Point(116, 0)
+
+
+                    pane.AutoScroll = True
+                    pane.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+
+                    panel(panel.Count - 1).Controls.Add(pane)
 
                     Dim addT = New ToolTip
                     addT.ShowAlways = True
@@ -726,8 +723,8 @@
                     panel(panel.Count - 1).Controls.Add(removeB)
 
                     If attrclasses(attrIndex).editable = False Then
+                        addB.Enabled = False
                         removeB.Enabled = False
-                        dgv.Enabled = False
                     End If
 
                     yIncrement = 65
@@ -1096,7 +1093,7 @@
     End Sub
 
     Sub addFearCall(sender As Object, e As EventArgs)
-        addFearCall2(sender.attrindex)
+        addFearCall2(sender.attrindex, "")
     End Sub
 
     Sub addMultiAnim(sender As Object, e As EventArgs)
@@ -1108,13 +1105,19 @@
         handle(sender.attrIndex).controls.RemoveAt(handle(sender.attrIndex).controls.Count - 1)
     End Sub
 
-    Sub addFearCall2(ByVal attrIndex As Integer)
-        handle(attrIndex).Rows.Add("")
-        Dim dgvcc As New DataGridViewComboBoxCell
+    Sub addFearCall2(ByVal attrIndex As Integer, ByVal val As String)
+        Dim cb = New UnscrollableAnimComboBox
+        cb.Size = New Drawing.Size(100, 15)
+        cb.Location = New Drawing.Point(5, handle(attrIndex).controls.count * 25 + 5 + handle(attrIndex).AutoScrollPosition.Y)
         For index = 0 To tabs(HuntableTab).records.Count - 1
-            dgvcc.Items.Add(tabs(HuntableTab).getAttr(index, "name"))
+            cb.Items.Add(tabs(HuntableTab).getAttr(index, "name"))
         Next
-        handle(attrIndex).Item(0, handle(attrIndex).Rows.Count - 1) = dgvcc
+        cb.DropDownStyle = ComboBoxStyle.DropDownList
+        cb.prevValue = cb.SelectedIndex
+        cb.senderAttr = attrIndex
+        cb.Text = val
+        If tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).editable = False Then cb.Enabled = False
+        handle(attrIndex).controls.Add(cb)
     End Sub
 
 
@@ -1122,12 +1125,11 @@
         Dim record As Record = tabs(TabControl1.SelectedIndex).records(recordIndex)
         Dim cb = New UnscrollableAnimComboBox
         cb.Size = New Drawing.Size(100, 15)
-        cb.Location = New Drawing.Point(5, handle(attrIndex).controls.count * 25 + 5)
+        cb.Location = New Drawing.Point(5, handle(attrIndex).controls.count * 25 + 5 + handle(attrIndex).AutoScrollPosition.Y)
         For Each animName In record.animList
             cb.Items.Add(animName)
         Next
         cb.DropDownStyle = ComboBoxStyle.DropDownList
-        panel(panel.Count - 1).Controls.Add(cb)
         cb.prevValue = cb.SelectedIndex
         cb.senderAttr = attrIndex
         cb.senderCtrl = handle(attrIndex).controls.count
@@ -1242,11 +1244,7 @@
     End Sub
 
     Function validateField(ByRef handle3 As Object, ByVal attrType As AttributeType)
-        If attrType = AttributeType.attrFearCall Then
-            For rowNo = 0 To handle3.count - 1
-                If handle3(rowNo).selectedindex < 0 Then Return False
-            Next
-        ElseIf attrType = AttributeType.attranimmulti Then
+        If attrType = AttributeType.attrAnimMulti Or attrType = AttributeType.attrFearCall Then
             For rowNo = 0 To handle3.controls.count - 1
                 If handle3.controls(rowNo).selectedindex < 0 Then Return False
             Next
@@ -1264,8 +1262,8 @@
                 Return aiList(getAI(handle3.text)).id
             Case AttributeType.attrFearCall
                 Dim l = New List(Of Integer)
-                For rowNo = 0 To handle3.Rows.count - 1
-                    l.Add(aiList(getAI(handle3.Item(0, rowNo).value)).id)
+                For rowNo = 0 To handle3.controls.count - 1
+                    l.Add(aiList(getAI(handle3.controls(rowNo).value)).id)
                 Next
                 Return l
             Case AttributeType.attrAnimMulti
