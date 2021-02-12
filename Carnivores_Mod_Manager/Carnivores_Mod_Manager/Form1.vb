@@ -225,6 +225,8 @@
         'remember to change ai minmax 'default is AI number, min/max is listAi index
         tabs(AmbientTab).addAttribute(carFileClass)
 
+        tabs(AmbientTab).addAttribute("Health", "health", AttributeType.attrInteger, 0, 0, 2147483647, False, "", "", True, False, False, False, "The creatures health points. Each hit will subtract the weapons power from the creatures health. Note that if the CAR file contains mortal zones, it will be possible to one-hit kill.")
+
         tabs(AmbientTab).addAttribute("Run Animation", "runAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, False, "The running animation for the creature - animations can be viewed by opening the car file in C3Dit.")
         tabs(AmbientTab).addAttribute("Run Speed", "runspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, False, "The movement speed of the creature when running.")
 
@@ -239,7 +241,10 @@
         tabs(AmbientTab).addAttribute("Glide Animation", "glideAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, False, "The gliding animation for the creature - animations can be viewed by opening the car file in C3Dit.")
         tabs(AmbientTab).addAttribute("Glide Speed", "gldspd", AttributeType.attrSpd, 0D, -1000D, 1000D, False, "", "", True, False, True, False, "The movement speed of the creature when gliding.")
 
-        tabs(AmbientTab).addAttribute("Idle Animations", "idleAnim", AttributeType.attrAnimMulti, -1, 0, 32, False, "", "", True, True, True, False, "The idle animations for the creature - animations can be viewed by opening the car file in C3Dit.")
+        tabs(AmbientTab).addAttribute("Idle Animations", "idleAnim", AttributeType.attrAnimMulti, -1, 0, 32, False, "", "", True, True, True, False, "The idle animations for the creature. Each creatures can have between 0 and 32 idle animations. Animations can be viewed by opening the car file in C3Dit.")
+
+        tabs(AmbientTab).addAttribute("Minimum Size (%)", "scale0", AttributeType.attrScale, 1000, 0, 2147483647, False, "", "", True, False, False, False, "Minimum size of the creature. Variation will adjust model size, mass, length and movement speed.")
+        tabs(AmbientTab).addAttribute("Maximum Size (%)", "scaleA", AttributeType.attrScaleA, 0, 0, 2147483647, False, "", "", True, True, False, False, "Maximum size of the creature. Variation will adjust model size, mass, length and movement speed.")
 
         tabs(AmbientTab).addAttribute("Can Swim", "canswim", AttributeType.attrSwimmer, False, 0, 0, False, "", "", True, False, True, False, "When set to true, the creature will be able to swim.")
         tabs(AmbientTab).addAttribute("Swim Animation", "swimAnim", AttributeType.attrAnim, -1, 0, 32, False, "", "", True, True, True, True, "The swimming animation for the creature - animations can be viewed by opening the car file in C3Dit. Only applicable if Can Swim is set to true.")
@@ -248,6 +253,14 @@
 
         tabs(AmbientTab).addAttribute("Afraid of Call", "fearCall", AttributeType.attrFearCall, 0, 0, 64, False, "", "", True, True, True, False, "These calls can be used to scare the creature away.")
 
+
+
+        'Average Scale scale0
+
+        'Scale Variation scaleA
+        'change mass desc once these two are done
+
+        tabs(AmbientTab).addAttribute("Mass", "mass", AttributeType.attrDouble, 0D, 0D, 10D, False, "", "", True, False, False, False, "The creatures mass displayed in the binoculars. The mass of each individual creature can vary depending on Minimum and Maximum Size.")
 
 
 
@@ -533,7 +546,14 @@
         For index = 0 To aiList.Count - 1
             If aiList(index).id = ai Then Return aiList(index)
         Next
-        Return -1
+        Return 0 'if not, return hunter
+    End Function
+
+    Function getAIbyName(ByVal n As String)
+        For index = 0 To aiList.Count - 1
+            If aiList(index).name = n Then Return index
+        Next
+        Return 0 'If Not, Return hunter
     End Function
 
     Function getSpdPos(ByVal resname As String)
@@ -632,10 +652,6 @@
                     Dim pane As Panel = New Panel
                     handle.Add(pane)
 
-                    For i As Integer = 0 To record.attributes(attrIndex).value.count - 1
-                        addMultiAnim2(attrIndex, recordIndex, record.attributes(attrIndex).value(i))
-                    Next
-
                     pane.Size = New Drawing.Size(130, 80)
                     pane.Location = New Drawing.Point(116, 0)
 
@@ -655,7 +671,7 @@
                     addB.Location = New Drawing.Point(93, -1)
                     addB.Image = imgAddSub
                     AddHandler addB.Click, AddressOf addMultiAnim
-                    addT.SetToolTip(addB, "Add Idle Animation")
+                    addT.SetToolTip(addB, "Add Animation")
                     panel(panel.Count - 1).Controls.Add(addB)
 
                     Dim removeT = New ToolTip
@@ -667,7 +683,7 @@
                     removeB.Location = New Drawing.Point(93, 21)
                     removeB.Image = imgMinusSub
                     AddHandler removeB.Click, AddressOf removeDGV
-                    removeT.SetToolTip(removeB, "Remove Idle Animation")
+                    removeT.SetToolTip(removeB, "Remove Animation")
                     panel(panel.Count - 1).Controls.Add(removeB)
 
                     If attrclasses(attrIndex).editable = False Then
@@ -675,7 +691,11 @@
                         removeB.Enabled = False
                     End If
 
+                    For i As Integer = 0 To record.attributes(attrIndex).value.count - 1
+                        addMultiAnim2(attrIndex, recordIndex, record.attributes(attrIndex).value(i))
+                    Next
 
+                    updateDGVButtons(attrIndex) ' in case of 0 reocrds
 
                     yIncrement = 65
                     helpIncrement = 32
@@ -684,10 +704,6 @@
 
                     Dim pane As Panel = New Panel
                     handle.Add(pane)
-
-                    For i As Integer = 0 To record.attributes(attrIndex).value.count - 1
-                        addFearCall2(attrIndex, aiList(getAIIndex(record.attributes(attrIndex).value(i))).name)
-                    Next
 
                     pane.Size = New Drawing.Size(130, 80)
                     pane.Location = New Drawing.Point(116, 0)
@@ -726,6 +742,12 @@
                         addB.Enabled = False
                         removeB.Enabled = False
                     End If
+
+                    For i As Integer = 0 To record.attributes(attrIndex).value.count - 1
+                        addFearCall2(attrIndex, aiList(getAIIndex(record.attributes(attrIndex).value(i))).name)
+                    Next
+
+                    updateDGVButtons(attrIndex) ' in case of 0 reocrds
 
                     yIncrement = 65
                     helpIncrement = 32
@@ -853,6 +875,34 @@
                     numBox.Increment = 0.01D
                     numBox.DecimalPlaces = 2
                     numBox.Text = record.attributes(attrIndex).value
+                    panel(panel.Count - 1).Controls.Add(numBox)
+                    handle.Add(numBox)
+
+                    If attrclasses(attrIndex).editable = False Then numBox.Enabled = False
+
+                Case AttributeType.attrScale
+                    Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
+                    numBox.Size = New Drawing.Size(130, 15)
+                    numBox.Location = New Drawing.Point(116, 0)
+                    numBox.Maximum = attrclasses(attrIndex).maxValue
+                    numBox.Minimum = attrclasses(attrIndex).minValue
+                    numBox.Increment = 0.1D
+                    numBox.DecimalPlaces = 1
+                    numBox.Text = record.attributes(attrIndex).value / 10
+                    panel(panel.Count - 1).Controls.Add(numBox)
+                    handle.Add(numBox)
+
+                    If attrclasses(attrIndex).editable = False Then numBox.Enabled = False
+
+                Case AttributeType.attrScaleA
+                    Dim numBox As UnscrollableNumericUpDown = New UnscrollableNumericUpDown 'custom class overrides scroll wheeling through options
+                    numBox.Size = New Drawing.Size(130, 15)
+                    numBox.Location = New Drawing.Point(116, 0)
+                    numBox.Maximum = attrclasses(attrIndex).maxValue
+                    numBox.Minimum = attrclasses(attrIndex).minValue
+                    numBox.Increment = 0.1D
+                    numBox.DecimalPlaces = 1
+                    numBox.Text = (record.attributes(attrIndex).value + tabs(TabControl1.SelectedIndex).getAttr(recordIndex, "scale0")) / 10
                     panel(panel.Count - 1).Controls.Add(numBox)
                     handle.Add(numBox)
 
@@ -1103,6 +1153,21 @@
     Sub removeDGV(sender As Object, e As EventArgs)
         'handle(sender.attrIndex).Rows.RemoveAt(handle(sender.attrIndex).rows.count - 1)
         handle(sender.attrIndex).controls.RemoveAt(handle(sender.attrIndex).controls.Count - 1)
+        updateDGVButtons(sender.attrIndex)
+    End Sub
+
+    Sub updateDGVButtons(ByVal attrIndex As Integer)
+        If handle(attrIndex).controls.count < tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).maxValue Then
+            panel(attrIndex).Controls(1).Enabled = True
+        Else
+            panel(attrIndex).Controls(1).Enabled = False
+        End If
+
+        If handle(attrIndex).controls.count > tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).minValue Then
+            panel(attrIndex).Controls(2).Enabled = True
+        Else
+            panel(attrIndex).Controls(2).Enabled = False
+        End If
     End Sub
 
     Sub addFearCall2(ByVal attrIndex As Integer, ByVal val As String)
@@ -1118,8 +1183,8 @@
         cb.Text = val
         If tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).editable = False Then cb.Enabled = False
         handle(attrIndex).controls.Add(cb)
+        updateDGVButtons(attrIndex)
     End Sub
-
 
     Sub addMultiAnim2(ByVal attrIndex As Integer, ByVal recordIndex As Integer, ByVal si As Integer)
         Dim record As Record = tabs(TabControl1.SelectedIndex).records(recordIndex)
@@ -1138,7 +1203,7 @@
         AddHandler cb.SelectedIndexChanged, AddressOf animReorder
         If tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex).editable = False Then cb.Enabled = False
         handle(attrIndex).controls.Add(cb)
-        'panel(panel.Count - 1).Controls.Add(cb)
+        updateDGVButtons(attrIndex)
     End Sub
 
     Sub swimChange2(ByVal h As Object)
@@ -1248,11 +1313,15 @@
             For rowNo = 0 To handle3.controls.count - 1
                 If handle3.controls(rowNo).selectedindex < 0 Then Return False
             Next
+        ElseIf attrType = AttributeType.attrscaleA Then
+            If handle3.value < handle(tabs(TabControl1.SelectedIndex).getAttrIndex("scale0")).value Then Return False
         Else
             If handle3.text.trim = "" Then Return False
         End If
         Return True
     End Function
+
+
 
     Function getHandleValue(ByRef attrClass As AttributeClass, ByRef handle3 As Object, ByVal record As Record)
         Select Case attrClass.type
@@ -1263,7 +1332,7 @@
             Case AttributeType.attrFearCall
                 Dim l = New List(Of Integer)
                 For rowNo = 0 To handle3.controls.count - 1
-                    l.Add(aiList(getAI(handle3.controls(rowNo).value)).id)
+                    l.Add(aiList(getAIbyName(handle3.controls(rowNo).text)).id)
                 Next
                 Return l
             Case AttributeType.attrAnimMulti
@@ -1297,6 +1366,18 @@
                     Return 0
                 Else
                     Return handle3.value
+                End If
+            Case AttributeType.attrScale
+                If handle3.Text = "" Then
+                    Return 0
+                Else
+                    Return handle3.value * 10
+                End If
+            Case AttributeType.attrScaleA
+                If handle3.Text = "" Then
+                    Return 0
+                Else
+                    Return (handle3.value - handle(tabs(TabControl1.SelectedIndex).getAttrIndex("scale0")).value) * 10
                 End If
             Case AttributeType.attrSpd
                 If handle3.Text = "" Then
@@ -1424,6 +1505,10 @@
                 Dim aCl = tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex)
                 If aCl.type = AttributeType.attrAnim Then
                     handle(attrIndex).items.clear
+                ElseIf aCl.type = AttributeType.attrAnimmulti Then
+                    For Each cb In handle(attrIndex).controls
+                        cb.items.clear
+                    Next
                 End If
             Next
             h.selectedindex = -1
@@ -1433,6 +1518,10 @@
                 Dim aCl = tabs(TabControl1.SelectedIndex).attributeClasses(attrIndex)
                 If aCl.type = AttributeType.attrAnim Then
                     handle(attrIndex).selectedIndex = -1
+                ElseIf aCl.type = AttributeType.attrAnimMulti Then
+                    For Each cb In handle(attrIndex).controls
+                        cb.selectedIndex = -1
+                    Next
                 ElseIf aCl.type = AttributeType.attrSpd And resetspd Then
                     handle(attrIndex).value = aiList(getAI(sender.text)).defaultSpeed(getSpdPos(aCl.resName))
                 End If
@@ -1463,6 +1552,13 @@
                         handle(attrIndex).items.clear
                         For animIndex = 0 To sender.record.animList.count - 1
                             handle(attrIndex).items.add(sender.record.animList(animIndex))
+                        Next
+                    ElseIf aCl.type = AttributeType.attrAnimmulti Then
+                        For Each cb In handle(attrIndex).controls
+                            cb.items.clear
+                            For animIndex = 0 To sender.record.animList.count - 1
+                                cb.items.add(sender.record.animList(animIndex))
+                            Next
                         Next
                     End If
                 Next
@@ -1625,17 +1721,16 @@
 
         End Class
 
-        Friend Class UnscrollableNumericUpDown
-            Inherits NumericUpDown
+    Friend Class UnscrollableNumericUpDown
+        Inherits NumericUpDown
 
-            Protected Overrides Sub OnMouseWheel(ByVal e As MouseEventArgs)
-                Dim mwe As HandledMouseEventArgs = DirectCast(e, HandledMouseEventArgs)
-                mwe.Handled = True
-            End Sub
-        End Class
+        Protected Overrides Sub OnMouseWheel(ByVal e As MouseEventArgs)
+            Dim mwe As HandledMouseEventArgs = DirectCast(e, HandledMouseEventArgs)
+            mwe.Handled = True
+        End Sub
+    End Class
 
-
-        Private Sub formOk(sender As Object, e As EventArgs)
+    Private Sub formOk(sender As Object, e As EventArgs)
             sender.result = True
             sender.form.Close()
         End Sub
@@ -1811,8 +1906,12 @@
                                     Case AttributeType.attrCar
                                         value = Trim(line.Substring(line.IndexOf("'") + 1)).TrimEnd(CChar("'"))
                                     Case AttributeType.attrInteger
-                                        value = Trim(line.Substring(line.IndexOf("=") + 1))
-                                    Case AttributeType.attrFearCall
+                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                Case AttributeType.attrScale
+                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                Case AttributeType.attrScaleA
+                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                Case AttributeType.attrFearCall
                                         value = Trim(line.Substring(line.IndexOf("=") + 1))
                                     Case AttributeType.attrAnim
                                         value = Trim(line.Substring(line.IndexOf("=") + 1))
@@ -2137,9 +2236,12 @@
             attrCar ' Creatures only
             attrAnim
             attrSpd  'speed - can be reset when AI changed - 3 decimal places
-            attrSwimmer ' attrBoolean with swim change event
+        attrSwimmer ' attrBoolean with swim change event
 
-            attrFearCall 'select multi ai
+        attrScale ' double with 1dp converts 1000 to 100%
+        attrScaleA ' ^ + scale0
+
+        attrFearCall 'select multi ai
             attrAnimMulti 'select multi ai
 
         End Enum
