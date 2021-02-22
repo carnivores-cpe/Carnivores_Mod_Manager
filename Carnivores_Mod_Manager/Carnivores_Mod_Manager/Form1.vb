@@ -213,6 +213,8 @@
         'tabs(HuntableTab).addAttribute("Call Icon", "callimg&", AttributeType.attrFile, "", 0, 509, False, "\HUNTDAT\MENU\PICS\CALL", "tga", True, True, "The image displayed in the top right when a call is selected during a hunt. Must be saved as a 16 bit uncompressed TGA.")
         'TODO - CALL FILE NAME FORMATS NEED TO ADJUSTED in C:ME!!!!
 
+        'NOTE - hear/look are sometimes written as hearK/lookK
+
         tabs(AmbientTab) = New Tab()
         tabs(AmbientTab).name = "Ambient Creatures"
         tabs(AmbientTab).nameS = "Ambient Creature"
@@ -257,6 +259,8 @@
         tabs(AmbientTab).addAttribute("Length", "length", AttributeType.attrDouble, 0D, 0D, 10D, False, "", "", True, False, False, False, True, "The creatures length displayed in the trophy room. The length of each individual creature can vary depending on Minimum and Maximum Size. Only applicable if Trophy is set to true.")
         tabs(AmbientTab).addAttribute("Mass", "mass", AttributeType.attrDouble, 0D, 0D, 10D, False, "", "", True, False, False, False, False, "The creatures mass displayed in the binoculars and trophy room. The mass of each individual creature can vary depending on Minimum and Maximum Size. Only applicable if Trophy is set to true.")
 
+        'CHANGE TO RADARHUNTABLE FOR HUNTABLE TAB + edit desc
+        tabs(AmbientTab).addAttribute("Radar Visible", "radar", AttributeType.attrRadarAmbient, 0, 0, 2, False, "", "", True, False, False, False, False, "Whether the creatures appears on radar.")
 
 
         tabs(AmbientTab).addAttribute("Afraid of Call", "fearCall", AttributeType.attrFearCall, 0, 0, 64, False, "", "", True, True, True, False, False, "These calls can be used to scare the creature away.")
@@ -940,6 +944,39 @@
 
                     If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
 
+                Case AttributeType.attrRadarAmbient
+                    Dim comboBox As UnscrollableComboBox = New UnscrollableComboBox 'custom class overrides scroll wheeling through options
+                    comboBox.Size = New Drawing.Size(130, 15)
+                    comboBox.Location = New Drawing.Point(116, 0)
+                    comboBox.Text = record.attributes(attrIndex).value
+                    comboBox.Items.Add("Never")
+                    comboBox.Items.Add("Always")
+                    comboBox.DropDownStyle = ComboBoxStyle.DropDownList
+                    If record.attributes(attrIndex).value > 0 Then
+                        comboBox.SelectedIndex = 1
+                    Else
+                        comboBox.SelectedIndex = 0
+                    End If
+                    panel(panel.Count - 1).Controls.Add(comboBox)
+                    handle.Add(comboBox)
+
+                    If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
+
+                Case AttributeType.attrRadarHuntable
+                    Dim comboBox As UnscrollableComboBox = New UnscrollableComboBox 'custom class overrides scroll wheeling through options
+                    comboBox.Size = New Drawing.Size(130, 15)
+                    comboBox.Location = New Drawing.Point(116, 0)
+                    comboBox.Text = record.attributes(attrIndex).value
+                    comboBox.Items.Add("Never")
+                    comboBox.Items.Add("If Selected")
+                    comboBox.Items.Add("Always")
+                    comboBox.DropDownStyle = ComboBoxStyle.DropDownList
+                    comboBox.SelectedIndex = record.attributes(attrIndex).value
+                    panel(panel.Count - 1).Controls.Add(comboBox)
+                    handle.Add(comboBox)
+
+                    If attrclasses(attrIndex).editable = False Then comboBox.Enabled = False
+
                 Case AttributeType.attrBoolean
                     Dim comboBox As UnscrollableComboBox = New UnscrollableComboBox 'custom class overrides scroll wheeling through options
                     comboBox.Size = New Drawing.Size(130, 15)
@@ -1431,6 +1468,12 @@
                 Else
                     Return False
                 End If
+            Case AttributeType.attrRadarAmbient
+                Dim i As Integer = handle3.selectedIndex
+                If i > 0 Then i = 2
+                Return i
+            Case AttributeType.attrRadarHuntable
+                Return handle3.selectedIndex
             Case AttributeType.attrBoolean
                 If handle3.selectedIndex = 0 Then
                     Return True
@@ -1952,6 +1995,10 @@
                                     Case AttributeType.attrCar
                                         value = Trim(line.Substring(line.IndexOf("'") + 1)).TrimEnd(CChar("'"))
                                     Case AttributeType.attrInteger
+                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                Case AttributeType.attrRadarAmbient
+                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                Case AttributeType.attrRadarHuntable
                                     value = Trim(line.Substring(line.IndexOf("=") + 1))
                                 Case AttributeType.attrScale
                                     value = Trim(line.Substring(line.IndexOf("=") + 1))
