@@ -128,7 +128,12 @@ Can Swim=False
 Swim Animation=-1
 Swim Speed=0
 Water Level=50
+Trophy=True
+Points Awarded=0
+Ship Magnet Alt=1000
+Length=9.8
 Mass=0.15
+Dog Trackable=False
 ---------------------------------------------------------------------
 ANIM7
 VERT348
@@ -155,7 +160,12 @@ Can Swim=False
 Swim Animation=-1
 Swim Speed=0
 Water Level=100
+Trophy=False
+Points Awarded=0
+Ship Magnet Alt=0
+Length=0
 Mass=0.1
+Dog Trackable=False
 ---------------------------------------------------------------------
 ANIM4
 VERT307
@@ -182,7 +192,12 @@ Can Swim=False
 Swim Animation=-1
 Swim Speed=0
 Water Level=40
+Trophy=False
+Points Awarded=0
+Ship Magnet Alt=0
+Length=0
 Mass=0.05
+Dog Trackable=False
 ---------------------------------------------------------------------
 ANIM4
 VERT349
@@ -209,7 +224,12 @@ Can Swim=False
 Swim Animation=-1
 Swim Speed=0
 Water Level=40
+Trophy=False
+Points Awarded=0
+Ship Magnet Alt=0
+Length=0
 Mass=0.25
+Dog Trackable=False
 ---------------------------------------------------------------------
 ANIM6
 VERT390
@@ -236,7 +256,12 @@ Can Swim=False
 Swim Animation=-1
 Swim Speed=0
 Water Level=50
+Trophy=False
+Points Awarded=0
+Ship Magnet Alt=0
+Length=0
 Mass=0.22
+Dog Trackable=False
 ---------------------------------------------------------------------
 ANIM6
 VERT332
