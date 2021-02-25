@@ -259,9 +259,11 @@
         tabs(AmbientTab).addAttribute("Length", "length", AttributeType.attrDouble, 0D, 0D, 10D, False, "", "", True, False, False, False, True, "The creatures length displayed in the trophy room. The length of each individual creature can vary depending on Minimum and Maximum Size. Only applicable if Trophy is set to true.")
         tabs(AmbientTab).addAttribute("Mass", "mass", AttributeType.attrDouble, 0D, 0D, 10D, False, "", "", True, False, False, False, False, "The creatures mass displayed in the binoculars and trophy room. The mass of each individual creature can vary depending on Minimum and Maximum Size. Only applicable if Trophy is set to true.")
 
+        'change resname and code in to read subsections
+        tabs(AmbientTab).addAttribute("Death Type", "deathtypeTEMP", AttributeType.attrSubSection, 0, 0, 32, False, "", "", True, False, False, False, False, "The rate of fire for the weapon - this value only effects the menu stats and doesn't effect gameplay. Note: the vanilla menu can only display values between 0.00 and 2.00.")
+
         'CHANGE TO RADARHUNTABLE FOR HUNTABLE TAB + edit desc
         tabs(AmbientTab).addAttribute("Radar Visible", "radar", AttributeType.attrRadarAmbient, 0, 0, 2, False, "", "", True, False, False, False, False, "Whether the creatures appears on radar.")
-
 
         tabs(AmbientTab).addAttribute("Afraid of Call", "fearCall", AttributeType.attrFearCall, 0, 0, 64, False, "", "", True, True, True, False, False, "These calls can be used to scare the creature away.")
 
@@ -700,6 +702,71 @@
                     Next
 
                     updateDGVButtons(attrIndex) ' in case of 0 reocrds
+
+                    yIncrement = 65
+                    helpIncrement = 32
+
+                Case AttributeType.attrSubSection
+
+                    Dim pane As Panel = New Panel
+                    handle.Add(pane)
+
+                    'pane.Size = New Drawing.Size(130, 80)
+                    'pane.Location = New Drawing.Point(116, 0)
+
+
+                    'pane.AutoScroll = True
+                    'pane.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+
+                    'panel(panel.Count - 1).Controls.Add(pane)
+
+                    Dim addT = New ToolTip
+                    addT.ShowAlways = True
+                    Dim addB As DGVButton = New DGVButton
+                    addB.attrIndex = attrIndex
+                    addB.record = record
+                    addB.recordIndex = recordIndex
+                    addB.Size = New Drawing.Size(23, 23)
+                    addB.Location = New Drawing.Point(93, -1)
+                    addB.Image = imgAddSub
+                    'AddHandler addB.Click, AddressOf addMultiAnim
+                    addT.SetToolTip(addB, "Add " & attrclasses(attrIndex).displayName)
+                    panel(panel.Count - 1).Controls.Add(addB)
+
+                    Dim editT = New ToolTip
+                    editT.ShowAlways = True
+                    Dim editB As DGVButton = New DGVButton
+                    editB.attrIndex = attrIndex
+                    editB.recordIndex = recordIndex
+                    editB.Size = New Drawing.Size(23, 23)
+                    editB.Location = New Drawing.Point(93, 21)
+                    editB.Image = imgEditSub
+                    'AddHandler editB.Click, AddressOf 
+                    editT.SetToolTip(editB, "Edit " & attrclasses(attrIndex).displayName)
+                    panel(panel.Count - 1).Controls.Add(editB)
+
+                    Dim removeT = New ToolTip
+                    removeT.ShowAlways = True
+                    Dim removeB As DGVButton = New DGVButton
+                    removeB.attrIndex = attrIndex
+                    removeB.recordIndex = recordIndex
+                    removeB.Size = New Drawing.Size(23, 23)
+                    removeB.Location = New Drawing.Point(93, 41)
+                    removeB.Image = imgMinusSub
+                    'AddHandler removeB.Click, AddressOf removeDGV
+                    removeT.SetToolTip(removeB, "Remove " & attrclasses(attrIndex).displayName)
+                    panel(panel.Count - 1).Controls.Add(removeB)
+
+                    If attrclasses(attrIndex).editable = False Then
+                        addB.Enabled = False
+                        removeB.Enabled = False
+                    End If
+
+                    'For i As Integer = 0 To record.attributes(attrIndex).value.count - 1
+                    'addMultiAnim2(attrIndex, recordIndex, record.attributes(attrIndex).value(i))
+                    'Next
+
+                    'updateDGVButtons(attrIndex) ' in case of 0 reocrds
 
                     yIncrement = 65
                     helpIncrement = 32
@@ -1320,6 +1387,7 @@
             If attrclasses(attrIndex).type = AttributeType.attrTextFile Then yIncrement = 65
             If attrclasses(attrIndex).type = AttributeType.attrFearCall Then yIncrement = 65
             If attrclasses(attrIndex).type = AttributeType.attrAnimMulti Then yIncrement = 65
+            If attrclasses(attrIndex).type = AttributeType.attrSubSection Then yIncrement = 65
             If attrclasses(attrIndex).type = AttributeType.attrTogglableInteger Then yIncrement = 20
 
             If active = True Then
@@ -1418,6 +1486,10 @@
                     l.Add(findIndex(handle3.controls(rowNo).text, record.animList))
                 Next
                 Return l
+            Case AttributeType.attrSubSection
+
+                'todo
+
             Case AttributeType.attrTextFile
                 Return handle3.text
             Case AttributeType.attrFile
@@ -2005,10 +2077,14 @@
                                 Case AttributeType.attrScaleA
                                     value = Trim(line.Substring(line.IndexOf("=") + 1))
                                 Case AttributeType.attrFearCall
-                                        value = Trim(line.Substring(line.IndexOf("=") + 1))
-                                    Case AttributeType.attrAnim
-                                        value = Trim(line.Substring(line.IndexOf("=") + 1))
-                                    Case AttributeType.attrAnimMulti
+                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                Case AttributeType.attrAnim
+                                    value = Trim(line.Substring(line.IndexOf("=") + 1))
+                                Case AttributeType.attrSubSection
+
+                                    'todo
+
+                                Case AttributeType.attrAnimMulti
                                         value = Trim(line.Substring(line.IndexOf("=") + 1))
                                     Case AttributeType.attrSlot
                                         value = Trim(line.Substring(line.IndexOf("=") + 1))
@@ -2075,12 +2151,13 @@
                     If debug Then
                         printLog("READ " & tabs(tabIndex).nameS & " : " & tabs(tabIndex).records.Count - 1)
                         For atrIndex As Integer = 0 To tabs(tabIndex).attributeClasses.Count - 1
-                            If tabs(tabIndex).attributeClasses(atrIndex).type = AttributeType.attrFearCall Or
-                        tabs(tabIndex).attributeClasses(atrIndex).type = AttributeType.attrAnimMulti Then
-                                'Dim o As Object = tabs(tabIndex).records(tabs(tabIndex).records.Count - 1).attributes(atrIndex).value
-                                'printLog(tabs(tabIndex).attributeClasses(atrIndex).displayName & "=" & o(o.count - 1))
-                            Else
-                                printLog(tabs(tabIndex).attributeClasses(atrIndex).displayName & "=" & tabs(tabIndex).records(tabs(tabIndex).records.Count - 1).attributes(atrIndex).value)
+                        If tabs(tabIndex).attributeClasses(atrIndex).type = AttributeType.attrFearCall Or
+                                tabs(tabIndex).attributeClasses(atrIndex).type = AttributeType.attrSubSection Or
+                    tabs(tabIndex).attributeClasses(atrIndex).type = AttributeType.attrAnimMulti Then
+                            'Dim o As Object = tabs(tabIndex).records(tabs(tabIndex).records.Count - 1).attributes(atrIndex).value
+                            'printLog(tabs(tabIndex).attributeClasses(atrIndex).displayName & "=" & o(o.count - 1))
+                        Else
+                            printLog(tabs(tabIndex).attributeClasses(atrIndex).displayName & "=" & tabs(tabIndex).records(tabs(tabIndex).records.Count - 1).attributes(atrIndex).value)
                             End If
                         Next
                         printLog("---------------------------------------------------------------------")
@@ -2178,22 +2255,23 @@
         End Sub
 
 
-        Public Class Tab
-            Public name, nameS As String
-            'Public addImage, editImage, removeImage As string
-            Public addButton, removeButton, editButton, upButton, downButton As Button
-            Public addToolTip, removeToolTip, editToolTip, upToolTip, downToolTip As ToolTip
-            Public listBox As ListBox
-            Public recordLock As Boolean ' prevent adding/deleting records
 
-            Public attributeClasses As List(Of AttributeClass)
-            Public recordMax, recordMin As Integer
-            Public records As List(Of Record)
+    Public Class Tab
+        Public name, nameS As String
+        'Public addImage, editImage, removeImage As string
+        Public addButton, removeButton, editButton, upButton, downButton As Button
+        Public addToolTip, removeToolTip, editToolTip, upToolTip, downToolTip As ToolTip
+        Public listBox As ListBox
+        Public recordLock As Boolean ' prevent adding/deleting records
 
-            Public Sub New()
-                records = New List(Of Record)
-                attributeClasses = New List(Of AttributeClass)
-            End Sub
+        Public attributeClasses As List(Of AttributeClass)
+        Public recordMax, recordMin As Integer
+        Public records As List(Of Record)
+
+        Public Sub New()
+            records = New List(Of Record)
+            attributeClasses = New List(Of AttributeClass)
+        End Sub
 
         Public Sub addAttribute(ByVal name As String, ByVal res As String, ByVal type As AttributeType, ByVal defaultValue As Object,
                                 ByVal min As Integer, ByVal max As Integer, ByVal hide As Boolean, ByVal gameFolder As String,
@@ -2202,93 +2280,110 @@
             attributeClasses.Add(New AttributeClass(name, res, type, defaultValue, min, max, hide, gameFolder, ext, edit, valida, aiD, _swimmer, _trophy, help))
         End Sub
 
+        Public Sub addSubAttribute(ByVal name As String, ByVal res As String, ByVal type As AttributeType, ByVal defaultValue As Object,
+                                ByVal min As Integer, ByVal max As Integer, ByVal hide As Boolean, ByVal gameFolder As String,
+                                ByVal ext As String, ByVal edit As Boolean, ByVal valida As Boolean, ByVal aiD As Boolean,
+                                ByVal _swimmer As Boolean, ByVal _trophy As Boolean, ByVal help As String)
+            attributeClasses(attributeClasses.Count - 1).subClass.Add(New AttributeClass(name, res, type, defaultValue, min, max, hide, gameFolder, ext, edit, valida, aiD, _swimmer, _trophy, help))
+        End Sub
+
         Public Sub addAttribute(ByRef attrClass)
-                attributeClasses.Add(attrClass)
-            End Sub
+            attributeClasses.Add(attrClass)
+        End Sub
 
-            Public Sub addRecord()
-                records.Add(New Record)
-                records(records.Count - 1).attributes = New List(Of Attribute)
-                records(records.Count - 1).animList = New List(Of String)
-                For attrIndex As Integer = 0 To attributeClasses.Count - 1
-                    records(records.Count - 1).attributes.Add(New Attribute(attributeClasses(attrIndex).defaultValue))
+        Public Sub addRecord()
+            records.Add(New Record)
+            records(records.Count - 1).attributes = New List(Of Attribute)
+            records(records.Count - 1).animList = New List(Of String)
+            For attrIndex As Integer = 0 To attributeClasses.Count - 1
+                records(records.Count - 1).attributes.Add(New Attribute(attributeClasses(attrIndex).defaultValue))
 
-                    If attributeClasses(attrIndex).type = AttributeType.attrFearCall Or
+                If attributeClasses(attrIndex).type = AttributeType.attrFearCall Or
                     attributeClasses(attrIndex).type = AttributeType.attrAnimMulti Then
-                        records(records.Count - 1).attributes(attrIndex).value = New List(Of Integer)
-                    End If
+                    records(records.Count - 1).attributes(attrIndex).value = New List(Of Integer)
+                End If
 
-                Next
-            End Sub
+                If attributeClasses(attrIndex).type = AttributeType.attrSubSection Then
+                    records(records.Count - 1).attributes(attrIndex).value = New List(Of Attribute)
+                    For subIndex = 0 To attributeClasses(attrIndex).subClass.Count - 1
+                        records(records.Count - 1).attributes(attrIndex).value.add(New Attribute(attributeClasses(attrIndex).subClass(subIndex).defaultValue))
+                    Next
+                End If
 
-            Public Sub setAttr(ByVal recordIndex As Integer, ByVal resName As String, ByVal _value As Object)
-                For attrIndex As Integer = 0 To attributeClasses.Count - 1
-                    If attributeClasses(attrIndex).resName = resName Then
-                        If attributeClasses(attrIndex).type = AttributeType.attrFearCall Or
+            Next
+        End Sub
+
+        Public Sub setAttr(ByVal recordIndex As Integer, ByVal resName As String, ByVal _value As Object)
+            For attrIndex As Integer = 0 To attributeClasses.Count - 1
+                If attributeClasses(attrIndex).resName = resName Then
+                    If attributeClasses(attrIndex).type = AttributeType.attrFearCall Or
                         attributeClasses(attrIndex).type = AttributeType.attrAnimMulti Then
-                            records(recordIndex).attributes(attrIndex).value.add(_value)
-                        Else
-                            records(recordIndex).attributes(attrIndex).value = _value
-                        End If
-
+                        records(recordIndex).attributes(attrIndex).value.add(_value)
+                    Else
+                        records(recordIndex).attributes(attrIndex).value = _value
                     End If
-                Next
-            End Sub
 
-            Public Function getAttr(ByVal recordIndex As Integer, ByVal resName As String)
-                For attrIndex As Integer = 0 To attributeClasses.Count - 1
-                    If attributeClasses(attrIndex).resName = resName Then
-                        Return records(recordIndex).attributes(attrIndex).value
-                    End If
-                Next
-                Return -1
-            End Function
+                End If
+            Next
+        End Sub
 
-            Public Function getAttrIndex(ByVal resName As String)
-                For attrIndex As Integer = 0 To attributeClasses.Count - 1
-                    If attributeClasses(attrIndex).resName = resName Then
-                        Return attrIndex
-                    End If
-                Next
-                Return -1
-            End Function
+        Public Function getAttr(ByVal recordIndex As Integer, ByVal resName As String)
+            For attrIndex As Integer = 0 To attributeClasses.Count - 1
+                If attributeClasses(attrIndex).resName = resName Then
+                    Return records(recordIndex).attributes(attrIndex).value
+                End If
+            Next
+            Return -1
+        End Function
 
-            Public Function getAttrClass(resName As String)
-                For attrIndex As Integer = 0 To attributeClasses.Count - 1
-                    If attributeClasses(attrIndex).resName = resName Then
-                        Return attributeClasses(attrIndex)
-                    End If
-                Next
-                Return -1
-            End Function
+        Public Function getAttrIndex(ByVal resName As String)
+            For attrIndex As Integer = 0 To attributeClasses.Count - 1
+                If attributeClasses(attrIndex).resName = resName Then
+                    Return attrIndex
+                End If
+            Next
+            Return -1
+        End Function
 
-        End Class
+        Public Function getAttrClass(resName As String)
+            For attrIndex As Integer = 0 To attributeClasses.Count - 1
+                If attributeClasses(attrIndex).resName = resName Then
+                    Return attributeClasses(attrIndex)
+                End If
+            Next
+            Return -1
+        End Function
 
-        Public Class Record
+    End Class
+
+    Public Class Record
             Public attributes As List(Of Attribute)
             Public animList As List(Of String)
         End Class
 
-        Public Class AttributeClass
-            Public displayName As String
-            Public resName As String
-            Public type As AttributeType
-            Public defaultValue
-            Public maxValue, minValue As Integer
-            Public hidden As Boolean
-            Public editable As Boolean
-            Public validation As Boolean
+
+    Public Class AttributeClass
+        Public displayName As String
+        Public resName As String
+        Public type As AttributeType
+        Public defaultValue
+        Public maxValue, minValue As Integer
+        Public hidden As Boolean
+        Public editable As Boolean
+        Public validation As Boolean
         Public swimmer As Boolean 'If true, checks can swim combobox
         Public trophy As Boolean
 
+        Public subClass As List(Of AttributeClass)
+
         Public gameFolder, ext As String 'file data only
 
-            Public helpInfo As String
+        Public helpInfo As String
 
-            Public data As List(Of Byte())
-            Public dInd As List(Of String)
+        Public data As List(Of Byte())
+        Public dInd As List(Of String)
 
-            Public AIdependant As Boolean 'If true, checks AI to see whether the value should be disabled
+        Public AIdependant As Boolean 'If true, checks AI to see whether the value should be disabled
 
         Public Sub New(ByVal _name As String, ByVal _res As String, ByVal _type As AttributeType, ByVal defVal As Object,
                        ByVal min As Integer, ByVal max As Integer, ByVal _hidden As Boolean, ByVal _gameFolder As String,
@@ -2310,6 +2405,10 @@
             swimmer = _swimmer
             trophy = _trophy
 
+            If type = AttributeType.attrSubSection Then
+                subClass = New List(Of AttributeClass)
+            End If
+
             If type = AttributeType.attrFile Or type = AttributeType.attrCar Then
                 data = New List(Of Byte())
                 dInd = New List(Of String)
@@ -2318,7 +2417,7 @@
 
     End Class
 
-        Enum AttributeType
+    Enum AttributeType
             attrString  'basic text
             attrTextFile
             attrInteger 'whole numbers
@@ -2341,11 +2440,10 @@
 
         attrFearCall 'select multi ai
         attrAnimMulti 'select multi ai
-
-        attrSubSection 'Multi with subattributes
-
         attrRadarAmbient 'never/always
         attrRadarHuntable 'never/always/whenSelected
+
+        attrSubSection
 
     End Enum
 

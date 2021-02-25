@@ -133,6 +133,7 @@ Points Awarded=0
 Ship Magnet Alt=1000
 Length=9.8
 Mass=0.15
+Radar Visible=0
 Dog Trackable=False
 ---------------------------------------------------------------------
 ANIM7
@@ -165,6 +166,7 @@ Points Awarded=0
 Ship Magnet Alt=0
 Length=0
 Mass=0.1
+Radar Visible=0
 Dog Trackable=False
 ---------------------------------------------------------------------
 ANIM4
@@ -197,6 +199,7 @@ Points Awarded=0
 Ship Magnet Alt=0
 Length=0
 Mass=0.05
+Radar Visible=0
 Dog Trackable=False
 ---------------------------------------------------------------------
 ANIM4
@@ -229,6 +232,7 @@ Points Awarded=0
 Ship Magnet Alt=0
 Length=0
 Mass=0.25
+Radar Visible=0
 Dog Trackable=False
 ---------------------------------------------------------------------
 ANIM6
@@ -261,6 +265,7 @@ Points Awarded=0
 Ship Magnet Alt=0
 Length=0
 Mass=0.22
+Radar Visible=0
 Dog Trackable=False
 ---------------------------------------------------------------------
 ANIM6
@@ -376,7 +381,7 @@ VERT495
 TRI988
 TEX131072
 READ Map Ambient Creature : 0
-Name=Brachiosaurus
+Name=TESTER
 CAR File=dangerbrachikiller2.car
 ---------------------------------------------------------------------
 ANIM7
